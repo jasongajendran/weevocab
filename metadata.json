@@ -1,0 +1,6 @@
+{
+  "name": "WeeVocab: Scotland Junior Dictionary & Word Quest",
+  "description": "An interactive, colorful dictionary and vocabulary quest hub designed for junior students aged 10–15 across the UK and Scotland, featuring top UK-common vocabulary, regional slang, academic words, pronunciation guides, A-Z index, games, daily challenges, and offline support.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

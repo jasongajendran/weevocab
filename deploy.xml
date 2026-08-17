@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  WeeVocab Deployment Configuration
+  Target: GitHub Pages / Cloud Run Container
+  Application: WeeVocab - Scotland Junior Dictionary & Word Quest
+-->
+<deployment>
+  <application>
+    <name>WeeVocab</name>
+    <version>1.0.0</version>
+    <platform>web</platform>
+    <targetEnvironment>github-pages</targetEnvironment>
+    <audience>Students aged 10-15 in Scotland, UK</audience>
+  </application>
+  <build>
+    <tool>vite</tool>
+    <command>npm run build</command>
+    <outputDirectory>dist</outputDirectory>
+    <nodeVersion>20.x</nodeVersion>
+  </build>
+  <features>
+    <feature name="A-Z Dictionary" status="enabled" />
+    <feature name="Scottish Slang & Regional Dialect" status="enabled" />
+    <feature name="Double Examples, Synonyms & Antonyms" status="enabled" />
+    <feature name="Pronunciation Audio & Voice Practice" status="enabled" />
+    <feature name="Interactive Vocabulary Games" status="enabled" />
+    <feature name="Daily Word Challenges" status="enabled" />
+    <feature name="100% Offline Functionality" status="enabled" />
+    <feature name="Hamish AI Bard" status="enabled" />
+  </features>
+</deployment>
