@@ -4,7 +4,7 @@ import {
   Search, Volume2, Mic, MicOff, Star, Sparkles, Shuffle, X, 
   BookOpen, ChevronRight, CheckCircle2, AlertCircle, BookmarkCheck,
   Tag, MapPin, Layers, GraduationCap, Copy, Check, ChevronDown, ChevronUp,
-  Eye, EyeOff, VolumeX, Radio, Compass, Filter, ChevronLeft
+  Eye, EyeOff, VolumeX, Radio, Compass, Filter, ChevronLeft, ArrowUp
 } from 'lucide-react';
 import { DictionaryEntry, WordCategory, ScottishRegion } from '../types/dictionary';
 import { speakWord, speakSentence, cancelSpeech, startVoicePractice, isSpeechRecognitionSupported, RecognitionResult } from '../utils/speech';
@@ -749,9 +749,11 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                       playSound('click');
                     }}
-                    className="text-[11px] font-bold text-slate-500 hover:text-blue-600 flex items-center gap-1 hover:underline cursor-pointer"
+                    title="Move to top"
+                    aria-label="Move to top"
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors cursor-pointer"
                   >
-                    <span>Top ↑</span>
+                    <ArrowUp className="w-4 h-4 stroke-[2.5]" />
                   </button>
                 </div>
 
