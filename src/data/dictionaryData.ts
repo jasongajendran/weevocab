@@ -2,12 +2,14 @@ import { DictionaryEntry, Badge } from '../types/dictionary';
 import { SCOTS_ENTRIES } from './scotsWords';
 import { UK_ACADEMIC_ENTRIES } from './ukAcademicWords';
 import { UK_COMMON_AND_SLANG_ENTRIES } from './ukCommonAndSlangWords';
+import { UK_SPOKEN_CONVERSATION_ENTRIES } from './ukSpokenAndConversationalWords';
 
 // Merge all vocabulary collections and deduplicate by word id
 const allRawEntries: DictionaryEntry[] = [
   ...SCOTS_ENTRIES,
   ...UK_ACADEMIC_ENTRIES,
   ...UK_COMMON_AND_SLANG_ENTRIES,
+  ...UK_SPOKEN_CONVERSATION_ENTRIES,
 ];
 
 const seenIds = new Set<string>();

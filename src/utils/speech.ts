@@ -1,4 +1,84 @@
-// Web Speech Synthesis and Voice Practice
+// Web Speech Synthesis and Voice Practice for UK & Scottish Junior Dictionary
+
+// Preferred young / female British English voices (ordered by youthfulness & quality)
+const PREFERRED_UK_FEMALE_NAMES = [
+  'libby',       // Microsoft Libby Online (Natural) - UK English youthful female
+  'maisie',      // Microsoft Maisie Online (Natural) - UK English young girl/female
+  'sonia',       // Microsoft Sonia Online (Natural) - UK English young female
+  'serena',      // Apple Serena - UK English female
+  'stephanie',   // Apple Stephanie - UK English female
+  'kate',        // Apple Kate - UK English female
+  'fiona',       // Apple Fiona - Scottish / UK English female
+  'google uk english female', // Google UK English Female (Chrome/Android)
+  'uk english female',
+  'hazel',       // Microsoft Hazel - UK English female
+  'susan',       // Microsoft Susan - UK English female
+  'mia',         // Microsoft Mia - UK English female
+  'martha',      // Apple Martha - UK English female
+  'victoria',    // Apple Victoria - UK English female
+];
+
+const MALE_NAME_KEYWORDS = [
+  'male', 'david', 'george', 'oliver', 'ryan', 'guy', 'daniel', 'thomas', 'arthur', 'brian', 'richard', 'james'
+];
+
+/**
+ * Select the best available British young female voice from the browser's speech synthesis engine.
+ */
+export const getBestBritishFemaleVoice = (): SpeechSynthesisVoice | null => {
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+    return null;
+  }
+
+  const voices = window.speechSynthesis.getVoices();
+  if (!voices || voices.length === 0) return null;
+
+  // 1. Check for specific high-quality young British female voices
+  for (const preferredName of PREFERRED_UK_FEMALE_NAMES) {
+    const match = voices.find(v => {
+      const vName = v.name.toLowerCase();
+      const isUK = v.lang === 'en-GB' || v.lang === 'en_GB' || v.lang.startsWith('en-GB');
+      return isUK && vName.includes(preferredName);
+    });
+    if (match) return match;
+  }
+
+  // 2. Any en-GB voice explicitly labeled female or without male identifiers
+  const gbFemaleVoice = voices.find(v => {
+    const isUK = v.lang === 'en-GB' || v.lang === 'en_GB' || v.lang.startsWith('en-GB');
+    const vName = v.name.toLowerCase();
+    const hasFemale = vName.includes('female') || vName.includes('woman') || vName.includes('girl');
+    const hasMale = MALE_NAME_KEYWORDS.some(m => vName.includes(m));
+    return isUK && (hasFemale || !hasMale);
+  });
+  if (gbFemaleVoice) return gbFemaleVoice;
+
+  // 3. Fallback: Any en-GB / UK voice
+  const anyGbVoice = voices.find(v => 
+    v.lang === 'en-GB' || v.lang === 'en_GB' || v.lang.startsWith('en-GB') || v.name.toLowerCase().includes('british') || v.name.toLowerCase().includes('united kingdom')
+  );
+  if (anyGbVoice) return anyGbVoice;
+
+  // 4. Fallback: Other English female voices (e.g. Jenny, Samantha, Karen)
+  const otherFemaleVoice = voices.find(v => {
+    const isEn = v.lang.startsWith('en');
+    const vName = v.name.toLowerCase();
+    const hasFemale = vName.includes('female') || vName.includes('woman') || vName.includes('jenny') || vName.includes('samantha') || vName.includes('karen') || vName.includes('zira');
+    const hasMale = MALE_NAME_KEYWORDS.some(m => vName.includes(m));
+    return isEn && (hasFemale || !hasMale);
+  });
+  if (otherFemaleVoice) return otherFemaleVoice;
+
+  // 5. Ultimate fallback: Any English voice
+  return voices.find(v => v.lang.startsWith('en')) || null;
+};
+
+// Pre-load voices on browser startup/change
+if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+  window.speechSynthesis.onvoiceschanged = () => {
+    window.speechSynthesis.getVoices();
+  };
+}
 
 export const speakWord = (
   text: string, 
@@ -24,23 +104,14 @@ export const speakSentence = (
   if (!cleanText) return;
 
   const utterance = new SpeechSynthesisUtterance(cleanText);
-  utterance.rate = options?.rate || 0.9; // Natural pace for learners
-  utterance.pitch = options?.pitch || 1.05; // Friendly, clear pitch
+  
+  // Tuned for a friendly, cheerful, youthful British female delivery
+  utterance.rate = options?.rate || 0.92; // Crisp, clear pace for junior learners
+  utterance.pitch = options?.pitch || 1.18; // Bright, youthful British female pitch
 
-  const voices = window.speechSynthesis.getVoices();
-  // Try to find a Scottish or British English voice
-  const scotVoice = voices.find(v => 
-    v.lang === 'en-GB' && (v.name.toLowerCase().includes('scot') || v.name.toLowerCase().includes('fiona'))
-  );
-  const gbVoice = voices.find(v => v.lang === 'en-GB' || v.lang.startsWith('en-GB') || v.name.toLowerCase().includes('british') || v.name.toLowerCase().includes('uk'));
-  const englishVoice = voices.find(v => v.lang.startsWith('en'));
-
-  if (scotVoice) {
-    utterance.voice = scotVoice;
-  } else if (gbVoice) {
-    utterance.voice = gbVoice;
-  } else if (englishVoice) {
-    utterance.voice = englishVoice;
+  const voice = getBestBritishFemaleVoice();
+  if (voice) {
+    utterance.voice = voice;
   }
 
   if (options?.onEnd) {

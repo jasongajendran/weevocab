@@ -8,6 +8,7 @@ import {
 import { DictionaryEntry, WordCategory, ScottishRegion } from '../types/dictionary';
 import { speakWord, speakSentence, cancelSpeech, startVoicePractice, isSpeechRecognitionSupported, RecognitionResult } from '../utils/speech';
 import { playSound } from '../utils/soundEffects';
+import { AlphabetFancyScrubber } from './AlphabetFancyScrubber';
 
 interface DictionaryViewProps {
   entries: DictionaryEntry[];
@@ -34,8 +35,8 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
   // Distraction-Free / Focus Mode toggle
   const [isFocusMode, setIsFocusMode] = useState<boolean>(false);
 
-  // Collapsible Filters toggle (default open on desktop, collapsible anytime)
-  const [isFilterOpen, setIsFilterOpen] = useState<boolean>(true);
+  // Collapsible Filters toggle (kept collapsed on initial load as requested)
+  const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
 
   // Audio playing state indicator for words/examples
   const [playingAudioId, setPlayingAudioId] = useState<string | null>(null);
@@ -109,6 +110,48 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
       return true;
     });
   }, [entries, selectedLetter, searchQuery, selectedCategory, selectedRegion, selectedDifficulty]);
+
+  // Distinct available letters in the current filtered set
+  const availableLetters = useMemo(() => {
+    const set = new Set<string>();
+    filteredEntries.forEach(e => {
+      if (e.word[0]) set.add(e.word[0].toUpperCase());
+    });
+    return Array.from(set).sort();
+  }, [filteredEntries]);
+
+  // Sub-prefixes when viewing a specific letter or larger subset for quick in-letter jumping
+  const subPrefixes = useMemo(() => {
+    if (filteredEntries.length <= 4) return [];
+    const map: Record<string, { count: number; firstId: string }> = {};
+    filteredEntries.forEach(e => {
+      const prefix = e.word.slice(0, 2).toUpperCase();
+      if (!map[prefix]) {
+        map[prefix] = { count: 0, firstId: e.id };
+      }
+      map[prefix].count++;
+    });
+    return Object.keys(map).sort().map(prefix => ({
+      prefix,
+      count: map[prefix].count,
+      firstId: map[prefix].firstId,
+    }));
+  }, [filteredEntries]);
+
+  // Group filtered entries by starting letter
+  const groupedByLetter = useMemo(() => {
+    const groups: { letter: string; entries: DictionaryEntry[] }[] = [];
+    const map: Record<string, DictionaryEntry[]> = {};
+    filteredEntries.forEach(entry => {
+      const letter = entry.word[0]?.toUpperCase() || '#';
+      if (!map[letter]) map[letter] = [];
+      map[letter].push(entry);
+    });
+    Object.keys(map).sort().forEach(letter => {
+      groups.push({ letter, entries: map[letter] });
+    });
+    return groups;
+  }, [filteredEntries]);
 
   // Random word
   const handleRandomWord = () => {
@@ -592,7 +635,21 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
         )}
       </div>
 
-      {/* Word Cards Grid */}
+      {/* Fancy In-Letter & Alphabet Quick Scrubber Bar */}
+      {filteredEntries.length > 0 && (
+        <AlphabetFancyScrubber
+          availableLetters={availableLetters}
+          activeLetter={selectedLetter}
+          onSelectLetter={(targetLetter) => {
+            setSelectedLetter(targetLetter);
+            playSound('click');
+          }}
+          subPrefixes={subPrefixes}
+          totalWordsCount={filteredEntries.length}
+        />
+      )}
+
+      {/* Word Cards Grid / Grouped Sections */}
       {filteredEntries.length === 0 ? (
         <div className="bg-white rounded-3xl p-10 text-center border border-slate-200 shadow-xs max-w-md mx-auto">
           <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-3 text-3xl">
@@ -616,8 +673,37 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-          {filteredEntries.map((entry) => {
+        <div className="space-y-8">
+          {groupedByLetter.map((group) => (
+            <div key={group.letter} id={`letter-section-${group.letter}`} className="space-y-3.5 scroll-mt-24">
+              {/* Section Header with anchor and count */}
+              <div className="flex items-center justify-between border-b-2 border-blue-100 pb-2 pt-1">
+                <div className="flex items-center gap-2.5">
+                  <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white font-black text-base sm:text-lg flex items-center justify-center shadow-xs">
+                    {group.letter}
+                  </span>
+                  <span className="font-extrabold text-slate-800 text-sm sm:text-base">
+                    Letter {group.letter}
+                  </span>
+                  <span className="text-[11px] sm:text-xs font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                    {group.entries.length} {group.entries.length === 1 ? 'word' : 'words'}
+                  </span>
+                </div>
+
+                <button
+                  onClick={() => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    playSound('click');
+                  }}
+                  className="text-[11px] font-bold text-slate-500 hover:text-blue-600 flex items-center gap-1 hover:underline cursor-pointer"
+                >
+                  <span>Top ↑</span>
+                </button>
+              </div>
+
+              {/* Grid of cards for this letter group */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+                {group.entries.map((entry) => {
             const isStarred = starredWordIds.includes(entry.id);
             const theme = getCategoryTheme(entry);
             const isWordPlaying = playingAudioId === `word-${entry.id}`;
@@ -811,6 +897,9 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
               </div>
             );
           })}
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
