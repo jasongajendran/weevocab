@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Sparkles, Send, BookOpen, Wand2, MessageSquare, RefreshCw, Copy, Check, Info } from 'lucide-react';
+import { Sparkles, Send, BookOpen, Wand2, MessageSquare, RefreshCw, Copy, Check, Info, Volume2, VolumeX } from 'lucide-react';
 import { DictionaryEntry } from '../types/dictionary';
 import { playSound } from '../utils/soundEffects';
+import { speakSentence, cancelSpeech } from '../utils/speech';
 
 interface HamishAIBardProps {
   entries: DictionaryEntry[];
@@ -32,6 +33,20 @@ export const HamishAIBard: React.FC<HamishAIBardProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [aiResponse, setAiResponse] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+
+  const handleToggleSpeak = () => {
+    if (!aiResponse) return;
+    if (isSpeaking) {
+      cancelSpeech();
+      setIsSpeaking(false);
+    } else {
+      setIsSpeaking(true);
+      // Clean markdown stars from speech text
+      const cleanText = aiResponse.replace(/[*#_~]/g, '');
+      speakSentence(cleanText);
+    }
+  };
 
   // Quick word pills selection
   const handleToggleStoryWord = (word: string) => {
@@ -133,7 +148,7 @@ Try using these in your next Scottish literature or creative writing assignment!
   };
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 max-w-4xl mx-auto pb-24 sm:pb-8">
       
       {/* Bard Mascot Header */}
       <div className="bg-gradient-to-br from-sky-600 via-indigo-700 to-purple-800 rounded-3xl p-6 sm:p-8 text-white shadow-lg shadow-indigo-900/10 relative overflow-hidden border border-indigo-500/30">
@@ -370,13 +385,28 @@ Try using these in your next Scottish literature or creative writing assignment!
                 Hamish's Bardic Creation
               </h3>
             </div>
-            <button
-              onClick={handleCopy}
-              className="flex items-center gap-1.5 text-xs font-bold text-indigo-600 hover:text-indigo-800 bg-white px-3 py-1.5 rounded-xl border border-indigo-200 shadow-2xs transition-colors"
-            >
-              {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
-              <span>{copied ? 'Copied!' : 'Copy Text'}</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleToggleSpeak}
+                className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl border shadow-2xs transition-colors cursor-pointer ${
+                  isSpeaking
+                    ? 'bg-rose-50 border-rose-300 text-rose-700 hover:bg-rose-100'
+                    : 'bg-indigo-50 border-indigo-200 text-indigo-700 hover:bg-indigo-100'
+                }`}
+                title="Read aloud with young British female voice"
+              >
+                {isSpeaking ? <VolumeX className="w-4 h-4 text-rose-600" /> : <Volume2 className="w-4 h-4 text-indigo-600" />}
+                <span>{isSpeaking ? 'Stop Reading' : 'Listen in British Voice'}</span>
+              </button>
+
+              <button
+                onClick={handleCopy}
+                className="flex items-center gap-1.5 text-xs font-bold text-indigo-600 hover:text-indigo-800 bg-white px-3 py-1.5 rounded-xl border border-indigo-200 shadow-2xs transition-colors cursor-pointer"
+              >
+                {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+                <span>{copied ? 'Copied!' : 'Copy Text'}</span>
+              </button>
+            </div>
           </div>
 
           <div className="prose prose-slate max-w-none text-slate-800 text-sm sm:text-base leading-relaxed whitespace-pre-wrap">

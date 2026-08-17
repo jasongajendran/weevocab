@@ -1,14 +1,15 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
+import confetti from 'canvas-confetti';
 import { 
   Search, Volume2, Mic, MicOff, Star, Sparkles, Shuffle, X, 
   BookOpen, ChevronRight, CheckCircle2, AlertCircle, BookmarkCheck,
   Tag, MapPin, Layers, GraduationCap, Copy, Check, ChevronDown, ChevronUp,
-  Eye, EyeOff, VolumeX, Radio, Compass, Filter
+  Eye, EyeOff, VolumeX, Radio, Compass, Filter, ChevronLeft
 } from 'lucide-react';
 import { DictionaryEntry, WordCategory, ScottishRegion } from '../types/dictionary';
 import { speakWord, speakSentence, cancelSpeech, startVoicePractice, isSpeechRecognitionSupported, RecognitionResult } from '../utils/speech';
 import { playSound } from '../utils/soundEffects';
-import { AlphabetFancyScrubber } from './AlphabetFancyScrubber';
+import { GlobalPageVerticalScrubber } from './GlobalPageVerticalScrubber';
 
 interface DictionaryViewProps {
   entries: DictionaryEntry[];
@@ -46,6 +47,17 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
   const [voiceResult, setVoiceResult] = useState<RecognitionResult | null>(null);
   const [voiceError, setVoiceError] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  // Refs for smooth manual scrubbing
+  const alphabetBarRef = useRef<HTMLDivElement>(null);
+
+  const scrollAlphabetBar = (direction: 'left' | 'right') => {
+    if (alphabetBarRef.current) {
+      const scrollAmount = direction === 'left' ? -220 : 220;
+      alphabetBarRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      playSound('click');
+    }
+  };
 
   // Alphabet letter counts
   const letterCounts = useMemo(() => {
@@ -120,24 +132,6 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
     return Array.from(set).sort();
   }, [filteredEntries]);
 
-  // Sub-prefixes when viewing a specific letter or larger subset for quick in-letter jumping
-  const subPrefixes = useMemo(() => {
-    if (filteredEntries.length <= 4) return [];
-    const map: Record<string, { count: number; firstId: string }> = {};
-    filteredEntries.forEach(e => {
-      const prefix = e.word.slice(0, 2).toUpperCase();
-      if (!map[prefix]) {
-        map[prefix] = { count: 0, firstId: e.id };
-      }
-      map[prefix].count++;
-    });
-    return Object.keys(map).sort().map(prefix => ({
-      prefix,
-      count: map[prefix].count,
-      firstId: map[prefix].firstId,
-    }));
-  }, [filteredEntries]);
-
   // Group filtered entries by starting letter
   const groupedByLetter = useMemo(() => {
     const groups: { letter: string; entries: DictionaryEntry[] }[] = [];
@@ -153,11 +147,45 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
     return groups;
   }, [filteredEntries]);
 
+  // Compute 2-letter sub-prefixes (e.g. ba, be, bi, bl, br...) for instant vertical scrubber navigation
+  const prefixItems = useMemo(() => {
+    if (filteredEntries.length <= 1) return [];
+    const map: Record<string, { prefix: string; count: number; firstId: string }> = {};
+    filteredEntries.forEach(e => {
+      const raw = e.word.trim();
+      if (raw.length < 2) return;
+      const prefix = raw.slice(0, 2).toLowerCase();
+      if (!map[prefix]) {
+        map[prefix] = { prefix, count: 0, firstId: e.id };
+      }
+      map[prefix].count += 1;
+    });
+    return Object.values(map).sort((a, b) => a.prefix.localeCompare(b.prefix));
+  }, [filteredEntries]);
+
+  const scrollToWordCard = (cardId: string) => {
+    playSound('click');
+    const el = document.getElementById(`word-card-${cardId}`);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el.classList.add('ring-4', 'ring-blue-400', 'scale-[1.02]');
+      setTimeout(() => {
+        el.classList.remove('ring-4', 'ring-blue-400', 'scale-[1.02]');
+      }, 1200);
+    }
+  };
+
   // Random word
   const handleRandomWord = () => {
     if (entries.length === 0) return;
     const random = entries[Math.floor(Math.random() * entries.length)];
     playSound('pop');
+    confetti({
+      particleCount: 40,
+      spread: 50,
+      origin: { y: 0.6 },
+      colors: ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b']
+    });
     setActiveModalWord(random);
   };
 
@@ -192,7 +220,13 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
         setIsRecording(false);
         setVoiceResult(result);
         if (result.isMatch) {
-          playSound('correct');
+          playSound('celebrate');
+          confetti({
+            particleCount: 70,
+            spread: 70,
+            origin: { y: 0.55 },
+            colors: ['#10b981', '#3b82f6', '#fbbf24', '#a855f7']
+          });
         } else {
           playSound('wrong');
         }
@@ -277,7 +311,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 pb-24 sm:pb-8">
       
       {/* Top Controls: Focus Mode Toggle & Quick Helper */}
       <div className="flex items-center justify-between gap-3 bg-white px-4 py-2.5 rounded-2xl border border-slate-200/80 shadow-2xs">
@@ -391,28 +425,55 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
       )}
 
       {/* A to Z Alphabet Navigation Bar (Mobile Swipeable & Touch Optimized) */}
-      <div className="bg-white rounded-2xl p-3.5 sm:p-4 shadow-xs border border-slate-200/80">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-extrabold uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
-            <BookOpen className="w-3.5 h-3.5 text-blue-600" />
-            A–Z Alphabet Scroller:
-          </span>
-          {selectedLetter && (
+      <div className="bg-white rounded-2xl p-3.5 sm:p-4 shadow-xs border border-slate-200/80 space-y-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+              <BookOpen className="w-4 h-4 text-blue-600" />
+              A–Z Alphabet Scroller:
+            </span>
+            {selectedLetter && (
+              <button
+                id="clear-letter-filter-btn"
+                onClick={() => {
+                  setSelectedLetter(null);
+                  playSound('click');
+                }}
+                className="text-xs font-black text-blue-600 hover:text-blue-800 hover:underline px-2.5 py-0.5 rounded-full bg-blue-50 border border-blue-200"
+              >
+                Show All (A–Z) ✕
+              </button>
+            )}
+          </div>
+
+          {/* Left/Right scroll buttons for smooth manual alphabet scrubbing */}
+          <div className="flex items-center gap-1">
             <button
-              id="clear-letter-filter-btn"
-              onClick={() => {
-                setSelectedLetter(null);
-                playSound('click');
-              }}
-              className="text-xs font-black text-blue-600 hover:text-blue-800 hover:underline px-2 py-0.5 rounded-md bg-blue-50"
+              onClick={() => scrollAlphabetBar('left')}
+              title="Scroll A-Z left"
+              className="p-1.5 rounded-lg bg-slate-100 hover:bg-blue-100 text-slate-700 border border-slate-200 shadow-2xs cursor-pointer transition-colors"
             >
-              Show All (A–Z)
+              <ChevronLeft className="w-3.5 h-3.5" />
             </button>
-          )}
+            <button
+              onClick={() => scrollAlphabetBar('right')}
+              title="Scroll A-Z right"
+              className="p-1.5 rounded-lg bg-slate-100 hover:bg-blue-100 text-slate-700 border border-slate-200 shadow-2xs cursor-pointer transition-colors"
+            >
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
 
-        {/* Swipeable Horizontal Alphabet Pill Bar with smooth touch scrolling */}
-        <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto pb-1.5 pt-0.5 no-scrollbar scroll-smooth">
+        {/* Swipeable Horizontal Alphabet Pill Bar with visible custom scrollbar and smooth touch scrolling */}
+        <div
+          ref={alphabetBarRef}
+          className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto pb-2.5 pt-0.5 scroll-smooth custom-scrollbar"
+          style={{
+            scrollbarWidth: 'thin',
+            scrollbarColor: '#93c5fd #f1f5f9',
+          }}
+        >
           <button
             id="alphabet-all-btn"
             onClick={() => {
@@ -444,7 +505,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                   isSelected
                     ? 'bg-blue-600 text-white shadow-sm scale-105'
                     : count > 0
-                    ? 'bg-slate-100 text-slate-800 hover:bg-blue-50 hover:text-blue-700'
+                    ? 'bg-slate-100 text-slate-800 hover:bg-blue-50 hover:text-blue-700 border border-slate-200/60'
                     : 'bg-slate-50 text-slate-300 cursor-not-allowed opacity-50'
                 }`}
                 title={count > 0 ? `${count} word${count > 1 ? 's' : ''} starting with ${letter}` : `No words starting with ${letter}`}
@@ -635,19 +696,11 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
         )}
       </div>
 
-      {/* Fancy In-Letter & Alphabet Quick Scrubber Bar */}
-      {filteredEntries.length > 0 && (
-        <AlphabetFancyScrubber
-          availableLetters={availableLetters}
-          activeLetter={selectedLetter}
-          onSelectLetter={(targetLetter) => {
-            setSelectedLetter(targetLetter);
-            playSound('click');
-          }}
-          subPrefixes={subPrefixes}
-          totalWordsCount={filteredEntries.length}
-        />
-      )}
+      {/* Global Page Vertical Scrubber pinned to whole page scroll on right edge */}
+      <GlobalPageVerticalScrubber
+        entries={filteredEntries}
+        onScrollToWord={scrollToWordCard}
+      />
 
       {/* Word Cards Grid / Grouped Sections */}
       {filteredEntries.length === 0 ? (
@@ -674,35 +727,36 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
         </div>
       ) : (
         <div className="space-y-8">
-          {groupedByLetter.map((group) => (
-            <div key={group.letter} id={`letter-section-${group.letter}`} className="space-y-3.5 scroll-mt-24">
-              {/* Section Header with anchor and count */}
-              <div className="flex items-center justify-between border-b-2 border-blue-100 pb-2 pt-1">
-                <div className="flex items-center gap-2.5">
-                  <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white font-black text-base sm:text-lg flex items-center justify-center shadow-xs">
-                    {group.letter}
-                  </span>
-                  <span className="font-extrabold text-slate-800 text-sm sm:text-base">
-                    Letter {group.letter}
-                  </span>
-                  <span className="text-[11px] sm:text-xs font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
-                    {group.entries.length} {group.entries.length === 1 ? 'word' : 'words'}
-                  </span>
+          {groupedByLetter.map((group) => {
+            return (
+              <div key={group.letter} id={`letter-section-${group.letter}`} className="relative space-y-3.5 scroll-mt-24">
+                {/* Section Header with anchor and count */}
+                <div className="flex items-center justify-between border-b-2 border-blue-100 pb-2 pt-1">
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white font-black text-base sm:text-lg flex items-center justify-center shadow-xs">
+                      {group.letter}
+                    </span>
+                    <span className="font-extrabold text-slate-800 text-sm sm:text-base">
+                      Letter {group.letter}
+                    </span>
+                    <span className="text-[11px] sm:text-xs font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                      {group.entries.length} {group.entries.length === 1 ? 'word' : 'words'}
+                    </span>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                      playSound('click');
+                    }}
+                    className="text-[11px] font-bold text-slate-500 hover:text-blue-600 flex items-center gap-1 hover:underline cursor-pointer"
+                  >
+                    <span>Top ↑</span>
+                  </button>
                 </div>
 
-                <button
-                  onClick={() => {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                    playSound('click');
-                  }}
-                  className="text-[11px] font-bold text-slate-500 hover:text-blue-600 flex items-center gap-1 hover:underline cursor-pointer"
-                >
-                  <span>Top ↑</span>
-                </button>
-              </div>
-
-              {/* Grid of cards for this letter group */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+                {/* Grid of cards for this letter group taking 100% full width */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 w-full">
                 {group.entries.map((entry) => {
             const isStarred = starredWordIds.includes(entry.id);
             const theme = getCategoryTheme(entry);
@@ -897,9 +951,10 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
               </div>
             );
           })}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 

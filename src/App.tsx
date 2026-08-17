@@ -7,6 +7,7 @@ import { DailyQuestHub } from './components/DailyQuestHub';
 import { HamishAIBard } from './components/HamishAIBard';
 import { WordVault } from './components/WordVault';
 import { ScrollToTop } from './components/ScrollToTop';
+import { VoiceSettingsModal } from './components/VoiceSettingsModal';
 
 import { DictionaryEntry, UserProgress } from './types/dictionary';
 import { INITIAL_DICTIONARY_ENTRIES, BADGES } from './data/dictionaryData';
@@ -19,6 +20,7 @@ export default function App() {
   const [isOnline, setIsOnline] = useState<boolean>(typeof navigator !== 'undefined' ? navigator.onLine : true);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
   const [aiBardTargetWord, setAiBardTargetWord] = useState<DictionaryEntry | null>(null);
+  const [isVoiceStudioOpen, setIsVoiceStudioOpen] = useState<boolean>(false);
 
   // Network offline listener
   useEffect(() => {
@@ -193,6 +195,7 @@ export default function App() {
         isOnline={isOnline}
         soundEnabled={soundEnabled}
         setSoundEnabled={setSoundEnabled}
+        onOpenVoiceStudio={() => setIsVoiceStudioOpen(true)}
       />
 
       {/* Main Container */}
@@ -271,6 +274,12 @@ export default function App() {
 
       {/* Floating Scroll to Top button */}
       <ScrollToTop />
+
+      {/* British Voice Settings & Audio Studio Modal */}
+      <VoiceSettingsModal
+        isOpen={isVoiceStudioOpen}
+        onClose={() => setIsVoiceStudioOpen(false)}
+      />
 
     </div>
   );

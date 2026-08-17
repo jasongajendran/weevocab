@@ -134,7 +134,7 @@ export const WordVault: React.FC<WordVaultProps> = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-24 sm:pb-8">
       
       {/* Vault Header */}
       <div className="bg-gradient-to-br from-emerald-600 via-teal-700 to-indigo-900 rounded-3xl p-6 sm:p-8 text-white shadow-lg shadow-emerald-900/10 relative overflow-hidden border border-emerald-500/30">

@@ -15,6 +15,8 @@ export const DEFAULT_USER_PROGRESS: UserProgress = {
     anagrams: 0,
     synonymDuel: 0,
     sentenceDetective: 0,
+    listeningBee: 0,
+    speedDialectRush: 0,
   },
   customWords: [],
   unlockedBadges: ['scots-scholar']

@@ -77,6 +77,8 @@ export interface UserProgress {
     anagrams: number;
     synonymDuel: number;
     sentenceDetective: number;
+    listeningBee?: number;
+    speedDialectRush?: number;
   };
   customWords: DictionaryEntry[];
   unlockedBadges: string[];

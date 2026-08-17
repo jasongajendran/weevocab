@@ -88,7 +88,7 @@ export const DailyQuestHub: React.FC<DailyQuestHubProps> = ({
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-24 sm:pb-8">
       
       {/* Daily Banner */}
       <div className="bg-gradient-to-br from-amber-500 via-orange-600 to-rose-600 rounded-3xl p-6 sm:p-8 text-white shadow-lg shadow-orange-900/10 relative overflow-hidden border border-orange-400/30">

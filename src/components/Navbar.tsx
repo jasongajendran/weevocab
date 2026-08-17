@@ -9,6 +9,7 @@ interface NavbarProps {
   isOnline: boolean;
   soundEnabled: boolean;
   setSoundEnabled: (enabled: boolean) => void;
+  onOpenVoiceStudio?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -18,6 +19,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   isOnline,
   soundEnabled,
   setSoundEnabled,
+  onOpenVoiceStudio,
 }) => {
   // Calculate level progress (each level takes 100 XP)
   const expInCurrentLevel = userProgress.exp % 100;
@@ -85,12 +87,26 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span className="text-[10px] text-indigo-600 font-bold">{expInCurrentLevel}/100</span>
             </div>
 
+            {/* British Voice Studio Button */}
+            {onOpenVoiceStudio && (
+              <button
+                id="open-voice-studio-btn"
+                onClick={onOpenVoiceStudio}
+                title="Voice Studio - British young female voice & pitch controls"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sky-50 border border-sky-200 text-sky-900 font-extrabold text-xs shadow-2xs hover:bg-sky-100 hover:border-sky-300 transition-all cursor-pointer"
+              >
+                <span className="text-sm">🇬🇧</span>
+                <span className="hidden sm:inline">Voice Studio</span>
+                <Sparkles className="w-3 h-3 text-sky-600" />
+              </button>
+            )}
+
             {/* Sound Toggle */}
             <button
               id="sound-toggle-btn"
               onClick={() => setSoundEnabled(!soundEnabled)}
               title={soundEnabled ? 'Mute sound effects' : 'Enable sound effects'}
-              className="p-2 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 border border-transparent hover:border-slate-200/60 transition-all"
+              className="p-2 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 border border-transparent hover:border-slate-200/60 transition-all cursor-pointer"
             >
               {soundEnabled ? <Volume2 className="w-4 h-4 text-blue-600" /> : <VolumeX className="w-4 h-4 text-slate-400" />}
             </button>
@@ -147,7 +163,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <Gamepad2 className="w-4 h-4" />
             <span>Word Arcade</span>
             <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-extrabold ${activeTab === 'games' ? 'bg-purple-500 text-white' : 'bg-purple-100 text-purple-800'}`}>
-              4
+              6
             </span>
           </button>
 
