@@ -10,6 +10,7 @@ import { DictionaryEntry, WordCategory, ScottishRegion } from '../types/dictiona
 import { speakWord, speakSentence, cancelSpeech, startVoicePractice, isSpeechRecognitionSupported, RecognitionResult } from '../utils/speech';
 import { playSound } from '../utils/soundEffects';
 import { GlobalPageVerticalScrubber } from './GlobalPageVerticalScrubber';
+import { HighlightedText } from '../utils/textHighlight';
 
 interface DictionaryViewProps {
   entries: DictionaryEntry[];
@@ -867,7 +868,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                           </button>
 
                           <p className="text-xs italic leading-relaxed flex-1 pt-0.5">
-                            "{ex}"
+                            "<HighlightedText text={ex} targetWord={entry.word} />"
                           </p>
                         </div>
                       );
@@ -1153,7 +1154,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
 
                       <div className="text-sm italic leading-relaxed flex-1 pt-0.5">
                         <span className="font-black text-blue-600 not-italic mr-2">#{i + 1}</span>
-                        "{ex}"
+                        "<HighlightedText text={ex} targetWord={activeModalWord.word} />"
                       </div>
                     </div>
                   );

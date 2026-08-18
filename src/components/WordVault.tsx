@@ -6,6 +6,7 @@ import {
 import { DictionaryEntry, UserProgress, PartOfSpeech, ScottishRegion, WordCategory } from '../types/dictionary';
 import { speakWord, speakSentence } from '../utils/speech';
 import { playSound } from '../utils/soundEffects';
+import { HighlightedText } from '../utils/textHighlight';
 
 interface WordVaultProps {
   entries: DictionaryEntry[];
@@ -298,7 +299,7 @@ export const WordVault: React.FC<WordVaultProps> = ({
                           >
                             <Volume2 className="w-3 h-3" />
                           </button>
-                          <p className="flex-1 pt-0.5">"{ex}"</p>
+                          <p className="flex-1 pt-0.5">"<HighlightedText text={ex} targetWord={entry.word} />"</p>
                         </div>
                       ))}
                     </div>
