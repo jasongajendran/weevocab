@@ -4,7 +4,8 @@ import {
   Search, Volume2, Mic, MicOff, Star, Sparkles, Shuffle, X, 
   BookOpen, ChevronRight, CheckCircle2, AlertCircle, BookmarkCheck,
   Tag, MapPin, Layers, GraduationCap, Copy, Check, ChevronDown, ChevronUp,
-  Eye, EyeOff, VolumeX, Radio, Compass, Filter, ChevronLeft, ArrowUp
+  Eye, EyeOff, VolumeX, Radio, Compass, Filter, ChevronLeft, ArrowUp,
+  Rows, Columns2, Columns3
 } from 'lucide-react';
 import { DictionaryEntry, WordCategory, ScottishRegion } from '../types/dictionary';
 import { speakWord, speakSentence, cancelSpeech, startVoicePractice, isSpeechRecognitionSupported, RecognitionResult } from '../utils/speech';
@@ -34,6 +35,17 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>('All');
   const [activeModalWord, setActiveModalWord] = useState<DictionaryEntry | null>(null);
   
+  // Layout column mode: '1' (1 word per row - large font, best for tablets/reading), '2' (2 cols), '3' (3 cols)
+  const [layoutColumns, setLayoutColumns] = useState<'1' | '2' | '3'>(() => {
+    return (localStorage.getItem('scots_dict_layout_cols') as '1' | '2' | '3') || '1';
+  });
+
+  const handleLayoutChange = (cols: '1' | '2' | '3') => {
+    setLayoutColumns(cols);
+    localStorage.setItem('scots_dict_layout_cols', cols);
+    playSound('click');
+  };
+
   // Distraction-Free / Focus Mode toggle
   const [isFocusMode, setIsFocusMode] = useState<boolean>(false);
 
@@ -314,35 +326,87 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
   return (
     <div className="space-y-5 pb-24 sm:pb-8">
       
-      {/* Top Controls: Focus Mode Toggle & Quick Helper */}
-      <div className="flex items-center justify-between gap-3 bg-white px-4 py-2.5 rounded-2xl border border-slate-200/80 shadow-2xs">
+      {/* Top Controls: Focus Mode Toggle, Layout Selector & Quick Helper */}
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-white px-4 py-2.5 rounded-2xl border border-slate-200/80 shadow-2xs">
         <div className="flex items-center gap-2">
           <span className="text-xl">📖</span>
           <span className="text-xs sm:text-sm font-black text-slate-800">
-            {isFocusMode ? '🎯 Focus Reading Mode (Distraction-Free)' : '🌟 Full Interactive Dictionary'}
+            {isFocusMode ? '🎯 Focus Reading Mode' : '🌟 Interactive Dictionary'}
           </span>
           <span className="hidden md:inline-block px-2 py-0.5 rounded-full text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
             {filteredEntries.length} words
           </span>
         </div>
 
-        {/* Hide Distractions / Focus Mode Button */}
-        <button
-          id="toggle-focus-mode-btn"
-          onClick={() => {
-            setIsFocusMode(!isFocusMode);
-            playSound('pop');
-          }}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs transition-all cursor-pointer ${
-            isFocusMode
-              ? 'bg-amber-400 text-slate-950 shadow-xs hover:bg-amber-300'
-              : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-          }`}
-          title={isFocusMode ? 'Switch back to full interactive mode' : 'Hide distractions for peaceful reading'}
-        >
-          {isFocusMode ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
-          <span>{isFocusMode ? 'Show Full Mode' : 'Hide Distractions'}</span>
-        </button>
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Layout Selector */}
+          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200/80">
+            <span className="text-[10px] font-extrabold uppercase text-slate-400 px-1 hidden sm:inline">
+              Layout:
+            </span>
+            <button
+              id="top-layout-1-col-btn"
+              onClick={() => handleLayoutChange('1')}
+              title="1 Word per Row (Large & Easy Read on Tablet)"
+              aria-label="1 Word per Row"
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                layoutColumns === '1'
+                  ? 'bg-white text-blue-700 shadow-xs border border-slate-200'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+              }`}
+            >
+              <Rows className="w-3.5 h-3.5" />
+              <span>1 / row</span>
+            </button>
+            <button
+              id="top-layout-2-col-btn"
+              onClick={() => handleLayoutChange('2')}
+              title="2 Words per Row (Split Columns)"
+              aria-label="2 Words per Row"
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                layoutColumns === '2'
+                  ? 'bg-white text-blue-700 shadow-xs border border-slate-200'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+              }`}
+            >
+              <Columns2 className="w-3.5 h-3.5" />
+              <span>2 cols</span>
+            </button>
+            <button
+              id="top-layout-3-col-btn"
+              onClick={() => handleLayoutChange('3')}
+              title="3 Words per Row (Compact Grid)"
+              aria-label="3 Words per Row"
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                layoutColumns === '3'
+                  ? 'bg-white text-blue-700 shadow-xs border border-slate-200'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+              }`}
+            >
+              <Columns3 className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">3 cols</span>
+              <span className="sm:hidden">3</span>
+            </button>
+          </div>
+
+          {/* Hide Distractions / Focus Mode Button */}
+          <button
+            id="toggle-focus-mode-btn"
+            onClick={() => {
+              setIsFocusMode(!isFocusMode);
+              playSound('pop');
+            }}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs transition-all cursor-pointer ${
+              isFocusMode
+                ? 'bg-amber-400 text-slate-950 shadow-xs hover:bg-amber-300'
+                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+            }`}
+            title={isFocusMode ? 'Switch back to full interactive mode' : 'Hide distractions for peaceful reading'}
+          >
+            {isFocusMode ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+            <span>{isFocusMode ? 'Show Full Mode' : 'Hide Distractions'}</span>
+          </button>
+        </div>
       </div>
 
       {/* Main Header Banner (Hidden in Focus Mode) */}
@@ -672,29 +736,79 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
         )}
       </div>
 
-      {/* Results Count & Active Filters Indicator */}
-      <div className="flex items-center justify-between text-xs text-slate-600 px-1">
-        <div>
-          Showing <span className="font-black text-slate-900">{filteredEntries.length}</span> of <span className="font-black text-slate-900">{entries.length}</span> terms
+      {/* Results Count, Active Filters & Layout Selector */}
+      <div className="flex flex-wrap items-center justify-between gap-2.5 text-xs text-slate-600 px-1">
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <span>Showing <strong className="font-black text-slate-900">{filteredEntries.length}</strong> of <strong className="font-black text-slate-900">{entries.length}</strong> terms</span>
           {selectedLetter && <span> • Letter <strong>'{selectedLetter}'</strong></span>}
           {searchQuery && <span> • Matching <strong>"{searchQuery}"</strong></span>}
+          {activeFiltersCount > 0 && (
+            <button
+              id="reset-all-filters-btn"
+              onClick={() => {
+                setSearchQuery('');
+                setSelectedLetter(null);
+                setSelectedCategory('All');
+                setSelectedRegion('All');
+                setSelectedDifficulty('All');
+                playSound('click');
+              }}
+              className="ml-1 text-blue-600 hover:text-blue-800 font-extrabold hover:underline cursor-pointer"
+            >
+              Clear Filters
+            </button>
+          )}
         </div>
-        {activeFiltersCount > 0 && (
+
+        {/* Layout Mode Selector in Results Bar */}
+        <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200 shadow-2xs">
+          <span className="text-[10px] font-extrabold uppercase text-slate-400 px-1">
+            Layout:
+          </span>
           <button
-            id="reset-all-filters-btn"
-            onClick={() => {
-              setSearchQuery('');
-              setSelectedLetter(null);
-              setSelectedCategory('All');
-              setSelectedRegion('All');
-              setSelectedDifficulty('All');
-              playSound('click');
-            }}
-            className="text-blue-600 hover:text-blue-800 font-extrabold hover:underline"
+            id="results-layout-1-col-btn"
+            onClick={() => handleLayoutChange('1')}
+            title="1 Word per Row (1 Column - Large fonts & easy to read on Tablet)"
+            aria-label="1 Word per Row"
+            className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
+              layoutColumns === '1'
+                ? 'bg-blue-600 text-white shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+            }`}
           >
-            Clear All
+            <Rows className="w-3.5 h-3.5" />
+            <span>1 / row</span>
           </button>
-        )}
+          <button
+            id="results-layout-2-col-btn"
+            onClick={() => handleLayoutChange('2')}
+            title="2 Words per Row (2 Columns Grid)"
+            aria-label="2 Words per Row"
+            className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
+              layoutColumns === '2'
+                ? 'bg-blue-600 text-white shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+            }`}
+          >
+            <Columns2 className="w-3.5 h-3.5" />
+            <span>2 cols</span>
+          </button>
+          <button
+            id="results-layout-3-col-btn"
+            onClick={() => handleLayoutChange('3')}
+            title="3 Words per Row (3 Columns Grid)"
+            aria-label="3 Words per Row"
+            className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
+              layoutColumns === '3'
+                ? 'bg-blue-600 text-white shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+            }`}
+          >
+            <Columns3 className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">3 cols</span>
+            <span className="sm:hidden">3</span>
+          </button>
+        </div>
       </div>
 
       {/* Global Page Vertical Scrubber pinned to whole page scroll on right edge */}
@@ -729,6 +843,13 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
       ) : (
         <div className="space-y-8">
           {groupedByLetter.map((group) => {
+            const gridClasses = 
+              layoutColumns === '1'
+                ? 'grid grid-cols-1 gap-6 max-w-4xl mx-auto w-full'
+                : layoutColumns === '2'
+                ? 'grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 w-full'
+                : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 w-full';
+
             return (
               <div key={group.letter} id={`letter-section-${group.letter}`} className="relative space-y-3.5 scroll-mt-24">
                 {/* Section Header with anchor and count */}
@@ -758,8 +879,8 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                   </button>
                 </div>
 
-                {/* Grid of cards for this letter group taking 100% full width */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 w-full">
+                {/* Grid of cards for this letter group formatted with responsive layout */}
+                <div className={gridClasses}>
                 {group.entries.map((entry) => {
             const isStarred = starredWordIds.includes(entry.id);
             const theme = getCategoryTheme(entry);
@@ -769,14 +890,18 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
               <div
                 key={entry.id}
                 id={`word-card-${entry.id}`}
-                className={`bg-white rounded-2xl p-5 border border-slate-200/80 hover:border-blue-400 hover:shadow-lg transition-all duration-200 flex flex-col justify-between group ${theme.accentBar}`}
+                className={`bg-white rounded-2xl border border-slate-200/80 hover:border-blue-400 hover:shadow-lg transition-all duration-200 flex flex-col justify-between group ${theme.accentBar} ${
+                  layoutColumns === '1' ? 'p-6 sm:p-7 shadow-xs' : 'p-5'
+                }`}
               >
                 <div>
                   {/* Top Bar: Word, Badges, Star */}
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <h2 className={`text-xl sm:text-2xl font-black text-slate-900 transition-colors ${theme.titleHover}`}>
+                        <h2 className={`font-black text-slate-900 transition-colors ${theme.titleHover} ${
+                          layoutColumns === '1' ? 'text-2xl sm:text-3xl' : 'text-xl sm:text-2xl'
+                        }`}>
                           {entry.word}
                         </h2>
                         <span className={`px-2 py-0.5 text-[11px] font-extrabold rounded-md border ${theme.badgeBg}`}>
@@ -786,8 +911,10 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                       
                       {/* Phonetic & Pronunciation Guide */}
                       <div className="flex items-center gap-2 mt-1 flex-wrap">
-                        <span className="text-xs font-mono font-bold text-slate-500">{entry.phonetic}</span>
-                        <span className="text-[11px] text-indigo-700 font-extrabold italic" title={entry.phoneticGuide}>
+                        <span className={`font-mono font-bold text-slate-500 ${layoutColumns === '1' ? 'text-sm' : 'text-xs'}`}>
+                          {entry.phonetic}
+                        </span>
+                        <span className={`text-indigo-700 font-extrabold italic ${layoutColumns === '1' ? 'text-sm' : 'text-[11px]'}`} title={entry.phoneticGuide}>
                           • {entry.phoneticGuide}
                         </span>
                       </div>
@@ -825,12 +952,16 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                   </div>
 
                   {/* Definition */}
-                  <p className="text-sm font-semibold text-slate-800 leading-snug mb-3.5">
+                  <p className={`font-semibold text-slate-800 leading-relaxed mb-3.5 ${
+                    layoutColumns === '1' ? 'text-base sm:text-lg' : 'text-sm'
+                  }`}>
                     {entry.definition}
                   </p>
 
                   {/* Example Sentences with Voice Read-Aloud Buttons */}
-                  <div className="bg-slate-50/90 rounded-xl p-3 border border-slate-200/60 space-y-2 mb-3.5">
+                  <div className={`bg-slate-50/90 rounded-xl border border-slate-200/60 mb-3.5 ${
+                    layoutColumns === '1' ? 'p-4 space-y-2.5' : 'p-3 space-y-2'
+                  }`}>
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
                         Context Examples:
@@ -847,7 +978,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                       return (
                         <div 
                           key={idx} 
-                          className={`flex items-start gap-2 p-2 rounded-lg border-l-3 transition-all ${
+                          className={`flex items-start gap-2.5 p-2 rounded-lg border-l-3 transition-all ${
                             isExPlaying 
                               ? 'bg-blue-100/70 border-l-blue-600 text-blue-950 font-bold' 
                               : `${theme.exBorder} text-slate-700`
@@ -858,16 +989,20 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                             onClick={() => handlePronounceAudio(ex, exAudioId, 0.88)}
                             title="Listen to this example sentence"
                             aria-label={`Listen to example sentence: ${ex}`}
-                            className={`p-1.5 rounded-lg transition-all shrink-0 cursor-pointer ${
+                            className={`rounded-lg transition-all shrink-0 cursor-pointer ${
+                              layoutColumns === '1' ? 'p-2' : 'p-1.5'
+                            } ${
                               isExPlaying
                                 ? 'bg-blue-600 text-white animate-pulse'
                                 : 'bg-white text-blue-700 hover:bg-blue-100 shadow-2xs border border-blue-200'
                             }`}
                           >
-                            <Volume2 className={`w-3.5 h-3.5 ${isExPlaying ? 'animate-bounce' : ''}`} />
+                            <Volume2 className={`${layoutColumns === '1' ? 'w-4 h-4' : 'w-3.5 h-3.5'} ${isExPlaying ? 'animate-bounce' : ''}`} />
                           </button>
 
-                          <p className="text-xs italic leading-relaxed flex-1 pt-0.5">
+                          <p className={`italic leading-relaxed flex-1 pt-0.5 ${
+                            layoutColumns === '1' ? 'text-sm sm:text-base' : 'text-xs'
+                          }`}>
                             "<HighlightedText text={ex} targetWord={entry.word} />"
                           </p>
                         </div>
@@ -920,13 +1055,15 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                       id={`pronounce-btn-${entry.id}`}
                       onClick={() => handlePronounceAudio(entry.word, `word-${entry.id}`, 0.9)}
                       title="Listen to word pronunciation"
-                      className={`px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer ${
+                      className={`rounded-xl font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${
+                        layoutColumns === '1' ? 'px-4 py-2 text-sm' : 'px-3 py-1.5 text-xs'
+                      } ${
                         isWordPlaying
                           ? 'bg-blue-600 text-white animate-pulse'
                           : 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200/80'
                       }`}
                     >
-                      <Volume2 className="w-3.5 h-3.5" />
+                      <Volume2 className={layoutColumns === '1' ? 'w-4 h-4' : 'w-3.5 h-3.5'} />
                       <span>{isWordPlaying ? 'Speaking...' : 'Listen'}</span>
                     </button>
 
@@ -945,7 +1082,9 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                       setActiveModalWord(entry);
                       playSound('pop');
                     }}
-                    className="flex items-center gap-1 text-xs font-black text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer"
+                    className={`flex items-center gap-1 font-black text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer ${
+                      layoutColumns === '1' ? 'px-3.5 py-2 text-sm' : 'px-2.5 py-1.5 text-xs'
+                    }`}
                   >
                     <span>Full Study Guide</span>
                     <ChevronRight className="w-3.5 h-3.5" />
