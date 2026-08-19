@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useMemo, useRef } from 'react';
+import { ChevronRight, ChevronLeft, ArrowUpDown } from 'lucide-react';
 import { playSound } from '../utils/soundEffects';
 
 interface PrefixItem {
@@ -13,6 +14,8 @@ interface GlobalPageVerticalScrubberProps {
   onScrollToWord: (firstId: string) => void;
 }
 
+const STORAGE_KEY = 'weevocab_scrubber_collapsed_v1';
+
 export const GlobalPageVerticalScrubber: React.FC<GlobalPageVerticalScrubberProps> = ({
   entries,
   onScrollToWord,
@@ -24,8 +27,33 @@ export const GlobalPageVerticalScrubber: React.FC<GlobalPageVerticalScrubberProp
   const [dragPrefix, setDragPrefix] = useState<string>('');
   const [dragY, setDragY] = useState<number>(0);
 
+  // Initialize collapsed state: default to collapsed on mobile (<768px) to prevent accidental touches
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved !== null) {
+        return saved === 'true';
+      }
+    } catch {
+      // ignore
+    }
+    // Mobile default: collapsed so kids don't accidentally touch it while scrolling
+    return typeof window !== 'undefined' ? window.innerWidth < 768 : false;
+  });
+
   const containerRef = useRef<HTMLDivElement>(null);
   const lastPrefixRef = useRef<string>('');
+
+  const toggleCollapse = (newVal?: boolean) => {
+    const nextVal = typeof newVal === 'boolean' ? newVal : !isCollapsed;
+    setIsCollapsed(nextVal);
+    playSound('pop');
+    try {
+      localStorage.setItem(STORAGE_KEY, String(nextVal));
+    } catch {
+      // ignore
+    }
+  };
 
   // Collect all 2-letter sub-prefixes in order across the whole dictionary
   const allPrefixItems = useMemo(() => {
@@ -59,7 +87,7 @@ export const GlobalPageVerticalScrubber: React.FC<GlobalPageVerticalScrubberProp
       const percent = docHeight > 0 ? Math.min(100, Math.max(0, (currentScroll / docHeight) * 100)) : 0;
       setScrollPercent(percent);
 
-      const scrollYTarget = window.scrollY + 200;
+      const scrollYTarget = window.scrollY + 220;
 
       // Find active letter section
       const letterSections = document.querySelectorAll<HTMLElement>('[id^="letter-section-"]');
@@ -145,82 +173,142 @@ export const GlobalPageVerticalScrubber: React.FC<GlobalPageVerticalScrubberProp
   };
 
   return (
-    <div className="fixed right-0 top-16 bottom-4 z-40 flex items-center justify-end select-none pointer-events-none">
-      {/* Interactive Scrubbing Bar Container */}
-      <div
-        ref={containerRef}
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerCancel={handlePointerUp}
-        className="pointer-events-auto relative w-7 sm:w-8 h-full flex flex-col items-center justify-between py-2 cursor-pointer touch-none bg-slate-900/10 hover:bg-slate-900/85 text-slate-600 hover:text-white backdrop-blur-xs rounded-l-2xl border-l border-y border-slate-300/40 hover:border-slate-700/80 transition-colors duration-200 group/scrubber"
-      >
-        {/* Large Floating Magnifier Bubble when Dragging/Hovering */}
-        {(isDragging || dragPrefix) && (
-          <div
-            className="absolute right-full mr-3 flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900 text-white shadow-2xl border border-slate-700 text-sm font-black whitespace-nowrap pointer-events-none transition-all duration-75"
-            style={{
-              top: `${isDragging ? dragY : (scrollPercent * 0.92)}px`,
-              transform: 'translateY(-50%)',
-            }}
+    <>
+      {/* 1. COLLAPSED FLOATING TAB (Discreet and completely safe against accidental touches) */}
+      {isCollapsed && (
+        <div className="fixed right-0 top-1/2 -translate-y-1/2 z-40 pointer-events-auto">
+          <button
+            id="open-scrubber-tab-btn"
+            onClick={() => toggleCollapse(false)}
+            title="Open A-Z Fast Scrubber (jump to any letter)"
+            aria-label="Open A-Z Fast Scrubber"
+            className="group flex flex-col items-center gap-1.5 py-3 px-1.5 sm:px-2 bg-slate-900/90 hover:bg-blue-600 text-white shadow-xl rounded-l-2xl border-l-2 border-y border-slate-700/80 hover:border-blue-400 backdrop-blur-md transition-all duration-200 cursor-pointer active:scale-95"
           >
-            <span className="w-6 h-6 rounded-lg bg-blue-600 text-white font-black text-xs flex items-center justify-center shadow-xs">
+            <div className="flex items-center gap-0.5 text-blue-400 group-hover:text-white transition-colors">
+              <ChevronLeft className="w-3.5 h-3.5 stroke-[3]" />
+              <span className="text-[10px] font-black uppercase tracking-wider">A-Z</span>
+            </div>
+            
+            {/* Current letter indicator bubble */}
+            <span className="w-6 h-6 rounded-lg bg-blue-500 group-hover:bg-white text-white group-hover:text-blue-700 font-black text-xs flex items-center justify-center shadow-xs transition-colors">
               {activeLetter}
             </span>
-            <span className="lowercase font-extrabold text-blue-300 tracking-tight text-base">
-              {isDragging ? dragPrefix : activePrefix}
-            </span>
-            {/* Pointer indicator arrow */}
-            <div className="absolute left-full top-1/2 -translate-y-1/2 border-y-6 border-y-transparent border-l-8 border-l-slate-900" />
-          </div>
-        )}
 
-        {/* List of sub-prefixes spaced out along the bar */}
-        <div className="w-full h-full flex flex-col justify-between items-center py-1 overflow-hidden">
-          {allPrefixItems.map((item, idx) => {
-            const isActive = (isDragging ? dragPrefix : activePrefix) === item.prefix;
-
-            // Render clear sub-prefix text or dots to prevent overcrowding
-            const total = allPrefixItems.length;
-            const step = Math.ceil(total / 24);
-            const isLabelVisible = idx % step === 0 || isActive;
-
-            return (
-              <div
-                key={item.prefix}
-                className="w-full flex items-center justify-center text-center relative"
-              >
-                {isLabelVisible ? (
-                  <span
-                    className={`text-[9px] font-black tracking-tighter lowercase leading-none transition-all ${
-                      isActive
-                        ? 'text-blue-500 font-black scale-130 text-[11px]'
-                        : 'text-slate-600 group-hover/scrubber:text-slate-300'
-                    }`}
-                  >
-                    {item.prefix}
-                  </span>
-                ) : (
-                  <span
-                    className={`w-1 h-1 rounded-full transition-all ${
-                      isActive ? 'bg-blue-500 scale-150' : 'bg-slate-400/40 group-hover/scrubber:bg-slate-500'
-                    }`}
-                  />
-                )}
-              </div>
-            );
-          })}
+            <ArrowUpDown className="w-3 h-3 text-slate-400 group-hover:text-white" />
+          </button>
         </div>
+      )}
 
-        {/* Active Scroll Position Thumb Bar */}
-        <div
-          className="absolute right-0.5 w-1 rounded-full bg-blue-600 transition-all duration-75"
-          style={{
-            top: `${scrollPercent * 0.95}%`,
-            height: '24px',
-          }}
-        />
-      </div>
-    </div>
+      {/* 2. EXPANDED FULL-HEIGHT SCRUBBER */}
+      {!isCollapsed && (
+        <div className="fixed right-0 top-16 bottom-4 z-40 flex items-center justify-end select-none pointer-events-none animate-in fade-in slide-in-from-right-4 duration-200">
+          <div className="pointer-events-auto relative flex flex-col items-center h-full bg-slate-900/90 text-white backdrop-blur-md rounded-l-2xl border-l border-y border-slate-700/90 shadow-2xl transition-all duration-200">
+            {/* Top Collapse Button Header */}
+            <div className="w-full pt-1.5 pb-1 px-1 flex flex-col items-center border-b border-slate-800">
+              <button
+                id="collapse-scrubber-btn"
+                onClick={() => toggleCollapse(true)}
+                title="Collapse Scrubber (prevents accidental touch on mobile)"
+                aria-label="Collapse Scrubber"
+                className="p-1 rounded-lg bg-slate-800 hover:bg-red-500/80 text-slate-300 hover:text-white transition-colors cursor-pointer"
+              >
+                <ChevronRight className="w-3.5 h-3.5 stroke-[3]" />
+              </button>
+              <span className="text-[8px] font-black text-blue-400 uppercase tracking-tighter mt-0.5">
+                A–Z
+              </span>
+            </div>
+
+            {/* Interactive Scrubbing Bar Track */}
+            <div
+              ref={containerRef}
+              onPointerDown={handlePointerDown}
+              onPointerMove={handlePointerMove}
+              onPointerUp={handlePointerUp}
+              onPointerCancel={handlePointerUp}
+              className="relative w-7 sm:w-8 flex-1 flex flex-col items-center justify-between py-1.5 cursor-pointer touch-none text-slate-300 hover:text-white transition-colors group/scrubber"
+            >
+              {/* Large Floating Magnifier Bubble when Dragging/Hovering */}
+              {(isDragging || dragPrefix) && (
+                <div
+                  className="absolute right-full mr-3 flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900 text-white shadow-2xl border border-slate-700 text-sm font-black whitespace-nowrap pointer-events-none transition-all duration-75"
+                  style={{
+                    top: `${isDragging ? dragY : (scrollPercent * 0.90)}px`,
+                    transform: 'translateY(-50%)',
+                  }}
+                >
+                  <span className="w-6 h-6 rounded-lg bg-blue-600 text-white font-black text-xs flex items-center justify-center shadow-xs">
+                    {activeLetter}
+                  </span>
+                  <span className="lowercase font-extrabold text-blue-300 tracking-tight text-base">
+                    {isDragging ? dragPrefix : activePrefix}
+                  </span>
+                  {/* Pointer indicator arrow */}
+                  <div className="absolute left-full top-1/2 -translate-y-1/2 border-y-6 border-y-transparent border-l-8 border-l-slate-900" />
+                </div>
+              )}
+
+              {/* List of sub-prefixes spaced out along the bar */}
+              <div className="w-full h-full flex flex-col justify-between items-center py-1 overflow-hidden">
+                {allPrefixItems.map((item, idx) => {
+                  const isActive = (isDragging ? dragPrefix : activePrefix) === item.prefix;
+
+                  // Render clear sub-prefix text or dots to prevent overcrowding
+                  const total = allPrefixItems.length;
+                  const step = Math.ceil(total / 22);
+                  const isLabelVisible = idx % step === 0 || isActive;
+
+                  return (
+                    <div
+                      key={item.prefix}
+                      className="w-full flex items-center justify-center text-center relative"
+                    >
+                      {isLabelVisible ? (
+                        <span
+                          className={`text-[9px] font-black tracking-tighter lowercase leading-none transition-all ${
+                            isActive
+                              ? 'text-blue-400 font-black scale-130 text-[11px]'
+                              : 'text-slate-400 group-hover/scrubber:text-slate-200'
+                          }`}
+                        >
+                          {item.prefix}
+                        </span>
+                      ) : (
+                        <span
+                          className={`w-1 h-1 rounded-full transition-all ${
+                            isActive ? 'bg-blue-400 scale-150' : 'bg-slate-600 group-hover/scrubber:bg-slate-400'
+                          }`}
+                        />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Active Scroll Position Thumb Bar */}
+              <div
+                className="absolute right-0.5 w-1 rounded-full bg-blue-500 transition-all duration-75 shadow-xs"
+                style={{
+                  top: `${scrollPercent * 0.94}%`,
+                  height: '24px',
+                }}
+              />
+            </div>
+
+            {/* Bottom quick close */}
+            <div className="w-full pb-1.5 pt-1 flex justify-center border-t border-slate-800">
+              <button
+                onClick={() => toggleCollapse(true)}
+                title="Hide A-Z Scrubber"
+                aria-label="Hide A-Z Scrubber"
+                className="text-[9px] text-slate-400 hover:text-white font-black px-1 py-0.5 hover:underline cursor-pointer"
+              >
+                Hide
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };

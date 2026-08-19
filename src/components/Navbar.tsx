@@ -136,14 +136,14 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
 
-        {/* Tab Navigation Menu */}
-        <nav className="flex items-center space-x-1 sm:space-x-1.5 overflow-x-auto py-2 no-scrollbar border-t border-slate-100">
+        {/* Tab Navigation Menu (Desktop & Tablet) */}
+        <nav className="hidden sm:flex items-center space-x-1 sm:space-x-1.5 overflow-x-auto py-2 no-scrollbar border-t border-slate-100">
           <button
             id="nav-tab-dictionary"
             onClick={() => setActiveTab('dictionary')}
-            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all duration-150 ${
+            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all duration-150 cursor-pointer ${
               activeTab === 'dictionary'
-                ? 'bg-blue-600 text-white shadow-sm shadow-blue-600/25'
+                ? 'bg-blue-600 text-white shadow-sm shadow-blue-600/25 scale-[1.02]'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
             }`}
           >
@@ -154,9 +154,9 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             id="nav-tab-games"
             onClick={() => setActiveTab('games')}
-            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all duration-150 ${
+            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all duration-150 cursor-pointer ${
               activeTab === 'games'
-                ? 'bg-purple-600 text-white shadow-sm shadow-purple-600/25'
+                ? 'bg-purple-600 text-white shadow-sm shadow-purple-600/25 scale-[1.02]'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
             }`}
           >
@@ -170,22 +170,22 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             id="nav-tab-daily"
             onClick={() => setActiveTab('daily')}
-            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all duration-150 ${
+            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all duration-150 cursor-pointer ${
               activeTab === 'daily'
-                ? 'bg-amber-500 text-white shadow-sm shadow-amber-500/25'
+                ? 'bg-amber-500 text-white shadow-sm shadow-amber-500/25 scale-[1.02]'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
             }`}
           >
-            <Flame className="w-4 h-4 text-amber-300" />
+            <Flame className="w-4 h-4 text-amber-300 fill-amber-300" />
             <span>Daily Word Quest</span>
           </button>
 
           <button
             id="nav-tab-ai-bard"
             onClick={() => setActiveTab('ai-bard')}
-            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all duration-150 ${
+            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all duration-150 cursor-pointer ${
               activeTab === 'ai-bard'
-                ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white shadow-sm shadow-indigo-500/25'
+                ? 'bg-gradient-to-r from-sky-600 to-indigo-600 text-white shadow-sm shadow-indigo-500/25 scale-[1.02]'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
             }`}
           >
@@ -199,9 +199,9 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             id="nav-tab-vault"
             onClick={() => setActiveTab('vault')}
-            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all duration-150 ${
+            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all duration-150 cursor-pointer ${
               activeTab === 'vault'
-                ? 'bg-emerald-600 text-white shadow-sm shadow-emerald-600/25'
+                ? 'bg-emerald-600 text-white shadow-sm shadow-emerald-600/25 scale-[1.02]'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
             }`}
           >
@@ -215,6 +215,89 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
         </nav>
       </div>
+
+      {/* Mobile Fixed Bottom Navigation Bar (Ultra thumb-friendly on smartphones) */}
+      <nav 
+        id="mobile-bottom-nav"
+        className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-xl border-t border-slate-200/90 px-1 py-1 flex items-center justify-around shadow-2xl safe-area-bottom"
+      >
+        <button
+          id="mobile-nav-dictionary"
+          onClick={() => setActiveTab('dictionary')}
+          className={`flex flex-col items-center justify-center flex-1 py-1 rounded-xl transition-all ${
+            activeTab === 'dictionary'
+              ? 'text-blue-600 font-black'
+              : 'text-slate-500 hover:text-slate-800 font-semibold'
+          }`}
+        >
+          <div className={`p-1 rounded-lg ${activeTab === 'dictionary' ? 'bg-blue-100' : ''}`}>
+            <BookOpen className="w-4 h-4" />
+          </div>
+          <span className="text-[10px] mt-0.5">Dictionary</span>
+        </button>
+
+        <button
+          id="mobile-nav-games"
+          onClick={() => setActiveTab('games')}
+          className={`flex flex-col items-center justify-center flex-1 py-1 rounded-xl transition-all relative ${
+            activeTab === 'games'
+              ? 'text-purple-600 font-black'
+              : 'text-slate-500 hover:text-slate-800 font-semibold'
+          }`}
+        >
+          <div className={`p-1 rounded-lg ${activeTab === 'games' ? 'bg-purple-100' : ''}`}>
+            <Gamepad2 className="w-4 h-4" />
+          </div>
+          <span className="text-[10px] mt-0.5">Arcade (6)</span>
+        </button>
+
+        <button
+          id="mobile-nav-daily"
+          onClick={() => setActiveTab('daily')}
+          className={`flex flex-col items-center justify-center flex-1 py-1 rounded-xl transition-all ${
+            activeTab === 'daily'
+              ? 'text-amber-600 font-black'
+              : 'text-slate-500 hover:text-slate-800 font-semibold'
+          }`}
+        >
+          <div className={`p-1 rounded-lg ${activeTab === 'daily' ? 'bg-amber-100' : ''}`}>
+            <Flame className="w-4 h-4 text-amber-500 fill-amber-500" />
+          </div>
+          <span className="text-[10px] mt-0.5">Quest</span>
+        </button>
+
+        <button
+          id="mobile-nav-ai-bard"
+          onClick={() => setActiveTab('ai-bard')}
+          className={`flex flex-col items-center justify-center flex-1 py-1 rounded-xl transition-all ${
+            activeTab === 'ai-bard'
+              ? 'text-sky-600 font-black'
+              : 'text-slate-500 hover:text-slate-800 font-semibold'
+          }`}
+        >
+          <div className={`p-1 rounded-lg ${activeTab === 'ai-bard' ? 'bg-sky-100' : ''}`}>
+            <Sparkles className="w-4 h-4" />
+          </div>
+          <span className="text-[10px] mt-0.5">Hamish AI</span>
+        </button>
+
+        <button
+          id="mobile-nav-vault"
+          onClick={() => setActiveTab('vault')}
+          className={`flex flex-col items-center justify-center flex-1 py-1 rounded-xl transition-all relative ${
+            activeTab === 'vault'
+              ? 'text-emerald-600 font-black'
+              : 'text-slate-500 hover:text-slate-800 font-semibold'
+          }`}
+        >
+          <div className={`p-1 rounded-lg ${activeTab === 'vault' ? 'bg-emerald-100' : ''}`}>
+            <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
+          </div>
+          <span className="text-[10px] mt-0.5">
+            Vault {userProgress.starredWordIds.length > 0 && `(${userProgress.starredWordIds.length})`}
+          </span>
+        </button>
+      </nav>
     </header>
   );
 };

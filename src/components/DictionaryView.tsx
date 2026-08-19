@@ -427,7 +427,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
               Junior UK & Scottish Dictionary
             </h1>
             <p className="text-xs sm:text-sm text-blue-100/90 leading-relaxed font-normal">
-              Explore 200+ top UK common words, Scottish regional slang, and academic power terms. Every entry includes <strong>voice audio for both the word and all example sentences</strong>, dual contexts, synonyms, and school stages.
+              Explore 450+ top UK common words, Scottish regional slang, and academic power terms. Every entry includes <strong>voice audio for both the word and all example sentences</strong>, dual contexts, synonyms, and school stages.
             </p>
 
             {/* Search Input Bar */}

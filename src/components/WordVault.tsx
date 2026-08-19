@@ -35,6 +35,8 @@ export const WordVault: React.FC<WordVaultProps> = ({
 
   // Add Custom Word Modal
   const [showAddModal, setShowAddModal] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [importStatus, setImportStatus] = useState<string | null>(null);
   const [newWord, setNewWord] = useState('');
   const [newPartOfSpeech, setNewPartOfSpeech] = useState<PartOfSpeech>('noun');
   const [newPhonetic, setNewPhonetic] = useState('');
@@ -77,9 +79,11 @@ export const WordVault: React.FC<WordVaultProps> = ({
   const handleSaveCustomWord = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newWord.trim() || !newDefinition.trim() || !newExample1.trim() || !newExample2.trim()) {
-      alert('Please fill in the word, definition, and at least 2 examples!');
+      setFormError('Please provide the word, definition, and both context examples!');
+      playSound('wrong');
       return;
     }
+    setFormError(null);
 
     const created: DictionaryEntry = {
       id: `custom-${Date.now()}`,
@@ -126,9 +130,15 @@ export const WordVault: React.FC<WordVaultProps> = ({
         if (Array.isArray(parsed)) {
           onImportVault(parsed);
           playSound('correct');
+          setImportStatus(`Successfully imported ${parsed.length} custom vocabulary items!`);
+          setTimeout(() => setImportStatus(null), 4000);
+        } else {
+          setImportStatus('Invalid JSON format: expected an array of word entries.');
+          playSound('wrong');
         }
       } catch (err) {
-        alert('Invalid JSON file.');
+        setImportStatus('Could not read JSON file. Please check file format.');
+        playSound('wrong');
       }
     };
     reader.readAsText(file);
@@ -168,6 +178,18 @@ export const WordVault: React.FC<WordVaultProps> = ({
           </div>
         </div>
       </div>
+
+      {importStatus && (
+        <div className="p-3.5 bg-blue-50 border border-blue-200 rounded-2xl text-xs sm:text-sm font-bold text-blue-900 flex items-center justify-between shadow-xs">
+          <span>{importStatus}</span>
+          <button
+            onClick={() => setImportStatus(null)}
+            className="text-blue-500 hover:text-blue-700 p-1"
+          >
+            ✕
+          </button>
+        </div>
+      )}
 
       {/* Sub navigation bar */}
       <div className="flex items-center justify-between flex-wrap gap-2 bg-slate-100/90 p-1.5 rounded-2xl border border-slate-200/80">
@@ -559,6 +581,13 @@ export const WordVault: React.FC<WordVaultProps> = ({
               <h2 className="text-2xl font-black text-slate-900">Add New Scottish Word</h2>
               <p className="text-xs text-slate-500">Include definition, at least 2 examples, synonyms, and antonyms.</p>
             </div>
+
+            {formError && (
+              <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs font-bold text-rose-800 flex items-center gap-2">
+                <span>⚠️</span>
+                <span>{formError}</span>
+              </div>
+            )}
 
             <form onSubmit={handleSaveCustomWord} className="space-y-4 text-xs font-bold text-slate-700">
               <div>
