@@ -5,6 +5,9 @@ import { UK_COMMON_AND_SLANG_ENTRIES } from './ukCommonAndSlangWords';
 import { UK_SPOKEN_CONVERSATION_ENTRIES } from './ukSpokenAndConversationalWords';
 import { POPULAR_KIDS_ENTRIES } from './popularKidsWords';
 import { ALPHABET_GAP_ENTRIES } from './alphabetGapWords';
+import { MORE_KIDS_VOCABULARY_ENTRIES } from './moreKidsVocabulary';
+import { ALPHABET_EXPANSION_PART1 } from './alphabetExpansionPart1';
+import { ALPHABET_EXPANSION_PART2 } from './alphabetExpansionPart2';
 
 // Merge all vocabulary collections and deduplicate by word id
 const allRawEntries: DictionaryEntry[] = [
@@ -14,6 +17,9 @@ const allRawEntries: DictionaryEntry[] = [
   ...UK_SPOKEN_CONVERSATION_ENTRIES,
   ...POPULAR_KIDS_ENTRIES,
   ...ALPHABET_GAP_ENTRIES,
+  ...MORE_KIDS_VOCABULARY_ENTRIES,
+  ...ALPHABET_EXPANSION_PART1,
+  ...ALPHABET_EXPANSION_PART2,
 ];
 
 const seenIds = new Set<string>();

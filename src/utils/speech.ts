@@ -1,63 +1,202 @@
-// Web Speech Synthesis and British Young Female Voice Engine for WeeVocab
+// Web Speech Synthesis and Device-Aware High-Quality Voice Engine for Wee-Vocab
+// Optimized for iPhone, iPad, Android Phones & Tablets, Windows, and Mac
 
 export interface VoiceSettings {
   selectedVoiceURI: string | null;
-  pitch: number; // 0.8 to 1.6 (default ~1.20 for young female)
-  rate: number;  // 0.7 to 1.3 (default ~0.92 for learning enunciation)
+  pitch: number; // 0.8 to 1.6 (device-adjusted default ~1.15-1.20)
+  rate: number;  // 0.7 to 1.3 (device-adjusted default ~0.92-0.95)
+  autoOptimizeForDevice: boolean;
 }
 
-const VOICE_PREF_KEY = 'weevocab_voice_settings_v2';
+export interface DeviceInfo {
+  platform: 'ios' | 'android' | 'mac' | 'windows' | 'other';
+  deviceType: 'iphone' | 'ipad' | 'android-phone' | 'android-tablet' | 'desktop' | 'mobile';
+  displayName: string;
+  isTouchDevice: boolean;
+  osTip?: string;
+}
+
+const VOICE_PREF_KEY = 'weevocab_voice_settings_v3';
+
+/**
+ * Detect user's current hardware and operating system to pick optimal TTS voices.
+ */
+export const detectDevicePlatform = (): DeviceInfo => {
+  if (typeof window === 'undefined' || typeof navigator === 'undefined') {
+    return {
+      platform: 'other',
+      deviceType: 'desktop',
+      displayName: 'Standard Device',
+      isTouchDevice: false,
+    };
+  }
+
+  const ua = navigator.userAgent || navigator.vendor || (window as any).opera || '';
+  const uaLower = ua.toLowerCase();
+  const maxTouchPoints = navigator.maxTouchPoints || 0;
+  const isTouch = maxTouchPoints > 0 || 'ontouchstart' in window;
+  const screenWidth = typeof window !== 'undefined' ? window.innerWidth : 1024;
+
+  // 1. Apple iOS Detection (iPhone, iPod)
+  if (/iphone|ipod/i.test(uaLower)) {
+    return {
+      platform: 'ios',
+      deviceType: 'iphone',
+      displayName: 'Apple iPhone',
+      isTouchDevice: true,
+      osTip: 'iOS High-Quality Serena & Fiona (Enhanced) neural voices supported in Safari / WebKit.',
+    };
+  }
+
+  // 2. Apple iPad / iPadOS (including iPad Pro running iPadOS reporting as MacIntel with touch)
+  const isIPad = /ipad/i.test(uaLower) || (navigator.platform === 'MacIntel' && maxTouchPoints > 1);
+  if (isIPad) {
+    return {
+      platform: 'ios',
+      deviceType: 'ipad',
+      displayName: 'Apple iPad',
+      isTouchDevice: true,
+      osTip: 'iPadOS High-Quality Serena & Fiona (Enhanced) voices supported.',
+    };
+  }
+
+  // 3. Android Detection (Tablet vs Phone)
+  if (/android/i.test(uaLower)) {
+    // Android tablets typically don't have 'mobile' in UA or have wide viewport
+    const isTablet = !/mobile/i.test(uaLower) || /tablet/i.test(uaLower) || screenWidth >= 600;
+    return {
+      platform: 'android',
+      deviceType: isTablet ? 'android-tablet' : 'android-phone',
+      displayName: isTablet ? 'Android Tablet' : 'Android Phone',
+      isTouchDevice: true,
+      osTip: 'Google Speech Services & Samsung UK English high-definition network voices supported.',
+    };
+  }
+
+  // 4. Apple Mac macOS
+  if (/macintosh|mac os x/i.test(uaLower) && !isIPad) {
+    return {
+      platform: 'mac',
+      deviceType: 'desktop',
+      displayName: 'Apple Mac',
+      isTouchDevice: isTouch,
+      osTip: 'macOS Siri & Serena/Fiona enhanced neural voices supported.',
+    };
+  }
+
+  // 5. Microsoft Windows
+  if (/windows/i.test(uaLower)) {
+    return {
+      platform: 'windows',
+      deviceType: 'desktop',
+      displayName: 'Windows PC',
+      isTouchDevice: isTouch,
+      osTip: 'Microsoft Libby & Maisie Online (Natural) HD neural voices supported in Edge / Chrome.',
+    };
+  }
+
+  // 6. Generic Mobile or Desktop fallback
+  if (isTouch) {
+    return {
+      platform: 'other',
+      deviceType: 'mobile',
+      displayName: 'Mobile Device',
+      isTouchDevice: true,
+    };
+  }
+
+  return {
+    platform: 'other',
+    deviceType: 'desktop',
+    displayName: 'Web Browser',
+    isTouchDevice: false,
+  };
+};
 
 export const DEFAULT_VOICE_SETTINGS: VoiceSettings = {
   selectedVoiceURI: null,
-  pitch: 1.20,
-  rate: 0.92,
+  pitch: 1.18,
+  rate: 0.94,
+  autoOptimizeForDevice: true,
 };
 
-// Known high-quality Young British / Scottish Female voices
-const PREFERRED_UK_FEMALE_KEYWORDS = [
-  'libby',       // Microsoft Libby Online (Natural) - UK English youthful female
-  'maisie',      // Microsoft Maisie Online (Natural) - UK English young girl
-  'sonia',       // Microsoft Sonia Online (Natural) - UK English youthful female
-  'serena',      // Apple Serena - UK English female
-  'stephanie',   // Apple Stephanie - UK English female
-  'kate',        // Apple Kate - UK English female
-  'fiona',       // Apple Fiona - Scottish / UK English female
-  'google uk english female', // Chrome / Android
+// Priority keywords by platform for high fidelity
+const IPHONE_IPAD_HIGH_QUALITY_PRIORITY = [
+  'serena (enhanced)',
+  'serena (premium)',
+  'stephanie (enhanced)',
+  'stephanie (premium)',
+  'fiona (enhanced)',
+  'fiona (premium)',
+  'kate (enhanced)',
+  'kate (premium)',
+  'martha (enhanced)',
+  'siri voice 1',
+  'siri voice 2',
+  'siri voice 3',
+  'siri voice 4',
+  'serena',
+  'stephanie',
+  'fiona',
+  'kate',
+  'martha',
+  'moira (enhanced)',
+  'samantha (enhanced)',
+  'ava (enhanced)',
+];
+
+const ANDROID_HIGH_QUALITY_PRIORITY = [
+  'google uk english female',
+  'google uk english',
+  'en-gb-x-rjs#female',
+  'en-gb-x-fis#female',
+  'en-gb-x-gba-network',
+  'en-gb-x-rjs-network',
+  'samsung english (united kingdom) female',
+  'samsung english (united kingdom)',
+  'samsung british english',
+  'google english (united kingdom)',
   'uk english female',
-  'hazel',       // Microsoft Hazel Desktop - UK English female
-  'susan',       // Microsoft Susan - UK English female
-  'mia',         // Microsoft Mia - UK English female
-  'martha',      // Apple Martha - UK English female
-  'victoria',    // Apple Victoria - UK English female
-  'moira',       // Apple Moira - Irish/Scottish female
-];
-
-const KNOWN_ENGLISH_FEMALE_FALLBACKS = [
-  'samantha',
-  'karen',
-  'zira',
-  'jenny',
   'google us english female',
-  'victoria',
-  'ava',
-  'allison',
 ];
 
-const MALE_NAME_KEYWORDS = [
+const DESKTOP_HIGH_QUALITY_PRIORITY = [
+  'microsoft libby online (natural)',
+  'microsoft maisie online (natural)',
+  'microsoft sonia online (natural)',
+  'microsoft ryan online (natural)',
+  'serena (enhanced)',
+  'fiona (enhanced)',
+  'stephanie (enhanced)',
+  'google uk english female',
+  'microsoft hazel',
+  'microsoft susan',
+  'microsoft mia',
+];
+
+const KNOWN_MALE_KEYWORDS = [
   'male', 'david', 'george', 'oliver', 'ryan', 'guy', 'daniel', 
   'thomas', 'arthur', 'brian', 'richard', 'james', 'mark', 'steven', 
-  'john', 'eddie', 'paul', 'tom', 'peter', 'charles'
+  'john', 'eddie', 'paul', 'tom', 'peter', 'charles', 'male_1', 'male_2'
 ];
 
 /**
- * Load user customized voice settings from localStorage.
+ * Load voice settings with localStorage persistence and device defaults.
  */
 export const loadVoiceSettings = (): VoiceSettings => {
   if (typeof window === 'undefined') return DEFAULT_VOICE_SETTINGS;
   try {
     const raw = localStorage.getItem(VOICE_PREF_KEY);
-    if (!raw) return DEFAULT_VOICE_SETTINGS;
+    if (!raw) {
+      // Calibrate base defaults according to device
+      const device = detectDevicePlatform();
+      if (device.platform === 'ios') {
+        return { ...DEFAULT_VOICE_SETTINGS, pitch: 1.12, rate: 0.95 };
+      } else if (device.platform === 'android') {
+        return { ...DEFAULT_VOICE_SETTINGS, pitch: 1.18, rate: 0.92 };
+      }
+      return DEFAULT_VOICE_SETTINGS;
+    }
     return { ...DEFAULT_VOICE_SETTINGS, ...JSON.parse(raw) };
   } catch (e) {
     return DEFAULT_VOICE_SETTINGS;
@@ -79,31 +218,34 @@ export const saveVoiceSettings = (settings: Partial<VoiceSettings>): VoiceSettin
 };
 
 /**
- * Check if a voice is strictly female (excluding male tokens).
+ * Check if a voice is female.
  */
 export const isVoiceFemale = (voice: SpeechSynthesisVoice): boolean => {
   const name = voice.name.toLowerCase();
-  if (MALE_NAME_KEYWORDS.some(m => name.includes(m))) {
+  const uri = (voice.voiceURI || '').toLowerCase();
+  
+  if (KNOWN_MALE_KEYWORDS.some(m => name.includes(m) || uri.includes(m))) {
     return false;
   }
-  if (name.includes('female') || name.includes('woman') || name.includes('girl')) {
+  if (name.includes('female') || name.includes('woman') || name.includes('girl') || uri.includes('female')) {
     return true;
   }
-  if (PREFERRED_UK_FEMALE_KEYWORDS.some(k => name.includes(k))) {
+  if (
+    IPHONE_IPAD_HIGH_QUALITY_PRIORITY.some(k => name.includes(k) || uri.includes(k)) ||
+    DESKTOP_HIGH_QUALITY_PRIORITY.some(k => name.includes(k) || uri.includes(k))
+  ) {
     return true;
   }
-  if (KNOWN_ENGLISH_FEMALE_FALLBACKS.some(k => name.includes(k))) {
-    return true;
-  }
-  return true; // Assume neutral/female if not flagged male
+  return true; // Default neutral/female candidate
 };
 
 /**
- * Check if a voice has a British / UK / Scottish accent.
+ * Check if a voice has a British or Scottish accent.
  */
 export const isVoiceBritish = (voice: SpeechSynthesisVoice): boolean => {
-  const lang = voice.lang.toLowerCase();
-  const name = voice.name.toLowerCase();
+  const lang = (voice.lang || '').toLowerCase();
+  const name = (voice.name || '').toLowerCase();
+  const uri = (voice.voiceURI || '').toLowerCase();
   return (
     lang.startsWith('en-gb') || 
     lang.startsWith('en_gb') || 
@@ -111,13 +253,37 @@ export const isVoiceBritish = (voice: SpeechSynthesisVoice): boolean => {
     name.includes('united kingdom') || 
     name.includes('british') || 
     name.includes('uk english') ||
-    name.includes('scot')
+    name.includes('scot') ||
+    name.includes('fiona') ||
+    name.includes('serena') ||
+    name.includes('libby') ||
+    name.includes('maisie') ||
+    uri.includes('en-gb') ||
+    uri.includes('en_gb')
   );
 };
 
 /**
- * Get all available voices on the current system, enriched with metadata.
+ * Check if a voice is an Enhanced / High Definition Neural voice.
  */
+export const isVoiceEnhanced = (voice: SpeechSynthesisVoice): boolean => {
+  const name = (voice.name || '').toLowerCase();
+  const uri = (voice.voiceURI || '').toLowerCase();
+  return (
+    name.includes('enhanced') ||
+    name.includes('premium') ||
+    name.includes('natural') ||
+    name.includes('neural') ||
+    name.includes('online') ||
+    name.includes('high quality') ||
+    name.includes('wavenet') ||
+    uri.includes('enhanced') ||
+    uri.includes('premium') ||
+    uri.includes('network') ||
+    (!voice.localService && name.includes('google'))
+  );
+};
+
 export interface VoiceOption {
   voice: SpeechSynthesisVoice;
   name: string;
@@ -125,18 +291,56 @@ export interface VoiceOption {
   uri: string;
   isBritish: boolean;
   isFemale: boolean;
+  isEnhanced: boolean;
   isRecommended: boolean;
+  isDeviceSpecificPick: boolean;
+  qualityBadge?: string;
 }
 
+/**
+ * Get scored and device-sorted voice options available in the browser.
+ */
 export const getAvailableVoicesList = (): VoiceOption[] => {
   if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
     return [];
   }
+  
   const rawVoices = window.speechSynthesis.getVoices() || [];
-  return rawVoices.map(voice => {
+  const device = detectDevicePlatform();
+
+  const enriched = rawVoices.map(voice => {
     const isBrit = isVoiceBritish(voice);
     const isFem = isVoiceFemale(voice);
-    const isRec = isBrit && isFem && PREFERRED_UK_FEMALE_KEYWORDS.some(k => voice.name.toLowerCase().includes(k));
+    const isEnh = isVoiceEnhanced(voice);
+    const vName = voice.name.toLowerCase();
+    const vUri = (voice.voiceURI || '').toLowerCase();
+
+    let isDeviceSpecificPick = false;
+    let qualityBadge: string | undefined = undefined;
+
+    if (device.platform === 'ios') {
+      if (IPHONE_IPAD_HIGH_QUALITY_PRIORITY.slice(0, 10).some(k => vName.includes(k) || vUri.includes(k))) {
+        isDeviceSpecificPick = true;
+        qualityBadge = isEnh ? 'Apple HD Enhanced' : 'Apple iOS Voice';
+      }
+    } else if (device.platform === 'android') {
+      if (ANDROID_HIGH_QUALITY_PRIORITY.slice(0, 8).some(k => vName.includes(k) || vUri.includes(k))) {
+        isDeviceSpecificPick = true;
+        qualityBadge = isEnh ? 'Google HD Neural' : 'Android UK Voice';
+      }
+    } else {
+      if (DESKTOP_HIGH_QUALITY_PRIORITY.slice(0, 6).some(k => vName.includes(k) || vUri.includes(k))) {
+        isDeviceSpecificPick = true;
+        qualityBadge = isEnh ? 'Microsoft Natural HD' : 'Desktop UK Voice';
+      }
+    }
+
+    if (vName.includes('fiona')) {
+      qualityBadge = '🏴󠁧󠁢󠁳󠁣󠁴󠁿 Authentic Scottish';
+    }
+
+    const isRec = isBrit && isFem && (isDeviceSpecificPick || isEnh);
+
     return {
       voice,
       name: voice.name,
@@ -144,13 +348,27 @@ export const getAvailableVoicesList = (): VoiceOption[] => {
       uri: voice.voiceURI || voice.name,
       isBritish: isBrit,
       isFemale: isFem,
-      isRecommended: isRec || (isBrit && isFem),
+      isEnhanced: isEnh,
+      isRecommended: isRec,
+      isDeviceSpecificPick,
+      qualityBadge,
     };
+  });
+
+  // Sort with recommended and device-specific at top
+  return enriched.sort((a, b) => {
+    if (a.isDeviceSpecificPick && !b.isDeviceSpecificPick) return -1;
+    if (!a.isDeviceSpecificPick && b.isDeviceSpecificPick) return 1;
+    if (a.isRecommended && !b.isRecommended) return -1;
+    if (!a.isRecommended && b.isRecommended) return 1;
+    if (a.isBritish && !b.isBritish) return -1;
+    if (!a.isBritish && b.isBritish) return 1;
+    return a.name.localeCompare(b.name);
   });
 };
 
 /**
- * Select the best British young female voice available.
+ * Intelligent Selection of Highest Quality British / Scottish Voice tailored to the specific device.
  */
 export const getBestBritishFemaleVoice = (): { voice: SpeechSynthesisVoice | null; pitchBoost: number } => {
   if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
@@ -163,41 +381,76 @@ export const getBestBritishFemaleVoice = (): { voice: SpeechSynthesisVoice | nul
   }
 
   const userSettings = loadVoiceSettings();
+  const device = detectDevicePlatform();
 
-  // 1. If user explicitly chose a voice URI in settings
+  // 1. If user explicitly selected a voice in settings
   if (userSettings.selectedVoiceURI) {
     const userMatch = voices.find(v => (v.voiceURI || v.name) === userSettings.selectedVoiceURI);
     if (userMatch) {
       const isMale = !isVoiceFemale(userMatch);
-      return { voice: userMatch, pitchBoost: isMale ? 0.25 : 0 };
+      return { voice: userMatch, pitchBoost: isMale ? 0.22 : 0 };
     }
   }
 
-  // 2. High-priority British Young Female Voices
-  for (const preferredKeyword of PREFERRED_UK_FEMALE_KEYWORDS) {
+  // 2. DEVICE-SPECIFIC HIGH-FIDELITY MATCHING
+
+  // A. Apple iOS (iPhone & iPad)
+  if (device.platform === 'ios') {
+    for (const keyword of IPHONE_IPAD_HIGH_QUALITY_PRIORITY) {
+      const match = voices.find(v => {
+        const vName = v.name.toLowerCase();
+        const vUri = (v.voiceURI || '').toLowerCase();
+        return (vName.includes(keyword) || vUri.includes(keyword)) && isVoiceFemale(v);
+      });
+      if (match) return { voice: match, pitchBoost: 0 };
+    }
+  }
+
+  // B. Android Phones & Android Tablets
+  if (device.platform === 'android') {
+    for (const keyword of ANDROID_HIGH_QUALITY_PRIORITY) {
+      const match = voices.find(v => {
+        const vName = v.name.toLowerCase();
+        const vUri = (v.voiceURI || '').toLowerCase();
+        return (vName.includes(keyword) || vUri.includes(keyword)) && isVoiceFemale(v);
+      });
+      if (match) return { voice: match, pitchBoost: 0 };
+    }
+  }
+
+  // C. Windows / macOS Desktop / General High Quality Fallback
+  for (const keyword of DESKTOP_HIGH_QUALITY_PRIORITY) {
     const match = voices.find(v => {
       const vName = v.name.toLowerCase();
-      const isBrit = isVoiceBritish(v);
-      return isBrit && vName.includes(preferredKeyword) && isVoiceFemale(v);
+      const vUri = (v.voiceURI || '').toLowerCase();
+      return (vName.includes(keyword) || vUri.includes(keyword)) && isVoiceFemale(v);
     });
     if (match) return { voice: match, pitchBoost: 0 };
   }
 
-  // 3. Any UK/British Voice that is female or not flagged male
+  // 3. Any UK/British Voice with Enhanced/Premium flag
+  const enhancedUK = voices.find(v => isVoiceBritish(v) && isVoiceFemale(v) && isVoiceEnhanced(v));
+  if (enhancedUK) return { voice: enhancedUK, pitchBoost: 0 };
+
+  // 4. Any UK/British Female voice
   const ukFemale = voices.find(v => isVoiceBritish(v) && isVoiceFemale(v));
   if (ukFemale) return { voice: ukFemale, pitchBoost: 0 };
 
-  // 4. Any English Female voice (e.g. US/AUS female voices like Samantha, Jenny)
+  // 5. Any English Enhanced Female voice (US / AU / International)
+  const englishEnhancedFemale = voices.find(v => v.lang.toLowerCase().startsWith('en') && isVoiceFemale(v) && isVoiceEnhanced(v));
+  if (englishEnhancedFemale) return { voice: englishEnhancedFemale, pitchBoost: 0.04 };
+
+  // 6. Any English Female voice
   const englishFemale = voices.find(v => v.lang.toLowerCase().startsWith('en') && isVoiceFemale(v));
   if (englishFemale) return { voice: englishFemale, pitchBoost: 0.05 };
 
-  // 5. If only UK male voice is present, pitch boost it significantly (+0.25) so it sounds youthful/feminine
+  // 7. If only UK male voice is present, apply a pitch boost so it sounds friendly and youthful
   const ukAny = voices.find(v => isVoiceBritish(v));
-  if (ukAny) return { voice: ukAny, pitchBoost: 0.25 };
+  if (ukAny) return { voice: ukAny, pitchBoost: 0.22 };
 
-  // 6. Generic fallback
+  // 8. Generic English fallback
   const anyEnglish = voices.find(v => v.lang.toLowerCase().startsWith('en'));
-  return { voice: anyEnglish || null, pitchBoost: 0.15 };
+  return { voice: anyEnglish || null, pitchBoost: 0.12 };
 };
 
 // Listen for browser voice readiness
@@ -208,7 +461,21 @@ if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
 }
 
 /**
- * Speak word with British young female voice.
+ * Mobile Audio Unlocker:
+ * On iOS Safari and Chrome Android, Web Speech API requires user interaction or unpausing
+ * before initial speech output can be heard clearly.
+ */
+export const unlockSpeechEngine = () => {
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+  try {
+    if (window.speechSynthesis.paused) {
+      window.speechSynthesis.resume();
+    }
+  } catch (e) {}
+};
+
+/**
+ * Speak word with device-calibrated British young female voice.
  */
 export const speakWord = (
   text: string, 
@@ -218,7 +485,7 @@ export const speakWord = (
 };
 
 /**
- * Speak full sentence or phrase with British young female voice.
+ * Speak full sentence or phrase with device-calibrated high quality voice.
  */
 export const speakSentence = (
   text: string,
@@ -229,8 +496,10 @@ export const speakSentence = (
     return;
   }
 
-  // Cancel previous speech
-  window.speechSynthesis.cancel();
+  try {
+    unlockSpeechEngine();
+    window.speechSynthesis.cancel();
+  } catch (e) {}
 
   // Clean special characters & markdown for smooth speech
   const cleanText = text.replace(/[*_#`~[\]]/g, '').trim();
@@ -238,12 +507,24 @@ export const speakSentence = (
 
   const utterance = new SpeechSynthesisUtterance(cleanText);
   const settings = loadVoiceSettings();
+  const device = detectDevicePlatform();
 
   const { voice, pitchBoost } = getBestBritishFemaleVoice();
 
-  // Tuned for a friendly, cheerful, youthful British female tone
-  utterance.pitch = options?.pitch ?? (settings.pitch + pitchBoost);
-  utterance.rate = options?.rate ?? settings.rate;
+  // Apply device-specific baseline tuning
+  let basePitch = settings.pitch;
+  let baseRate = settings.rate;
+
+  if (device.platform === 'ios') {
+    // iOS Safari sounds most natural at ~0.95 rate and slight pitch elevation
+    basePitch = Math.min(1.35, basePitch);
+  } else if (device.platform === 'android') {
+    // Android speech engine benefits from steady pace
+    baseRate = Math.min(1.0, baseRate);
+  }
+
+  utterance.pitch = options?.pitch ?? (basePitch + pitchBoost);
+  utterance.rate = options?.rate ?? baseRate;
 
   if (voice) {
     utterance.voice = voice;
@@ -253,7 +534,21 @@ export const speakSentence = (
     utterance.onend = options.onEnd;
   }
 
-  window.speechSynthesis.speak(utterance);
+  utterance.onerror = (e) => {
+    // Recover silently if speech was cancelled by next action
+    if (e.error !== 'canceled' && e.error !== 'interrupted') {
+      console.warn('TTS playback issue:', e.error);
+    }
+    if (options?.onEnd) {
+      options.onEnd();
+    }
+  };
+
+  try {
+    window.speechSynthesis.speak(utterance);
+  } catch (err) {
+    console.error('Error executing speech synthesis:', err);
+  }
 };
 
 /**
@@ -266,7 +561,9 @@ export const testBritishVoicePreview = (customText?: string) => {
 
 export const cancelSpeech = () => {
   if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-    window.speechSynthesis.cancel();
+    try {
+      window.speechSynthesis.cancel();
+    } catch (e) {}
   }
 };
 

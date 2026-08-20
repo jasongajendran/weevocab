@@ -92,11 +92,12 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 id="open-voice-studio-btn"
                 onClick={onOpenVoiceStudio}
-                title="Voice Studio - British young female voice & pitch controls"
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sky-50 border border-sky-200 text-sky-900 font-extrabold text-xs shadow-2xs hover:bg-sky-100 hover:border-sky-300 transition-all cursor-pointer"
+                title="High-Quality Voice Studio - Device-tuned British & Scottish voice engine"
+                className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full bg-sky-50 border border-sky-200 text-sky-900 font-extrabold text-xs shadow-2xs hover:bg-sky-100 hover:border-sky-300 transition-all cursor-pointer shrink-0"
               >
                 <span className="text-sm">🇬🇧</span>
                 <span className="hidden sm:inline">Voice Studio</span>
+                <span className="inline sm:hidden">Voice</span>
                 <Sparkles className="w-3 h-3 text-sky-600" />
               </button>
             )}

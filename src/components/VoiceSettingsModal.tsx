@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Volume2, Sparkles, X, Check, Sliders, RefreshCw, Radio, UserCheck } from 'lucide-react';
+import { 
+  Volume2, Sparkles, X, Check, Sliders, RefreshCw, Smartphone, 
+  Tablet, Laptop, Info, ShieldCheck, CheckCircle2 
+} from 'lucide-react';
 import { 
   getAvailableVoicesList, 
   loadVoiceSettings, 
   saveVoiceSettings, 
   testBritishVoicePreview, 
+  detectDevicePlatform,
   VoiceOption, 
-  VoiceSettings 
+  VoiceSettings,
+  DeviceInfo
 } from '../utils/speech';
 import { playSound } from '../utils/soundEffects';
 
@@ -18,11 +23,14 @@ interface VoiceSettingsModalProps {
 export const VoiceSettingsModal: React.FC<VoiceSettingsModalProps> = ({ isOpen, onClose }) => {
   const [voices, setVoices] = useState<VoiceOption[]>([]);
   const [settings, setSettings] = useState<VoiceSettings>(loadVoiceSettings());
+  const [deviceInfo, setDeviceInfo] = useState<DeviceInfo>(detectDevicePlatform());
   const [isPlayingSample, setIsPlayingSample] = useState(false);
+  const [activeSampleType, setActiveSampleType] = useState<'greeting' | 'scots' | 'word'>('greeting');
 
   const refreshVoiceList = () => {
     const list = getAvailableVoicesList();
     setVoices(list);
+    setDeviceInfo(detectDevicePlatform());
   };
 
   useEffect(() => {
@@ -55,16 +63,33 @@ export const VoiceSettingsModal: React.FC<VoiceSettingsModalProps> = ({ isOpen, 
     setSettings(updated);
   };
 
-  const handleTestVoice = (customSample?: string) => {
-    playSound('pop');
-    setIsPlayingSample(true);
-    testBritishVoicePreview(customSample);
-    setTimeout(() => setIsPlayingSample(false), 3500);
+  const sampleTexts = {
+    greeting: "Hello! I am your British and Scottish study companion. Let's learn some braw vocabulary together!",
+    scots: "It is a fair dreich morning, but that stooshie in the glen was truly magnificent!",
+    word: "Flabbergasted. Flabbergasted: extremely surprised, astonished, or dumbfounded."
   };
 
-  // Categorize voices
-  const recommendedBritishFemale = voices.filter(v => v.isRecommended);
-  const otherBritishVoices = voices.filter(v => v.isBritish && !v.isRecommended);
+  const handleTestVoice = (sampleKey?: 'greeting' | 'scots' | 'word') => {
+    const key = sampleKey || activeSampleType;
+    playSound('pop');
+    setIsPlayingSample(true);
+    testBritishVoicePreview(sampleTexts[key]);
+    setTimeout(() => setIsPlayingSample(false), 3800);
+  };
+
+  // Device icon helper
+  const getDeviceIcon = () => {
+    if (deviceInfo.deviceType === 'iphone' || deviceInfo.deviceType === 'android-phone') {
+      return <Smartphone className="w-4 h-4 text-blue-600" />;
+    }
+    if (deviceInfo.deviceType === 'ipad' || deviceInfo.deviceType === 'android-tablet') {
+      return <Tablet className="w-4 h-4 text-indigo-600" />;
+    }
+    return <Laptop className="w-4 h-4 text-sky-600" />;
+  };
+
+  const deviceRecommendedVoices = voices.filter(v => v.isDeviceSpecificPick || v.isRecommended);
+  const otherBritishVoices = voices.filter(v => v.isBritish && !v.isDeviceSpecificPick && !v.isRecommended);
   const otherVoices = voices.filter(v => !v.isBritish && v.lang.startsWith('en'));
 
   return (
@@ -86,10 +111,10 @@ export const VoiceSettingsModal: React.FC<VoiceSettingsModalProps> = ({ isOpen, 
             </div>
             <div>
               <h3 className="text-lg font-black text-slate-900 flex items-center gap-1.5">
-                British Voice Studio 🇬🇧
+                High-Quality Voice Studio 🇬🇧
               </h3>
               <p className="text-xs text-slate-500 font-medium">
-                Young female pronunciation & pitch controls
+                Device-tuned British & Scottish pronunciation engine
               </p>
             </div>
           </div>
@@ -103,29 +128,92 @@ export const VoiceSettingsModal: React.FC<VoiceSettingsModalProps> = ({ isOpen, 
           </button>
         </div>
 
-        {/* Live Audio Test Banner */}
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-4 border border-blue-100 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="space-y-0.5 text-center sm:text-left">
-            <span className="text-[11px] font-extrabold uppercase tracking-wider text-blue-700 block">
-              Active Voice Test
+        {/* Device Detection Banner */}
+        <div className="bg-gradient-to-r from-blue-50 via-indigo-50 to-sky-50 rounded-2xl p-3.5 border border-blue-100/80 shadow-2xs">
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-lg bg-white shadow-2xs border border-blue-200/60">
+                {getDeviceIcon()}
+              </div>
+              <div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-blue-900">
+                    Detected Device:
+                  </span>
+                  <span className="px-2 py-0.5 rounded-full text-[11px] font-black bg-blue-600 text-white shadow-2xs">
+                    {deviceInfo.displayName}
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-600 font-medium mt-0.5">
+                  {deviceInfo.platform === 'ios' && 'Tuned for iPhone / iPad: prioritizing Apple Serena & Scottish Fiona Enhanced neural voices.'}
+                  {deviceInfo.platform === 'android' && 'Tuned for Android: prioritizing Google HD Neural & Samsung UK English audio.'}
+                  {deviceInfo.platform === 'windows' && 'Tuned for Windows: prioritizing Microsoft Libby & Maisie Natural HD speech.'}
+                  {deviceInfo.platform === 'mac' && 'Tuned for macOS: prioritizing Apple Serena / Fiona Enhanced HD audio.'}
+                  {deviceInfo.platform === 'other' && 'Tuned for standard British female pronunciation.'}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {deviceInfo.osTip && (
+            <div className="mt-2.5 pt-2 border-t border-blue-200/50 flex items-center gap-1.5 text-[10px] text-blue-800 font-medium">
+              <Info className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+              <span>{deviceInfo.osTip}</span>
+            </div>
+          )}
+        </div>
+
+        {/* Live Audio Test & Sample Selector */}
+        <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200 space-y-2.5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+              <span>Audio Preview & Enunciation Test</span>
             </span>
-            <p className="text-xs font-semibold text-slate-700">
-              "Hello! Let's learn some braw vocabulary together."
-            </p>
+            <div className="flex gap-1 bg-white p-0.5 rounded-lg border border-slate-200 text-[10px] font-bold">
+              <button
+                onClick={() => setActiveSampleType('greeting')}
+                className={`px-2 py-0.5 rounded-md transition-colors cursor-pointer ${
+                  activeSampleType === 'greeting' ? 'bg-blue-600 text-white' : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Greeting
+              </button>
+              <button
+                onClick={() => setActiveSampleType('scots')}
+                className={`px-2 py-0.5 rounded-md transition-colors cursor-pointer ${
+                  activeSampleType === 'scots' ? 'bg-blue-600 text-white' : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Scots
+              </button>
+              <button
+                onClick={() => setActiveSampleType('word')}
+                className={`px-2 py-0.5 rounded-md transition-colors cursor-pointer ${
+                  activeSampleType === 'word' ? 'bg-blue-600 text-white' : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Word
+              </button>
+            </div>
+          </div>
+
+          <div className="p-2.5 bg-white rounded-xl border border-slate-200/80 text-xs text-slate-700 italic">
+            "{sampleTexts[activeSampleType]}"
           </div>
 
           <button
             id="test-voice-btn"
             onClick={() => handleTestVoice()}
             disabled={isPlayingSample}
-            className={`px-4 py-2.5 rounded-xl font-black text-xs flex items-center gap-2 shadow-xs transition-all shrink-0 cursor-pointer ${
+            className={`w-full py-2.5 rounded-xl font-black text-xs flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer ${
               isPlayingSample 
                 ? 'bg-blue-600 text-white animate-pulse' 
-                : 'bg-blue-600 hover:bg-blue-700 active:scale-95 text-white'
+                : 'bg-blue-600 hover:bg-blue-700 active:scale-98 text-white'
             }`}
           >
             <Volume2 className={`w-4 h-4 ${isPlayingSample ? 'animate-bounce' : ''}`} />
-            <span>{isPlayingSample ? 'Speaking...' : 'Test Voice Now'}</span>
+            <span>{isPlayingSample ? 'Speaking through device...' : 'Test Voice on This Device'}</span>
           </button>
         </div>
 
@@ -133,40 +221,40 @@ export const VoiceSettingsModal: React.FC<VoiceSettingsModalProps> = ({ isOpen, 
         <div className="space-y-3.5 bg-slate-50 rounded-2xl p-4 border border-slate-200/80">
           <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700">
             <Sliders className="w-3.5 h-3.5 text-blue-600" />
-            <span>Tone & Pace Tuning</span>
+            <span>Pace & Pitch Calibration</span>
           </div>
 
           {/* Pitch Slider */}
           <div>
             <div className="flex justify-between text-xs font-bold text-slate-600 mb-1">
-              <span>Voice Pitch (Higher = More Youthful)</span>
+              <span>Voice Pitch</span>
               <span className="text-blue-600 font-extrabold">
-                {settings.pitch >= 1.25 ? '👧 Young / Youthful' : settings.pitch >= 1.1 ? '👩 Natural Female' : 'Standard'} ({settings.pitch.toFixed(2)})
+                {settings.pitch >= 1.25 ? '👧 Youthful / Cheerful' : settings.pitch >= 1.1 ? '👩 Natural British' : 'Standard'} ({settings.pitch.toFixed(2)})
               </span>
             </div>
             <input
               id="voice-pitch-slider"
               type="range"
               min="0.9"
-              max="1.5"
+              max="1.45"
               step="0.05"
               value={settings.pitch}
               onChange={(e) => handlePitchChange(parseFloat(e.target.value))}
               className="w-full accent-blue-600 cursor-pointer"
             />
             <div className="flex justify-between text-[10px] text-slate-400 font-semibold mt-0.5">
-              <span>0.9 (Deeper)</span>
-              <span>1.20 (Recommended Young British)</span>
-              <span>1.5 (High)</span>
+              <span>0.90 (Deeper)</span>
+              <span>1.15 (Default Sweet)</span>
+              <span>1.45 (High)</span>
             </div>
           </div>
 
           {/* Rate Slider */}
           <div>
             <div className="flex justify-between text-xs font-bold text-slate-600 mb-1">
-              <span>Speech Speed</span>
+              <span>Speech Rate (Speed)</span>
               <span className="text-blue-600 font-extrabold">
-                {settings.rate < 0.9 ? '🐢 Slow (Learner)' : settings.rate > 1.05 ? '⚡ Quick' : 'Normal Pace'} ({settings.rate.toFixed(2)}x)
+                {settings.rate < 0.9 ? '🐢 Slow (Junior Learner)' : settings.rate > 1.05 ? '⚡ Quick' : 'Enunciation Pace'} ({settings.rate.toFixed(2)}x)
               </span>
             </div>
             <input
@@ -186,18 +274,18 @@ export const VoiceSettingsModal: React.FC<VoiceSettingsModalProps> = ({ isOpen, 
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-extrabold uppercase tracking-wider text-slate-500">
-              Installed Voice Selector:
+              Voice Selector ({deviceInfo.displayName}):
             </span>
             <button
               onClick={refreshVoiceList}
               className="text-[11px] font-bold text-blue-600 hover:underline flex items-center gap-1 cursor-pointer"
             >
               <RefreshCw className="w-3 h-3" />
-              <span>Refresh Voices ({voices.length})</span>
+              <span>Refresh ({voices.length})</span>
             </button>
           </div>
 
-          {/* Default Auto Mode */}
+          {/* Default Smart Device Auto Mode */}
           <button
             id="voice-select-auto"
             onClick={() => handleSelectVoice(null)}
@@ -214,14 +302,14 @@ export const VoiceSettingsModal: React.FC<VoiceSettingsModalProps> = ({ isOpen, 
               <div>
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-black text-slate-900">
-                    Smart British Young Female (Auto-Select)
+                    Smart Device Auto-Select (Recommended)
                   </span>
                   <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-600 text-white">
-                    Recommended
+                    Active
                   </span>
                 </div>
                 <p className="text-[11px] text-slate-500">
-                  Automatically chooses Libby, Maisie, Serena, Fiona, or highest quality UK female voice.
+                  Automatically chooses the highest quality British/Scottish voice available on your {deviceInfo.displayName}.
                 </p>
               </div>
             </div>
@@ -230,7 +318,7 @@ export const VoiceSettingsModal: React.FC<VoiceSettingsModalProps> = ({ isOpen, 
 
           {/* List of Detected Voices */}
           <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
-            {recommendedBritishFemale.map((v) => (
+            {deviceRecommendedVoices.map((v) => (
               <button
                 key={v.uri}
                 onClick={() => handleSelectVoice(v.uri)}
@@ -243,9 +331,14 @@ export const VoiceSettingsModal: React.FC<VoiceSettingsModalProps> = ({ isOpen, 
                 <div className="flex items-center gap-2">
                   <span className="text-sm">🇬🇧</span>
                   <div>
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1.5 flex-wrap">
                       <span className="text-xs font-bold text-slate-800">{v.name}</span>
-                      <span className="text-[10px] px-1.5 py-0.2 bg-emerald-100 text-emerald-800 rounded-md font-extrabold">
+                      {v.qualityBadge && (
+                        <span className="text-[9px] px-1.5 py-0.2 bg-indigo-100 text-indigo-800 rounded-md font-extrabold">
+                          {v.qualityBadge}
+                        </span>
+                      )}
+                      <span className="text-[9px] px-1.5 py-0.2 bg-emerald-100 text-emerald-800 rounded-md font-extrabold">
                         Female
                       </span>
                     </div>
@@ -300,7 +393,7 @@ export const VoiceSettingsModal: React.FC<VoiceSettingsModalProps> = ({ isOpen, 
         {/* Footer */}
         <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
           <span className="text-[11px] text-slate-500">
-            Settings save automatically to this browser.
+            Auto-saved for {deviceInfo.displayName}.
           </span>
           <button
             id="done-voice-settings-btn"
