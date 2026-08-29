@@ -151,42 +151,47 @@ Try using these in your next Scottish literature or creative writing assignment!
     <div className="space-y-6 max-w-4xl mx-auto pb-24 sm:pb-8">
       
       {/* Bard Mascot Header */}
-      <div className="bg-gradient-to-br from-sky-600 via-indigo-700 to-purple-800 rounded-3xl p-6 sm:p-8 text-white shadow-lg shadow-indigo-900/10 relative overflow-hidden border border-indigo-500/30">
+      <div className="bg-gradient-to-r from-purple-950 via-slate-900 to-emerald-950 rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-purple-950/20 relative overflow-hidden border-2 border-white/20">
+        <div className="absolute -right-10 -top-10 w-72 h-72 bg-gradient-to-br from-amber-400/25 to-emerald-500/25 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute right-8 bottom-3 opacity-15 text-8xl font-black select-none pointer-events-none">
+          ✨
+        </div>
+
         <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between">
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-bold text-sky-200">
-              <Sparkles className="w-4 h-4 text-sky-300" />
-              AI Scottish Vocabulary Tutor & Story Weaver
+          <div className="space-y-3">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/30 text-xs font-black text-amber-300 shadow-2xs">
+              <Sparkles className="w-4 h-4 text-amber-300 animate-pulse" />
+              <span>AI Scottish Vocabulary Tutor & Story Weaver</span>
             </div>
-            <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">
+            <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-white">
               Hamish the Tartan Bard
             </h1>
-            <p className="text-sm sm:text-base text-sky-100/90 leading-relaxed max-w-xl font-normal">
+            <p className="text-sm sm:text-base text-purple-100 leading-relaxed max-w-xl font-medium">
               Hamish helps you write creative Scottish stories with your vocabulary words, translates everyday English into authentic Scots slang, and answers any word questions!
             </p>
           </div>
 
-          <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white/15 rounded-3xl backdrop-blur-md border border-white/20 flex items-center justify-center text-4xl sm:text-5xl shadow-sm shrink-0">
+          <div className="w-18 h-18 sm:w-22 sm:h-22 bg-gradient-to-tr from-amber-400/20 to-emerald-400/20 rounded-3xl backdrop-blur-md border-2 border-amber-300/40 flex items-center justify-center text-4xl sm:text-5xl shadow-lg shrink-0 transform hover:scale-105 transition-transform">
             🦉
           </div>
         </div>
       </div>
 
       {/* Mode Selector Tabs */}
-      <div className="flex items-center gap-1.5 bg-slate-100/90 p-1.5 rounded-2xl border border-slate-200/80">
+      <div className="flex items-center gap-2 bg-slate-100 p-2 rounded-2xl border border-slate-200">
         <button
           id="bard-mode-story"
           onClick={() => {
             setActiveMode('story');
             playSound('click');
           }}
-          className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all ${
+          className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-black text-xs sm:text-sm transition-all cursor-pointer ${
             activeMode === 'story'
-              ? 'bg-white text-indigo-900 shadow-xs'
-              : 'text-slate-600 hover:text-slate-900'
+              ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-md scale-102'
+              : 'text-slate-700 hover:text-slate-900 hover:bg-white/60'
           }`}
         >
-          <Wand2 className="w-4 h-4 text-indigo-600" />
+          <Wand2 className={`w-4 h-4 ${activeMode === 'story' ? 'text-white' : 'text-purple-600'}`} />
           <span>Story Generator</span>
         </button>
 
@@ -196,13 +201,13 @@ Try using these in your next Scottish literature or creative writing assignment!
             setActiveMode('translate');
             playSound('click');
           }}
-          className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all ${
+          className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-black text-xs sm:text-sm transition-all cursor-pointer ${
             activeMode === 'translate'
-              ? 'bg-white text-indigo-900 shadow-xs'
-              : 'text-slate-600 hover:text-slate-900'
+              ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md scale-102'
+              : 'text-slate-700 hover:text-slate-900 hover:bg-white/60'
           }`}
         >
-          <BookOpen className="w-4 h-4 text-sky-600" />
+          <BookOpen className={`w-4 h-4 ${activeMode === 'translate' ? 'text-white' : 'text-emerald-600'}`} />
           <span>Scots Slang Translator</span>
         </button>
 
@@ -212,13 +217,13 @@ Try using these in your next Scottish literature or creative writing assignment!
             setActiveMode('ask');
             playSound('click');
           }}
-          className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all ${
+          className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-black text-xs sm:text-sm transition-all cursor-pointer ${
             activeMode === 'ask'
-              ? 'bg-white text-indigo-900 shadow-xs'
-              : 'text-slate-600 hover:text-slate-900'
+              ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow-md scale-102'
+              : 'text-slate-700 hover:text-slate-900 hover:bg-white/60'
           }`}
         >
-          <MessageSquare className="w-4 h-4 text-purple-600" />
+          <MessageSquare className={`w-4 h-4 ${activeMode === 'ask' ? 'text-slate-950' : 'text-amber-600'}`} />
           <span>Ask Hamish</span>
         </button>
       </div>
@@ -237,10 +242,10 @@ Try using these in your next Scottish literature or creative writing assignment!
                   <button
                     key={entry.id}
                     onClick={() => handleToggleStoryWord(entry.word)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                       isSelected
-                        ? 'bg-indigo-600 text-white shadow-xs scale-105'
-                        : 'bg-slate-50 text-slate-700 hover:bg-slate-200 border border-slate-200'
+                        ? 'bg-purple-600 text-white shadow-xs scale-105'
+                        : 'bg-slate-50 text-slate-700 hover:bg-purple-50 hover:text-purple-900 border border-slate-200'
                     }`}
                   >
                     {entry.word}
@@ -259,7 +264,7 @@ Try using these in your next Scottish literature or creative writing assignment!
               value={customStoryTopic}
               onChange={(e) => setCustomStoryTopic(e.target.value)}
               placeholder="e.g. A mystery at Edinburgh Castle, a rainy school sports day, or a Highland camping trip..."
-              className="w-full p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-sm font-medium text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-indigo-500"
+              className="w-full p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-sm font-medium text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-purple-500"
             />
           </div>
 
@@ -267,7 +272,7 @@ Try using these in your next Scottish literature or creative writing assignment!
             id="generate-story-btn"
             disabled={isLoading || selectedWordsForStory.length === 0}
             onClick={handleGenerate}
-            className="w-full py-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-700 hover:to-sky-700 active:scale-99 text-white font-black text-sm shadow-md transition-all flex items-center justify-center gap-2"
+            className="w-full py-4 rounded-2xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 active:scale-99 text-white font-black text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
             {isLoading ? (
               <>
@@ -276,7 +281,7 @@ Try using these in your next Scottish literature or creative writing assignment!
               </>
             ) : (
               <>
-                <Sparkles className="w-4 h-4 text-sky-200" />
+                <Sparkles className="w-4 h-4 text-amber-300" />
                 <span>Weave Scottish Adventure Story</span>
               </>
             )}
@@ -296,7 +301,7 @@ Try using these in your next Scottish literature or creative writing assignment!
               value={translateInput}
               onChange={(e) => setTranslateInput(e.target.value)}
               placeholder="e.g. My bedroom is very messy, and my teacher was angry about my homework..."
-              className="w-full p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-sm font-medium text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-sky-500"
+              className="w-full p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-sm font-medium text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
             />
           </div>
 
@@ -310,7 +315,7 @@ Try using these in your next Scottish literature or creative writing assignment!
               <button
                 key={idx}
                 onClick={() => setTranslateInput(eg)}
-                className="text-blue-600 hover:underline bg-blue-50 px-2 py-0.5 rounded-md"
+                className="text-emerald-700 hover:underline bg-emerald-50 px-2 py-0.5 rounded-md font-medium cursor-pointer"
               >
                 "{eg}"
               </button>
@@ -321,7 +326,7 @@ Try using these in your next Scottish literature or creative writing assignment!
             id="translate-scots-btn"
             disabled={isLoading || !translateInput.trim()}
             onClick={handleGenerate}
-            className="w-full py-4 rounded-2xl bg-sky-600 hover:bg-sky-700 active:scale-99 text-white font-black text-sm shadow-md transition-all flex items-center justify-center gap-2"
+            className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 active:scale-99 text-white font-black text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
             {isLoading ? (
               <>
@@ -350,7 +355,7 @@ Try using these in your next Scottish literature or creative writing assignment!
               value={askPrompt}
               onChange={(e) => setAskPrompt(e.target.value)}
               placeholder="e.g. What is the difference between Scots and Scottish Gaelic?"
-              className="w-full p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-sm font-medium text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-purple-500"
+              className="w-full p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-sm font-medium text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-amber-500"
             />
           </div>
 
@@ -358,7 +363,7 @@ Try using these in your next Scottish literature or creative writing assignment!
             id="ask-hamish-btn"
             disabled={isLoading || !askPrompt.trim()}
             onClick={handleGenerate}
-            className="w-full py-4 rounded-2xl bg-purple-600 hover:bg-purple-700 active:scale-99 text-white font-black text-sm shadow-md transition-all flex items-center justify-center gap-2"
+            className="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 active:scale-99 text-slate-950 font-black text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
             {isLoading ? (
               <>
@@ -377,8 +382,8 @@ Try using these in your next Scottish literature or creative writing assignment!
 
       {/* AI Output Card */}
       {aiResponse && (
-        <div className="bg-gradient-to-br from-white to-sky-50/50 rounded-3xl p-6 sm:p-8 border-2 border-indigo-200 shadow-lg space-y-4 animate-in fade-in">
-          <div className="flex items-center justify-between border-b border-indigo-100 pb-3">
+        <div className="bg-gradient-to-br from-white to-purple-50/50 rounded-3xl p-6 sm:p-8 border-2 border-purple-200 shadow-lg space-y-4 animate-in fade-in">
+          <div className="flex items-center justify-between border-b border-purple-100 pb-3">
             <div className="flex items-center gap-2">
               <span className="text-2xl">🦉</span>
               <h3 className="font-extrabold text-slate-900 text-base sm:text-lg">
@@ -391,17 +396,17 @@ Try using these in your next Scottish literature or creative writing assignment!
                 className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl border shadow-2xs transition-colors cursor-pointer ${
                   isSpeaking
                     ? 'bg-rose-50 border-rose-300 text-rose-700 hover:bg-rose-100'
-                    : 'bg-indigo-50 border-indigo-200 text-indigo-700 hover:bg-indigo-100'
+                    : 'bg-purple-50 border-purple-200 text-purple-900 hover:bg-purple-100'
                 }`}
                 title="Read aloud with young British female voice"
               >
-                {isSpeaking ? <VolumeX className="w-4 h-4 text-rose-600" /> : <Volume2 className="w-4 h-4 text-indigo-600" />}
+                {isSpeaking ? <VolumeX className="w-4 h-4 text-rose-600" /> : <Volume2 className="w-4 h-4 text-purple-600" />}
                 <span>{isSpeaking ? 'Stop Reading' : 'Listen in British Voice'}</span>
               </button>
 
               <button
                 onClick={handleCopy}
-                className="flex items-center gap-1.5 text-xs font-bold text-indigo-600 hover:text-indigo-800 bg-white px-3 py-1.5 rounded-xl border border-indigo-200 shadow-2xs transition-colors cursor-pointer"
+                className="flex items-center gap-1.5 text-xs font-bold text-purple-800 hover:text-purple-950 bg-white px-3 py-1.5 rounded-xl border border-purple-200 shadow-2xs transition-colors cursor-pointer"
               >
                 {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
                 <span>{copied ? 'Copied!' : 'Copy Text'}</span>

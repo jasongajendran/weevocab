@@ -602,17 +602,23 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
       {activeGame === 'hub' && (
         <div className="space-y-6">
           {/* Header Banner */}
-          <div className="bg-gradient-to-br from-purple-800 via-indigo-900 to-blue-950 rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-purple-950/20 relative overflow-hidden border border-purple-500/30">
-            <div className="relative z-10 max-w-3xl space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-bold text-purple-200">
-                <Gamepad2 className="w-4 h-4 text-purple-300" />
-                6 High-Energy Word Games & Audio Quests
+          <div className="bg-gradient-to-r from-purple-950 via-slate-900 to-emerald-950 rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-purple-950/20 relative overflow-hidden border-2 border-white/20">
+            {/* Ambient decorative blurs & game elements */}
+            <div className="absolute -right-10 -top-10 w-72 h-72 bg-gradient-to-br from-amber-400/25 to-emerald-500/25 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute right-8 bottom-3 opacity-15 text-8xl font-black select-none pointer-events-none">
+              🎮
+            </div>
+
+            <div className="relative z-10 max-w-3xl space-y-3.5">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/30 text-xs font-black text-amber-300 shadow-xs">
+                <Gamepad2 className="w-4 h-4 text-amber-300 animate-bounce" />
+                <span>6 High-Energy Word Arcade Challenges & Audio Quests</span>
               </div>
-              <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">
+              <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-white">
                 Junior Vocabulary Arcade
               </h1>
-              <p className="text-sm sm:text-base text-purple-100/90 leading-relaxed font-normal">
-                Master Scottish regional terms, UK slang, and powerful academic words. Challenge yourself with British voice listening spelling bees, rapid dialect sorters, synonym duels, and anagram scrambles!
+              <p className="text-sm sm:text-base text-purple-100 leading-relaxed font-medium">
+                Level up your Scottish slang, UK idioms, and academic vocabulary. Challenge yourself with British voice spelling bees, conveyor belt rush, synonym duels, and anagram scrambles!
               </p>
             </div>
           </div>
@@ -621,176 +627,188 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             
             {/* Game 1: Scots Match Master */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs hover:border-blue-300 hover:shadow-md transition-all duration-200 flex flex-col justify-between group">
+            <div className="bg-white rounded-3xl p-6 border-2 border-teal-200/90 shadow-sm hover:border-teal-500 hover:shadow-xl transition-all duration-250 flex flex-col justify-between group relative overflow-hidden">
+              <div className="absolute top-0 right-0 bg-gradient-to-r from-teal-600 to-emerald-600 text-white font-black text-[10px] px-3 py-1 rounded-bl-xl uppercase tracking-wider shadow-2xs">
+                ⏱️ 60s Memory
+              </div>
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 bg-blue-50 border border-blue-100 text-blue-700 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-105 transition-transform">
+                  <div className="w-14 h-14 bg-gradient-to-tr from-teal-500 to-emerald-400 text-white rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-250 shadow-md shadow-teal-500/25 border-2 border-white/40">
                     🧩
                   </div>
-                  <span className="text-xs font-bold px-2.5 py-1 bg-blue-50 text-blue-800 rounded-full border border-blue-200/70">
+                  <span className="text-xs font-black px-3 py-1 bg-teal-50 text-teal-950 rounded-full border border-teal-200 shadow-2xs">
                     Best: {userProgress.gameHighScores.matchMaster} pts
                   </span>
                 </div>
-                <h3 className="text-lg font-black text-slate-900 mb-1">
+                <h3 className="text-lg font-black text-slate-900 mb-1.5 group-hover:text-teal-700 transition-colors">
                   1. Match Master
                 </h3>
-                <p className="text-xs text-slate-600 mb-4 leading-relaxed">
-                  Flip tiles to pair Scottish words with definitions in a 60-second pair-matching grid with audio enunciation!
+                <p className="text-xs text-slate-600 mb-5 leading-relaxed font-medium">
+                  Flip tiles to pair Scottish words with definitions in a 60-second pair-matching grid with live audio pronunciation!
                 </p>
               </div>
               <button
                 id="play-match-master-btn"
                 onClick={initMatchGame}
-                className="w-full py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 active:scale-98 text-white font-extrabold text-xs shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-3 rounded-2xl bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 active:scale-95 text-white font-black text-xs shadow-md shadow-teal-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>Play Match Master</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <ArrowRight className="w-4 h-4" />
               </button>
             </div>
 
             {/* Game 2: Highland Anagram Scramble */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs hover:border-purple-300 hover:shadow-md transition-all duration-200 flex flex-col justify-between group">
+            <div className="bg-white rounded-3xl p-6 border-2 border-purple-200/90 shadow-sm hover:border-purple-500 hover:shadow-xl transition-all duration-250 flex flex-col justify-between group relative overflow-hidden">
+              <div className="absolute top-0 right-0 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-black text-[10px] px-3 py-1 rounded-bl-xl uppercase tracking-wider shadow-2xs">
+                🔤 Puzzle
+              </div>
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 bg-purple-50 border border-purple-100 text-purple-700 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-105 transition-transform">
-                    🔤
+                  <div className="w-14 h-14 bg-gradient-to-tr from-purple-500 to-pink-500 text-white rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-250 shadow-md shadow-purple-500/25 border-2 border-white/40">
+                    🔠
                   </div>
-                  <span className="text-xs font-bold px-2.5 py-1 bg-purple-50 text-purple-800 rounded-full border border-purple-200/70">
+                  <span className="text-xs font-black px-3 py-1 bg-purple-50 text-purple-900 rounded-full border border-purple-200 shadow-2xs">
                     Best: {userProgress.gameHighScores.anagrams} pts
                   </span>
                 </div>
-                <h3 className="text-lg font-black text-slate-900 mb-1">
+                <h3 className="text-lg font-black text-slate-900 mb-1.5 group-hover:text-purple-600 transition-colors">
                   2. Anagram Scramble
                 </h3>
-                <p className="text-xs text-slate-600 mb-4 leading-relaxed">
-                  Unscramble jumbled letter tiles to reconstruct vocabulary words using definitions, rhyming hints, and lore!
+                <p className="text-xs text-slate-600 mb-5 leading-relaxed font-medium">
+                  Unscramble jumbled letter tiles to reconstruct vocabulary words using definitions, rhyming hints, and cultural lore!
                 </p>
               </div>
               <button
                 id="play-anagrams-btn"
                 onClick={initAnagramGame}
-                className="w-full py-2.5 rounded-2xl bg-purple-600 hover:bg-purple-700 active:scale-98 text-white font-extrabold text-xs shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-3 rounded-2xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 active:scale-95 text-white font-black text-xs shadow-md shadow-purple-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>Play Anagram Scramble</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <ArrowRight className="w-4 h-4" />
               </button>
             </div>
 
             {/* Game 3: Synonym & Antonym Duel */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs hover:border-emerald-300 hover:shadow-md transition-all duration-200 flex flex-col justify-between group">
+            <div className="bg-white rounded-3xl p-6 border-2 border-emerald-200/90 shadow-sm hover:border-emerald-500 hover:shadow-xl transition-all duration-250 flex flex-col justify-between group relative overflow-hidden">
+              <div className="absolute top-0 right-0 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-black text-[10px] px-3 py-1 rounded-bl-xl uppercase tracking-wider shadow-2xs">
+                ⚡ Rapid Quiz
+              </div>
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 bg-emerald-50 border border-emerald-100 text-emerald-700 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-105 transition-transform">
+                  <div className="w-14 h-14 bg-gradient-to-tr from-emerald-500 to-teal-400 text-white rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-250 shadow-md shadow-emerald-500/25 border-2 border-white/40">
                     ⚔️
                   </div>
-                  <span className="text-xs font-bold px-2.5 py-1 bg-emerald-50 text-emerald-800 rounded-full border border-emerald-200/70">
+                  <span className="text-xs font-black px-3 py-1 bg-emerald-50 text-emerald-900 rounded-full border border-emerald-200 shadow-2xs">
                     Best: {userProgress.gameHighScores.synonymDuel} pts
                   </span>
                 </div>
-                <h3 className="text-lg font-black text-slate-900 mb-1">
+                <h3 className="text-lg font-black text-slate-900 mb-1.5 group-hover:text-emerald-600 transition-colors">
                   3. Synonym & Antonym Duel
                 </h3>
-                <p className="text-xs text-slate-600 mb-4 leading-relaxed">
+                <p className="text-xs text-slate-600 mb-5 leading-relaxed font-medium">
                   15-second lightning quiz: pick the correct synonym or antonym before time runs out to build combo multipliers!
                 </p>
               </div>
               <button
                 id="play-synonym-duel-btn"
                 onClick={initSynonymDuel}
-                className="w-full py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white font-extrabold text-xs shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 active:scale-95 text-white font-black text-xs shadow-md shadow-emerald-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>Play Synonym Duel</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <ArrowRight className="w-4 h-4" />
               </button>
             </div>
 
             {/* Game 4: Sentence Detective */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs hover:border-amber-300 hover:shadow-md transition-all duration-200 flex flex-col justify-between group">
+            <div className="bg-white rounded-3xl p-6 border-2 border-amber-200/90 shadow-sm hover:border-amber-500 hover:shadow-xl transition-all duration-250 flex flex-col justify-between group relative overflow-hidden">
+              <div className="absolute top-0 right-0 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-black text-[10px] px-3 py-1 rounded-bl-xl uppercase tracking-wider shadow-2xs">
+                🕵️ Clues
+              </div>
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 bg-amber-50 border border-amber-100 text-amber-700 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-105 transition-transform">
+                  <div className="w-14 h-14 bg-gradient-to-tr from-amber-500 to-orange-400 text-white rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-250 shadow-md shadow-amber-500/25 border-2 border-white/40">
                     🔎
                   </div>
-                  <span className="text-xs font-bold px-2.5 py-1 bg-amber-50 text-amber-800 rounded-full border border-amber-200/70">
+                  <span className="text-xs font-black px-3 py-1 bg-amber-50 text-amber-900 rounded-full border border-amber-200 shadow-2xs">
                     Best: {userProgress.gameHighScores.sentenceDetective} pts
                   </span>
                 </div>
-                <h3 className="text-lg font-black text-slate-900 mb-1">
+                <h3 className="text-lg font-black text-slate-900 mb-1.5 group-hover:text-amber-600 transition-colors">
                   4. Sentence Detective
                 </h3>
-                <p className="text-xs text-slate-600 mb-4 leading-relaxed">
-                  Deduce missing words in Scottish school stories and everyday banter using rich contextual clues!
+                <p className="text-xs text-slate-600 mb-5 leading-relaxed font-medium">
+                  Deduce missing words in Scottish school stories and everyday banter using rich contextual sentence clues!
                 </p>
               </div>
               <button
                 id="play-detective-btn"
                 onClick={initDetectiveGame}
-                className="w-full py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-600 active:scale-98 text-white font-extrabold text-xs shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 active:scale-95 text-slate-950 font-black text-xs shadow-md shadow-amber-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>Play Detective</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <ArrowRight className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Game 5 (NEW): British Voice Spelling Bee */}
-            <div className="bg-white rounded-3xl p-6 border-2 border-sky-300/80 shadow-xs hover:border-sky-500 hover:shadow-md transition-all duration-200 flex flex-col justify-between group relative overflow-hidden">
-              <div className="absolute top-0 right-0 bg-sky-500 text-white font-extrabold text-[10px] px-3 py-1 rounded-bl-xl uppercase tracking-wider">
+            {/* Game 5: British Voice Spelling Bee */}
+            <div className="bg-white rounded-3xl p-6 border-2 border-indigo-200/90 shadow-sm hover:border-indigo-500 hover:shadow-xl transition-all duration-250 flex flex-col justify-between group relative overflow-hidden">
+              <div className="absolute top-0 right-0 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-black text-[10px] px-3 py-1 rounded-bl-xl uppercase tracking-wider shadow-2xs">
                 🇬🇧 Voice Quest
               </div>
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 bg-sky-50 border border-sky-100 text-sky-700 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-105 transition-transform">
+                  <div className="w-14 h-14 bg-gradient-to-tr from-indigo-500 to-purple-500 text-white rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-250 shadow-md shadow-indigo-500/25 border-2 border-white/40">
                     🐝
                   </div>
-                  <span className="text-xs font-bold px-2.5 py-1 bg-sky-50 text-sky-800 rounded-full border border-sky-200/70">
+                  <span className="text-xs font-black px-3 py-1 bg-indigo-50 text-indigo-950 rounded-full border border-indigo-200 shadow-2xs">
                     Best: {userProgress.gameHighScores.listeningBee || 0} pts
                   </span>
                 </div>
-                <h3 className="text-lg font-black text-slate-900 mb-1 flex items-center gap-1.5">
+                <h3 className="text-lg font-black text-slate-900 mb-1.5 group-hover:text-indigo-700 transition-colors flex items-center gap-1.5">
                   5. British Voice Spelling Bee
                 </h3>
-                <p className="text-xs text-slate-600 mb-4 leading-relaxed">
+                <p className="text-xs text-slate-600 mb-5 leading-relaxed font-medium">
                   Listen to the young British female voice pronounce words, hear slow audio phonetics, and test your spelling accuracy!
                 </p>
               </div>
               <button
                 id="play-listening-bee-btn"
                 onClick={initListeningBee}
-                className="w-full py-2.5 rounded-2xl bg-sky-600 hover:bg-sky-700 active:scale-98 text-white font-extrabold text-xs shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-3 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 active:scale-95 text-white font-black text-xs shadow-md shadow-indigo-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>Start Voice Spelling Bee</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <ArrowRight className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Game 6 (NEW): Speed Slang & Dialect Conveyor Rush */}
-            <div className="bg-white rounded-3xl p-6 border-2 border-rose-300/80 shadow-xs hover:border-rose-500 hover:shadow-md transition-all duration-200 flex flex-col justify-between group relative overflow-hidden">
-              <div className="absolute top-0 right-0 bg-rose-500 text-white font-extrabold text-[10px] px-3 py-1 rounded-bl-xl uppercase tracking-wider">
+            {/* Game 6: Speed Slang & Dialect Conveyor Rush */}
+            <div className="bg-white rounded-3xl p-6 border-2 border-rose-300 shadow-sm hover:border-rose-500 hover:shadow-xl transition-all duration-250 flex flex-col justify-between group relative overflow-hidden">
+              <div className="absolute top-0 right-0 bg-gradient-to-r from-rose-500 to-red-600 text-white font-black text-[10px] px-3 py-1 rounded-bl-xl uppercase tracking-wider shadow-2xs">
                 ⚡ 45s Rush
               </div>
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 bg-rose-50 border border-rose-100 text-rose-700 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-105 transition-transform">
+                  <div className="w-14 h-14 bg-gradient-to-tr from-rose-500 to-red-500 text-white rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-250 shadow-md shadow-rose-500/25 border-2 border-white/40">
                     ⚡
                   </div>
-                  <span className="text-xs font-bold px-2.5 py-1 bg-rose-50 text-rose-800 rounded-full border border-rose-200/70">
+                  <span className="text-xs font-black px-3 py-1 bg-rose-50 text-rose-900 rounded-full border border-rose-200 shadow-2xs">
                     Best: {userProgress.gameHighScores.speedDialectRush || 0} pts
                   </span>
                 </div>
-                <h3 className="text-lg font-black text-slate-900 mb-1">
+                <h3 className="text-lg font-black text-slate-900 mb-1.5 group-hover:text-rose-600 transition-colors">
                   6. Dialect Conveyor Rush
                 </h3>
-                <p className="text-xs text-slate-600 mb-4 leading-relaxed">
+                <p className="text-xs text-slate-600 mb-5 leading-relaxed font-medium">
                   Fast-paced 45s sorting arcade: rapidly categorize incoming words into Scots Regional, UK Slang, or Academic Power!
                 </p>
               </div>
               <button
                 id="play-dialect-rush-btn"
                 onClick={initDialectRush}
-                className="w-full py-2.5 rounded-2xl bg-rose-600 hover:bg-rose-700 active:scale-98 text-white font-extrabold text-xs shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-3 rounded-2xl bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 active:scale-95 text-white font-black text-xs shadow-md shadow-rose-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>Start Dialect Rush</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <ArrowRight className="w-4 h-4" />
               </button>
             </div>
 
@@ -805,12 +823,12 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
         <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-lg space-y-6 max-w-4xl mx-auto">
           <div className="flex items-center justify-between flex-wrap gap-3 border-b border-slate-100 pb-4">
             <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-blue-600">Game 1</span>
+              <span className="text-xs font-bold uppercase tracking-wider text-teal-700">Game 1</span>
               <h2 className="text-2xl font-black text-slate-900">Scots Match Master</h2>
             </div>
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-50 text-blue-900 font-extrabold text-sm">
-                <Clock className="w-4 h-4 text-blue-600" />
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-teal-50 text-teal-950 font-extrabold text-sm">
+                <Clock className="w-4 h-4 text-teal-600" />
                 <span>{matchTimer}s</span>
               </div>
               <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 text-amber-900 font-extrabold text-sm">
@@ -840,15 +858,15 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
                         ? 'bg-emerald-50 border-emerald-300 text-emerald-800 opacity-60 scale-95'
                         : isSelected || card.isFlipped
                         ? card.type === 'word'
-                          ? 'bg-blue-600 text-white border-blue-700 shadow-md scale-105'
-                          : 'bg-indigo-600 text-white border-indigo-700 shadow-md scale-105'
-                        : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-blue-400 hover:bg-blue-50/50 shadow-2xs'
+                          ? 'bg-teal-700 text-white border-teal-800 shadow-md scale-105'
+                          : 'bg-emerald-700 text-white border-emerald-800 shadow-md scale-105'
+                        : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-teal-400 hover:bg-teal-50/50 shadow-2xs'
                     }`}
                   >
                     {card.isFlipped || card.isMatched ? (
                       <span className="leading-snug">
-                        {card.type === 'word' && <span className="block text-[10px] uppercase text-blue-200 mb-1">🏴󠁧󠁢󠁳󠁣󠁴󠁿 Word</span>}
-                        {card.type === 'meaning' && <span className="block text-[10px] uppercase text-indigo-200 mb-1">📖 Meaning</span>}
+                        {card.type === 'word' && <span className="block text-[10px] uppercase text-teal-200 mb-1">🏴󠁧󠁢󠁳󠁣󠁴󠁿 Word</span>}
+                        {card.type === 'meaning' && <span className="block text-[10px] uppercase text-emerald-200 mb-1">📖 Meaning</span>}
                         {card.text}
                       </span>
                     ) : (
@@ -868,12 +886,12 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
                 Match Master Complete!
               </h3>
               <p className="text-slate-600">
-                You scored <strong className="text-blue-600 text-lg">{matchScore} points</strong> (+45 EXP)!
+                You scored <strong className="text-teal-700 text-lg">{matchScore} points</strong> (+45 EXP)!
               </p>
               <div className="flex items-center justify-center gap-3 pt-2">
                 <button
                   onClick={initMatchGame}
-                  className="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm shadow-md cursor-pointer"
+                  className="px-6 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-extrabold text-sm shadow-md cursor-pointer"
                 >
                   Play Again
                 </button>

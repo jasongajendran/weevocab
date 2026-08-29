@@ -148,31 +148,36 @@ export const WordVault: React.FC<WordVaultProps> = ({
     <div className="space-y-6 pb-24 sm:pb-8">
       
       {/* Vault Header */}
-      <div className="bg-gradient-to-br from-emerald-600 via-teal-700 to-indigo-900 rounded-3xl p-6 sm:p-8 text-white shadow-lg shadow-emerald-900/10 relative overflow-hidden border border-emerald-500/30">
+      <div className="bg-gradient-to-r from-emerald-950 via-slate-900 to-purple-950 rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-emerald-950/20 relative overflow-hidden border-2 border-white/20">
+        <div className="absolute -right-10 -top-10 w-72 h-72 bg-gradient-to-br from-amber-400/25 to-emerald-500/25 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute right-8 bottom-3 opacity-15 text-8xl font-black select-none pointer-events-none">
+          ⭐
+        </div>
+
         <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-bold text-emerald-200">
-              <Star className="w-4 h-4 text-amber-300 fill-amber-300" />
-              Personal Study Vault & Flashcards
+          <div className="space-y-3">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/30 text-xs font-black text-amber-300 shadow-2xs">
+              <Star className="w-4 h-4 text-amber-300 fill-amber-300 animate-bounce" />
+              <span>Personal Study Vault & Interactive 3D Flashcards</span>
             </div>
-            <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">
+            <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-white">
               My Word Vault
             </h1>
-            <p className="text-sm sm:text-base text-emerald-100/90 leading-relaxed max-w-xl font-normal">
+            <p className="text-sm sm:text-base text-emerald-100 leading-relaxed max-w-xl font-medium">
               Save your favourite Scottish words, practice with interactive 3D flashcards, and create your own custom school vocabulary bank!
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             <button
               id="add-custom-word-btn"
               onClick={() => {
                 setShowAddModal(true);
                 playSound('click');
               }}
-              className="flex items-center gap-2 px-4 py-3 rounded-2xl bg-white text-emerald-950 font-black text-sm shadow-sm hover:bg-emerald-50 active:scale-95 transition-all whitespace-nowrap cursor-pointer"
+              className="flex items-center gap-2 px-5 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-black text-sm shadow-md hover:from-emerald-400 hover:to-teal-400 active:scale-95 transition-all whitespace-nowrap cursor-pointer hover:scale-105"
             >
-              <Plus className="w-4 h-4 text-emerald-700" />
+              <Plus className="w-5 h-5 text-white font-black" />
               <span>Add Custom Word</span>
             </button>
           </div>
@@ -180,7 +185,7 @@ export const WordVault: React.FC<WordVaultProps> = ({
       </div>
 
       {importStatus && (
-        <div className="p-3.5 bg-blue-50 border border-blue-200 rounded-2xl text-xs sm:text-sm font-bold text-blue-900 flex items-center justify-between shadow-xs">
+        <div className="p-3.5 bg-blue-50 border-2 border-blue-200 rounded-2xl text-xs sm:text-sm font-black text-blue-900 flex items-center justify-between shadow-xs animate-fadeIn">
           <span>{importStatus}</span>
           <button
             onClick={() => setImportStatus(null)}
@@ -192,21 +197,21 @@ export const WordVault: React.FC<WordVaultProps> = ({
       )}
 
       {/* Sub navigation bar */}
-      <div className="flex items-center justify-between flex-wrap gap-2 bg-slate-100/90 p-1.5 rounded-2xl border border-slate-200/80">
-        <div className="flex items-center gap-1">
+      <div className="flex items-center justify-between flex-wrap gap-2 bg-slate-100 p-2 rounded-2xl border border-slate-200">
+        <div className="flex items-center gap-1.5 flex-wrap">
           <button
             id="subtab-starred"
             onClick={() => {
               setActiveSubTab('starred');
               playSound('click');
             }}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer ${
               activeSubTab === 'starred'
-                ? 'bg-white text-emerald-900 shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-gradient-to-r from-amber-400 to-orange-500 text-amber-950 shadow-md scale-105'
+                : 'text-slate-700 hover:text-slate-900 hover:bg-white/60'
             }`}
           >
-            <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
+            <Star className={`w-4 h-4 ${activeSubTab === 'starred' ? 'fill-amber-950 text-amber-950' : 'text-amber-500 fill-amber-500'}`} />
             <span>Starred Words ({starredEntries.length})</span>
           </button>
 
@@ -216,13 +221,13 @@ export const WordVault: React.FC<WordVaultProps> = ({
               setActiveSubTab('flashcards');
               playSound('click');
             }}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer ${
               activeSubTab === 'flashcards'
-                ? 'bg-white text-emerald-900 shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md scale-105'
+                : 'text-slate-700 hover:text-slate-900 hover:bg-white/60'
             }`}
           >
-            <Layers className="w-4 h-4 text-indigo-600" />
+            <Layers className="w-4 h-4 text-indigo-400" />
             <span>Interactive Flashcards</span>
           </button>
 
@@ -232,13 +237,13 @@ export const WordVault: React.FC<WordVaultProps> = ({
               setActiveSubTab('custom');
               playSound('click');
             }}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer ${
               activeSubTab === 'custom'
-                ? 'bg-white text-emerald-900 shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-md scale-105'
+                : 'text-slate-700 hover:text-slate-900 hover:bg-white/60'
             }`}
           >
-            <BookOpen className="w-4 h-4 text-teal-600" />
+            <BookOpen className="w-4 h-4 text-teal-400" />
             <span>Custom Words ({customEntries.length})</span>
           </button>
         </div>
@@ -285,43 +290,45 @@ export const WordVault: React.FC<WordVaultProps> = ({
                   className="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs hover:border-emerald-300 hover:shadow-md transition-all flex flex-col justify-between"
                 >
                   <div>
-                    {/* Top Bar with Word on Left and Action Icons on Right */}
-                    <div className="flex items-start justify-between gap-3 mb-2.5">
+                    {/* Top Bar with Word & Bookmark on Left and Audio Button Aligned to Far Right */}
+                    <div className="flex items-start justify-between gap-3 mb-2.5 pr-3">
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-xl font-black text-slate-900">{entry.word}</h3>
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-xl font-black text-slate-900">{entry.word}</h3>
+                          {/* Star / Remove button next to title */}
+                          <button
+                            onClick={() => {
+                              onToggleStar(entry.id);
+                              playSound('pop');
+                            }}
+                            title="Remove from vault"
+                            aria-label={`Remove ${entry.word} from vault`}
+                            className="p-1 text-amber-500 hover:text-slate-400 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
+                          >
+                            <Star className="w-4 h-4 fill-amber-500" />
+                          </button>
+                        </div>
                         <span className="text-xs font-mono text-slate-500 font-bold">{entry.phonetic} • {entry.partOfSpeech}</span>
                       </div>
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        {/* Sound button on right */}
-                        <button
-                          id={`vault-word-sound-${entry.id}`}
-                          onClick={() => {
-                            playSound('click');
-                            speakWord(entry.word);
-                          }}
-                          title={`Listen to pronunciation of "${entry.word}"`}
-                          aria-label={`Listen to ${entry.word}`}
-                          className="p-2 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 shadow-2xs transition-transform active:scale-95 cursor-pointer"
-                        >
-                          <Volume2 className="w-4 h-4" />
-                        </button>
-                        {/* Star / Remove button on right */}
-                        <button
-                          onClick={() => {
-                            onToggleStar(entry.id);
-                            playSound('pop');
-                          }}
-                          title="Remove from vault"
-                          className="p-2 text-amber-500 hover:text-slate-400 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer"
-                        >
-                          <Star className="w-5 h-5 fill-amber-500" />
-                        </button>
-                      </div>
+
+                      {/* 1. Word Sound button on right */}
+                      <button
+                        id={`vault-word-sound-${entry.id}`}
+                        onClick={() => {
+                          playSound('click');
+                          speakWord(entry.word);
+                        }}
+                        title={`Listen to pronunciation of "${entry.word}"`}
+                        aria-label={`Listen to ${entry.word}`}
+                        className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200 shadow-2xs flex items-center justify-center transition-transform active:scale-95 cursor-pointer shrink-0"
+                      >
+                        <Volume2 className="w-4 h-4" />
+                      </button>
                     </div>
 
                     {/* Definition with Sound Icon right next to definition */}
                     <div className="bg-slate-50 rounded-xl p-3 border border-slate-100 mb-3 flex items-start justify-between gap-2">
-                      <div className="flex-1">
+                      <div className="flex-1 min-w-0">
                         <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-0.5">
                           Meaning:
                         </span>
@@ -329,6 +336,7 @@ export const WordVault: React.FC<WordVaultProps> = ({
                           {entry.definition}
                         </p>
                       </div>
+                      {/* 2. Definition sound button */}
                       <button
                         id={`vault-def-sound-${entry.id}`}
                         onClick={() => {
@@ -337,20 +345,20 @@ export const WordVault: React.FC<WordVaultProps> = ({
                         }}
                         title="Listen to definition"
                         aria-label={`Read definition: ${entry.definition}`}
-                        className="p-1.5 rounded-lg bg-white text-blue-700 hover:bg-blue-50 border border-blue-200 shadow-2xs shrink-0 cursor-pointer"
+                        className="w-8 h-8 rounded-lg bg-white text-emerald-700 hover:bg-emerald-50 border border-emerald-200 shadow-2xs flex items-center justify-center shrink-0 cursor-pointer"
                       >
-                        <Volume2 className="w-3.5 h-3.5" />
+                        <Volume2 className="w-4 h-4" />
                       </button>
                     </div>
 
-                    <div className="bg-slate-50/80 p-3 rounded-xl border border-slate-100 text-xs italic text-slate-700 space-y-2 mb-3">
-                      <div className="flex items-center justify-between not-italic">
+                    <div className="space-y-2 mb-3">
+                      <div className="px-1">
                         <span className="text-[10px] uppercase font-bold text-slate-400">Context Examples:</span>
-                        <span className="text-[10px] text-blue-600 font-bold">🔊 Tap to hear</span>
                       </div>
                       {entry.examples.map((ex, i) => (
-                        <div key={i} className="flex items-start justify-between gap-2">
-                          <p className="flex-1 pt-0.5">"<HighlightedText text={ex} targetWord={entry.word} />"</p>
+                        <div key={i} className="bg-slate-50/80 p-3 rounded-xl border border-slate-100 text-xs italic text-slate-700 flex items-start justify-between gap-2">
+                          <p className="flex-1 min-w-0 pt-0.5 font-medium">"<HighlightedText text={ex} targetWord={entry.word} />"</p>
+                          {/* 3 & 4. Example sound button */}
                           <button
                             onClick={() => {
                               playSound('click');
@@ -358,9 +366,9 @@ export const WordVault: React.FC<WordVaultProps> = ({
                             }}
                             title="Listen to this example"
                             aria-label={`Listen to example ${i + 1}`}
-                            className="p-1.5 rounded-md bg-white text-blue-600 hover:bg-blue-50 border border-blue-200 transition-colors shrink-0 cursor-pointer"
+                            className="w-8 h-8 rounded-lg bg-white text-emerald-700 hover:bg-emerald-50 border border-emerald-200 transition-colors flex items-center justify-center shrink-0 cursor-pointer"
                           >
-                            <Volume2 className="w-3.5 h-3.5" />
+                            <Volume2 className="w-4 h-4" />
                           </button>
                         </div>
                       ))}
@@ -399,14 +407,14 @@ export const WordVault: React.FC<WordVaultProps> = ({
             onClick={handleFlipCard}
             className={`min-h-[340px] rounded-3xl p-8 cursor-pointer transition-all duration-300 flex flex-col justify-between select-none shadow-xl border-2 ${
               isFlipped
-                ? 'bg-gradient-to-br from-indigo-900 to-slate-900 text-white border-indigo-500'
-                : 'bg-white text-slate-900 border-indigo-200'
+                ? 'bg-gradient-to-br from-purple-950 via-slate-900 to-emerald-950 text-white border-purple-500/50'
+                : 'bg-white text-slate-900 border-purple-200'
             }`}
           >
             {!isFlipped ? (
               // FRONT OF CARD
               <div className="flex flex-col items-center justify-center my-auto text-center space-y-3">
-                <span className="px-3 py-1 bg-indigo-50 text-indigo-800 rounded-full text-xs font-black uppercase tracking-wider">
+                <span className="px-3 py-1 bg-purple-50 text-purple-900 rounded-full text-xs font-black uppercase tracking-wider">
                   {currentFlashcard.isScots ? '🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scots Term' : '🎓 Power Word'}
                 </span>
                 <div className="flex items-center justify-center gap-3">
@@ -419,13 +427,13 @@ export const WordVault: React.FC<WordVaultProps> = ({
                     }}
                     title="Pronounce word"
                     aria-label={`Pronounce ${currentFlashcard.word}`}
-                    className="p-2 rounded-2xl bg-indigo-100/80 text-indigo-700 hover:bg-indigo-200 transition-all hover:scale-105 active:scale-95 shadow-xs"
+                    className="p-2 rounded-2xl bg-purple-100 text-purple-800 hover:bg-purple-200 transition-all hover:scale-105 active:scale-95 shadow-xs cursor-pointer"
                   >
                     <Volume2 className="w-5 h-5" />
                   </button>
                 </div>
                 <p className="text-sm font-mono text-slate-500 font-bold">{currentFlashcard.phonetic}</p>
-                <p className="text-xs text-indigo-600 font-semibold italic">📖 {currentFlashcard.phoneticGuide}</p>
+                <p className="text-xs text-purple-700 font-semibold italic">📖 {currentFlashcard.phoneticGuide}</p>
                 <div className="pt-4 flex items-center gap-1.5 text-xs text-slate-400">
                   <RotateCw className="w-3.5 h-3.5 animate-spin" />
                   <span>Tap anywhere to reveal definition & double examples</span>
@@ -436,7 +444,7 @@ export const WordVault: React.FC<WordVaultProps> = ({
               <div className="space-y-4 text-left">
                 <div className="flex items-center justify-between border-b border-white/10 pb-2">
                   <div className="flex items-center gap-2">
-                    <span className="text-xl font-black text-indigo-300">{currentFlashcard.word}</span>
+                    <span className="text-xl font-black text-purple-300">{currentFlashcard.word}</span>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -444,7 +452,7 @@ export const WordVault: React.FC<WordVaultProps> = ({
                         speakWord(currentFlashcard.word);
                       }}
                       title="Pronounce word"
-                      className="p-1 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors"
+                      className="p-1 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors cursor-pointer"
                     >
                       <Volume2 className="w-3.5 h-3.5" />
                     </button>
@@ -464,7 +472,7 @@ export const WordVault: React.FC<WordVaultProps> = ({
                       speakSentence(currentFlashcard.definition, { rate: 0.9 });
                     }}
                     title="Listen to definition"
-                    className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors shrink-0"
+                    className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors shrink-0 cursor-pointer"
                   >
                     <Volume2 className="w-3.5 h-3.5" />
                   </button>
@@ -472,8 +480,7 @@ export const WordVault: React.FC<WordVaultProps> = ({
 
                 <div className="bg-white/10 p-3 rounded-xl space-y-2 text-xs italic">
                   <div className="flex items-center justify-between not-italic">
-                    <span className="text-[10px] uppercase font-bold text-indigo-300 block">Double Examples:</span>
-                    <span className="text-[10px] text-indigo-200 font-bold">🔊 Tap to hear</span>
+                    <span className="text-[10px] uppercase font-bold text-purple-300 block">Double Examples:</span>
                   </div>
                   {currentFlashcard.examples.map((ex, i) => (
                     <div key={i} className="flex items-start gap-2">
@@ -516,19 +523,19 @@ export const WordVault: React.FC<WordVaultProps> = ({
           <div className="flex items-center justify-center gap-4">
             <button
               onClick={handlePrevCard}
-              className="p-3 rounded-2xl bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 shadow-xs"
+              className="p-3 rounded-2xl bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 shadow-xs cursor-pointer"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
             <button
               onClick={handleFlipCard}
-              className="px-6 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs sm:text-sm shadow-md"
+              className="px-6 py-3 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold text-xs sm:text-sm shadow-md cursor-pointer active:scale-95 transition-all"
             >
               Flip Card ↻
             </button>
             <button
               onClick={handleNextCard}
-              className="p-3 rounded-2xl bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 shadow-xs"
+              className="p-3 rounded-2xl bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 shadow-xs cursor-pointer"
             >
               <ChevronRight className="w-5 h-5" />
             </button>
@@ -630,7 +637,6 @@ export const WordVault: React.FC<WordVaultProps> = ({
                     <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs italic text-slate-700 space-y-2 mb-3">
                       <div className="flex items-center justify-between not-italic">
                         <span className="text-[10px] uppercase font-bold text-slate-400">Context Examples:</span>
-                        <span className="text-[10px] text-teal-600 font-bold">🔊 Tap to hear</span>
                       </div>
                       {entry.examples.map((ex, i) => (
                         <div key={i} className="flex items-start justify-between gap-2">
