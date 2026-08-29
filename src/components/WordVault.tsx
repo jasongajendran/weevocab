@@ -285,43 +285,83 @@ export const WordVault: React.FC<WordVaultProps> = ({
                   className="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs hover:border-emerald-300 hover:shadow-md transition-all flex flex-col justify-between"
                 >
                   <div>
-                    <div className="flex items-start justify-between gap-2 mb-2">
-                      <div>
-                        <h3 className="text-xl font-bold text-slate-900">{entry.word}</h3>
-                        <span className="text-xs font-mono text-slate-500">{entry.phonetic} • {entry.partOfSpeech}</span>
+                    {/* Top Bar with Word on Left and Action Icons on Right */}
+                    <div className="flex items-start justify-between gap-3 mb-2.5">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-xl font-black text-slate-900">{entry.word}</h3>
+                        <span className="text-xs font-mono text-slate-500 font-bold">{entry.phonetic} • {entry.partOfSpeech}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        {/* Sound button on right */}
+                        <button
+                          id={`vault-word-sound-${entry.id}`}
+                          onClick={() => {
+                            playSound('click');
+                            speakWord(entry.word);
+                          }}
+                          title={`Listen to pronunciation of "${entry.word}"`}
+                          aria-label={`Listen to ${entry.word}`}
+                          className="p-2 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 shadow-2xs transition-transform active:scale-95 cursor-pointer"
+                        >
+                          <Volume2 className="w-4 h-4" />
+                        </button>
+                        {/* Star / Remove button on right */}
+                        <button
+                          onClick={() => {
+                            onToggleStar(entry.id);
+                            playSound('pop');
+                          }}
+                          title="Remove from vault"
+                          className="p-2 text-amber-500 hover:text-slate-400 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer"
+                        >
+                          <Star className="w-5 h-5 fill-amber-500" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Definition with Sound Icon right next to definition */}
+                    <div className="bg-slate-50 rounded-xl p-3 border border-slate-100 mb-3 flex items-start justify-between gap-2">
+                      <div className="flex-1">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-0.5">
+                          Meaning:
+                        </span>
+                        <p className="text-xs sm:text-sm text-slate-800 font-semibold leading-relaxed">
+                          {entry.definition}
+                        </p>
                       </div>
                       <button
+                        id={`vault-def-sound-${entry.id}`}
                         onClick={() => {
-                          onToggleStar(entry.id);
-                          playSound('pop');
+                          playSound('click');
+                          speakSentence(entry.definition, { rate: 0.9 });
                         }}
-                        title="Remove from vault"
-                        className="p-1.5 text-amber-500 hover:text-slate-400 rounded-lg hover:bg-slate-100"
+                        title="Listen to definition"
+                        aria-label={`Read definition: ${entry.definition}`}
+                        className="p-1.5 rounded-lg bg-white text-blue-700 hover:bg-blue-50 border border-blue-200 shadow-2xs shrink-0 cursor-pointer"
                       >
-                        <Star className="w-5 h-5 fill-amber-500" />
+                        <Volume2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
 
-                    <p className="text-xs sm:text-sm text-slate-700 mb-3">{entry.definition}</p>
-
-                    <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs italic text-slate-700 space-y-2 mb-3">
+                    <div className="bg-slate-50/80 p-3 rounded-xl border border-slate-100 text-xs italic text-slate-700 space-y-2 mb-3">
                       <div className="flex items-center justify-between not-italic">
                         <span className="text-[10px] uppercase font-bold text-slate-400">Context Examples:</span>
                         <span className="text-[10px] text-blue-600 font-bold">🔊 Tap to hear</span>
                       </div>
                       {entry.examples.map((ex, i) => (
-                        <div key={i} className="flex items-start gap-2">
+                        <div key={i} className="flex items-start justify-between gap-2">
+                          <p className="flex-1 pt-0.5">"<HighlightedText text={ex} targetWord={entry.word} />"</p>
                           <button
                             onClick={() => {
                               playSound('click');
                               speakSentence(ex, { rate: 0.88 });
                             }}
                             title="Listen to this example"
-                            className="p-1 rounded-md bg-white text-blue-600 hover:bg-blue-50 border border-blue-200 transition-colors shrink-0 cursor-pointer"
+                            aria-label={`Listen to example ${i + 1}`}
+                            className="p-1.5 rounded-md bg-white text-blue-600 hover:bg-blue-50 border border-blue-200 transition-colors shrink-0 cursor-pointer"
                           >
-                            <Volume2 className="w-3 h-3" />
+                            <Volume2 className="w-3.5 h-3.5" />
                           </button>
-                          <p className="flex-1 pt-0.5">"<HighlightedText text={ex} targetWord={entry.word} />"</p>
                         </div>
                       ))}
                     </div>
@@ -332,18 +372,9 @@ export const WordVault: React.FC<WordVaultProps> = ({
                     </div>
                   </div>
 
-                  <div className="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between">
-                    <button
-                      onClick={() => {
-                        playSound('click');
-                        speakWord(entry.word);
-                      }}
-                      className="flex items-center gap-1 text-xs font-bold text-blue-600 hover:text-blue-800"
-                    >
-                      <Volume2 className="w-4 h-4" />
-                      <span>Listen</span>
-                    </button>
-                    <span className="text-[10px] font-bold text-slate-400">{entry.scotsRegion}</span>
+                  <div className="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                    <span className="text-[11px] font-bold text-slate-500">{entry.scotsRegion}</span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">{entry.difficulty}</span>
                   </div>
                 </div>
               ))}
@@ -378,8 +409,22 @@ export const WordVault: React.FC<WordVaultProps> = ({
                 <span className="px-3 py-1 bg-indigo-50 text-indigo-800 rounded-full text-xs font-black uppercase tracking-wider">
                   {currentFlashcard.isScots ? '🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scots Term' : '🎓 Power Word'}
                 </span>
-                <h2 className="text-4xl font-black tracking-tight">{currentFlashcard.word}</h2>
-                <p className="text-sm font-mono text-slate-500">{currentFlashcard.phonetic}</p>
+                <div className="flex items-center justify-center gap-3">
+                  <h2 className="text-4xl font-black tracking-tight">{currentFlashcard.word}</h2>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      playSound('click');
+                      speakWord(currentFlashcard.word);
+                    }}
+                    title="Pronounce word"
+                    aria-label={`Pronounce ${currentFlashcard.word}`}
+                    className="p-2 rounded-2xl bg-indigo-100/80 text-indigo-700 hover:bg-indigo-200 transition-all hover:scale-105 active:scale-95 shadow-xs"
+                  >
+                    <Volume2 className="w-5 h-5" />
+                  </button>
+                </div>
+                <p className="text-sm font-mono text-slate-500 font-bold">{currentFlashcard.phonetic}</p>
                 <p className="text-xs text-indigo-600 font-semibold italic">📖 {currentFlashcard.phoneticGuide}</p>
                 <div className="pt-4 flex items-center gap-1.5 text-xs text-slate-400">
                   <RotateCw className="w-3.5 h-3.5 animate-spin" />
@@ -390,13 +435,39 @@ export const WordVault: React.FC<WordVaultProps> = ({
               // BACK OF CARD
               <div className="space-y-4 text-left">
                 <div className="flex items-center justify-between border-b border-white/10 pb-2">
-                  <span className="text-xl font-black text-indigo-300">{currentFlashcard.word}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl font-black text-indigo-300">{currentFlashcard.word}</span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        playSound('click');
+                        speakWord(currentFlashcard.word);
+                      }}
+                      title="Pronounce word"
+                      className="p-1 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors"
+                    >
+                      <Volume2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                   <span className="text-xs px-2 py-0.5 bg-white/20 rounded-md font-bold">{currentFlashcard.partOfSpeech}</span>
                 </div>
 
-                <div>
-                  <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider block">Definition:</span>
-                  <p className="text-sm sm:text-base font-semibold leading-snug">{currentFlashcard.definition}</p>
+                <div className="bg-white/10 p-3 rounded-xl flex items-start justify-between gap-2">
+                  <div className="flex-1">
+                    <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider block mb-0.5">Definition:</span>
+                    <p className="text-sm sm:text-base font-semibold leading-snug">{currentFlashcard.definition}</p>
+                  </div>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      playSound('click');
+                      speakSentence(currentFlashcard.definition, { rate: 0.9 });
+                    }}
+                    title="Listen to definition"
+                    className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors shrink-0"
+                  >
+                    <Volume2 className="w-3.5 h-3.5" />
+                  </button>
                 </div>
 
                 <div className="bg-white/10 p-3 rounded-xl space-y-2 text-xs italic">
@@ -436,18 +507,8 @@ export const WordVault: React.FC<WordVaultProps> = ({
             )}
 
             <div className="pt-2 flex items-center justify-between border-t border-slate-100/20 text-xs">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  playSound('click');
-                  speakWord(currentFlashcard.word);
-                }}
-                className="flex items-center gap-1 font-bold text-blue-500 hover:underline"
-              >
-                <Volume2 className="w-4 h-4" />
-                <span>Audio Pronunciation</span>
-              </button>
-              <span className="text-[11px] opacity-60">Flip: Click anywhere</span>
+              <span className="text-slate-400 text-[11px] font-medium">{currentFlashcard.scotsRegion}</span>
+              <span className="text-[11px] opacity-60">Tap card to flip</span>
             </div>
           </div>
 
@@ -504,31 +565,67 @@ export const WordVault: React.FC<WordVaultProps> = ({
                   className="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs flex flex-col justify-between"
                 >
                   <div>
-                    <div className="flex items-start justify-between gap-2 mb-2">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h3 className="text-xl font-bold text-slate-900">{entry.word}</h3>
+                    <div className="flex items-start justify-between gap-3 mb-2.5">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h3 className="text-xl font-black text-slate-900">{entry.word}</h3>
                           <span className="px-2 py-0.5 text-[10px] font-bold bg-teal-100 text-teal-900 rounded-md">
                             Custom Added
                           </span>
                         </div>
-                        <span className="text-xs font-mono text-slate-500">{entry.phonetic} • {entry.partOfSpeech}</span>
+                        <span className="text-xs font-mono text-slate-500 font-bold">{entry.phonetic} • {entry.partOfSpeech}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        {/* Sound button on right */}
+                        <button
+                          onClick={() => {
+                            playSound('click');
+                            speakWord(entry.word);
+                          }}
+                          title={`Listen to "${entry.word}"`}
+                          aria-label={`Listen to ${entry.word}`}
+                          className="p-2 rounded-xl bg-teal-50 text-teal-700 hover:bg-teal-100 border border-teal-200 shadow-2xs transition-transform active:scale-95 cursor-pointer"
+                        >
+                          <Volume2 className="w-4 h-4" />
+                        </button>
+                        {/* Delete button on right */}
+                        <button
+                          onClick={() => {
+                            if (confirm(`Delete custom word "${entry.word}"?`)) {
+                              onDeleteCustomWord(entry.id);
+                              playSound('pop');
+                            }
+                          }}
+                          title="Delete custom word"
+                          className="p-2 text-rose-500 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Definition with Sound Icon right next to definition */}
+                    <div className="bg-slate-50 rounded-xl p-3 border border-slate-100 mb-3 flex items-start justify-between gap-2">
+                      <div className="flex-1">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-0.5">
+                          Meaning:
+                        </span>
+                        <p className="text-xs sm:text-sm text-slate-800 font-semibold leading-relaxed">
+                          {entry.definition}
+                        </p>
                       </div>
                       <button
                         onClick={() => {
-                          if (confirm(`Delete custom word "${entry.word}"?`)) {
-                            onDeleteCustomWord(entry.id);
-                            playSound('pop');
-                          }
+                          playSound('click');
+                          speakSentence(entry.definition, { rate: 0.9 });
                         }}
-                        title="Delete custom word"
-                        className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg"
+                        title="Listen to definition"
+                        aria-label={`Read definition: ${entry.definition}`}
+                        className="p-1.5 rounded-lg bg-white text-teal-700 hover:bg-teal-50 border border-teal-200 shadow-2xs shrink-0 cursor-pointer"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Volume2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
-
-                    <p className="text-xs sm:text-sm text-slate-700 mb-3">{entry.definition}</p>
 
                     <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs italic text-slate-700 space-y-2 mb-3">
                       <div className="flex items-center justify-between not-italic">
@@ -536,18 +633,19 @@ export const WordVault: React.FC<WordVaultProps> = ({
                         <span className="text-[10px] text-teal-600 font-bold">🔊 Tap to hear</span>
                       </div>
                       {entry.examples.map((ex, i) => (
-                        <div key={i} className="flex items-start gap-2">
+                        <div key={i} className="flex items-start justify-between gap-2">
+                          <p className="flex-1 pt-0.5">#{i + 1} "{ex}"</p>
                           <button
                             onClick={() => {
                               playSound('click');
                               speakSentence(ex, { rate: 0.88 });
                             }}
                             title="Listen to this custom example"
-                            className="p-1 rounded-md bg-white text-teal-700 hover:bg-teal-50 border border-teal-200 transition-colors shrink-0 cursor-pointer"
+                            aria-label={`Listen to example ${i + 1}`}
+                            className="p-1.5 rounded-md bg-white text-teal-700 hover:bg-teal-50 border border-teal-200 transition-colors shrink-0 cursor-pointer"
                           >
-                            <Volume2 className="w-3 h-3" />
+                            <Volume2 className="w-3.5 h-3.5" />
                           </button>
-                          <p className="flex-1 pt-0.5">#{i + 1} "{ex}"</p>
                         </div>
                       ))}
                     </div>

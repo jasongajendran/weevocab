@@ -3,7 +3,7 @@ import confetti from 'canvas-confetti';
 import { 
   Search, Volume2, Mic, MicOff, Star, Sparkles, Shuffle, X, 
   BookOpen, ChevronRight, CheckCircle2, AlertCircle, BookmarkCheck,
-  Tag, MapPin, Layers, GraduationCap, Copy, Check, ChevronDown, ChevronUp,
+  Tag, MapPin, Layers, GraduationCap, ChevronDown, ChevronUp,
   Eye, EyeOff, VolumeX, Radio, Compass, Filter, ChevronLeft, ArrowUp,
   Rows, Columns2, Columns3
 } from 'lucide-react';
@@ -59,7 +59,6 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
   const [isRecording, setIsRecording] = useState(false);
   const [voiceResult, setVoiceResult] = useState<RecognitionResult | null>(null);
   const [voiceError, setVoiceError] = useState<string | null>(null);
-  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   // Refs for smooth manual scrubbing
   const alphabetBarRef = useRef<HTMLDivElement>(null);
@@ -255,15 +254,6 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
       setIsRecording(false);
       stopFn();
     }, 5000);
-  };
-
-  // Copy entry details
-  const handleCopyWord = (entry: DictionaryEntry) => {
-    const text = `${entry.word} (${entry.partOfSpeech}) - ${entry.phonetic}\nDefinition: ${entry.definition}\nExamples:\n1. ${entry.examples[0]}\n2. ${entry.examples[1]}\nSynonyms: ${entry.synonyms.join(', ')}\nAntonyms: ${entry.antonyms.join(', ')}`;
-    navigator.clipboard.writeText(text);
-    setCopiedId(entry.id);
-    playSound('pop');
-    setTimeout(() => setCopiedId(null), 2000);
   };
 
   // Helper for Category Styling & Badges
@@ -895,15 +885,16 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                 }`}
               >
                 <div>
-                  {/* Top Bar: Word, Badges, Star */}
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 flex-wrap">
+                  {/* Top Bar: Word, Badges on Left; Sound and Star Action Icons to the Right */}
+                  <div className="flex items-start justify-between gap-3 mb-2.5">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2.5 flex-wrap">
                         <h2 className={`font-black text-slate-900 transition-colors ${theme.titleHover} ${
                           layoutColumns === '1' ? 'text-2xl sm:text-3xl' : 'text-xl sm:text-2xl'
                         }`}>
                           {entry.word}
                         </h2>
+
                         <span className={`px-2 py-0.5 text-[11px] font-extrabold rounded-md border ${theme.badgeBg}`}>
                           {theme.flag}
                         </span>
@@ -920,27 +911,45 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                       </div>
                     </div>
 
-                    {/* Star / Bookmark Button */}
-                    <button
-                      id={`star-btn-${entry.id}`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onToggleStar(entry.id);
-                        playSound('pop');
-                      }}
-                      title={isStarred ? 'Remove from My Vault' : 'Save to My Vault'}
-                      className={`p-2.5 rounded-xl transition-all shrink-0 cursor-pointer ${
-                        isStarred 
-                          ? 'bg-amber-100 text-amber-600 hover:bg-amber-200' 
-                          : 'bg-slate-100 text-slate-400 hover:text-amber-500 hover:bg-amber-50'
-                      }`}
-                    >
-                      <Star className={`w-4 h-4 ${isStarred ? 'fill-amber-500 text-amber-500' : ''}`} />
-                    </button>
+                    {/* Card Action Icons Aligned to the Right */}
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      {/* Word Pronunciation Sound Icon on the Right */}
+                      <button
+                        id={`word-sound-btn-${entry.id}`}
+                        onClick={() => handlePronounceAudio(entry.word, `word-${entry.id}`, 0.9)}
+                        title={`Listen to pronunciation of "${entry.word}"`}
+                        aria-label={`Listen to pronunciation of ${entry.word}`}
+                        className={`p-2 rounded-xl flex items-center justify-center transition-all cursor-pointer shadow-2xs ${
+                          isWordPlaying
+                            ? 'bg-blue-600 text-white shadow-md scale-105 ring-2 ring-blue-300 animate-pulse'
+                            : 'bg-blue-50 text-blue-700 hover:bg-blue-100 hover:scale-105 border border-blue-200/80 active:scale-95'
+                        }`}
+                      >
+                        <Volume2 className={`${layoutColumns === '1' ? 'w-4 h-4' : 'w-3.5 h-3.5'} ${isWordPlaying ? 'animate-bounce' : ''}`} />
+                      </button>
+
+                      {/* Star / Bookmark Button on the Right */}
+                      <button
+                        id={`star-btn-${entry.id}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onToggleStar(entry.id);
+                          playSound('pop');
+                        }}
+                        title={isStarred ? 'Remove from My Vault' : 'Save to My Vault'}
+                        className={`p-2 rounded-xl transition-all cursor-pointer ${
+                          isStarred 
+                            ? 'bg-amber-100 text-amber-600 hover:bg-amber-200 shadow-2xs' 
+                            : 'bg-slate-100 text-slate-400 hover:text-amber-500 hover:bg-amber-50'
+                        }`}
+                      >
+                        <Star className={`w-4 h-4 ${isStarred ? 'fill-amber-500 text-amber-500' : ''}`} />
+                      </button>
+                    </div>
                   </div>
 
                   {/* Tags & Metadata Bar */}
-                  <div className="flex items-center gap-2 mb-2.5 text-xs flex-wrap">
+                  <div className="flex items-center gap-2 mb-3 text-xs flex-wrap">
                     <span className="font-black text-slate-800 bg-slate-100 px-2 py-0.5 rounded-md">
                       {entry.partOfSpeech}
                     </span>
@@ -951,12 +960,39 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                     </span>
                   </div>
 
-                  {/* Definition */}
-                  <p className={`font-semibold text-slate-800 leading-relaxed mb-3.5 ${
-                    layoutColumns === '1' ? 'text-base sm:text-lg' : 'text-sm'
-                  }`}>
-                    {entry.definition}
-                  </p>
+                  {/* Definition Box with Direct Sound Icon Next to Definition */}
+                  {(() => {
+                    const isDefPlaying = playingAudioId === `card-def-${entry.id}`;
+                    return (
+                      <div className="bg-slate-50/70 rounded-xl p-3 sm:p-3.5 border border-slate-200/70 mb-3.5 flex items-start justify-between gap-3 group/def">
+                        <div className="flex-1">
+                          <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-0.5">
+                            Meaning:
+                          </span>
+                          <p className={`font-semibold text-slate-800 leading-relaxed ${
+                            layoutColumns === '1' ? 'text-base sm:text-lg' : 'text-sm'
+                          }`}>
+                            {entry.definition}
+                          </p>
+                        </div>
+
+                        {/* Sound Icon placed right next to the word definition */}
+                        <button
+                          id={`def-sound-btn-${entry.id}`}
+                          onClick={() => handlePronounceAudio(entry.definition, `card-def-${entry.id}`, 0.9)}
+                          title="Listen to definition read out loud"
+                          aria-label={`Listen to definition: ${entry.definition}`}
+                          className={`p-2 rounded-xl flex items-center justify-center transition-all shrink-0 cursor-pointer ${
+                            isDefPlaying
+                              ? 'bg-blue-600 text-white shadow-md ring-2 ring-blue-300 animate-pulse'
+                              : 'bg-white text-blue-700 hover:bg-blue-100 shadow-2xs border border-blue-200/80 active:scale-95'
+                          }`}
+                        >
+                          <Volume2 className={`${layoutColumns === '1' ? 'w-4 h-4' : 'w-3.5 h-3.5'} ${isDefPlaying ? 'animate-bounce' : ''}`} />
+                        </button>
+                      </div>
+                    );
+                  })()}
 
                   {/* Example Sentences with Voice Read-Aloud Buttons */}
                   <div className={`bg-slate-50/90 rounded-xl border border-slate-200/60 mb-3.5 ${
@@ -978,12 +1014,18 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                       return (
                         <div 
                           key={idx} 
-                          className={`flex items-start gap-2.5 p-2 rounded-lg border-l-3 transition-all ${
+                          className={`flex items-start justify-between gap-2.5 p-2 rounded-lg border-l-3 transition-all ${
                             isExPlaying 
                               ? 'bg-blue-100/70 border-l-blue-600 text-blue-950 font-bold' 
                               : `${theme.exBorder} text-slate-700`
                           }`}
                         >
+                          <p className={`italic leading-relaxed flex-1 pt-0.5 ${
+                            layoutColumns === '1' ? 'text-sm sm:text-base' : 'text-xs'
+                          }`}>
+                            "<HighlightedText text={ex} targetWord={entry.word} />"
+                          </p>
+
                           <button
                             id={`read-ex-${entry.id}-${idx}`}
                             onClick={() => handlePronounceAudio(ex, exAudioId, 0.88)}
@@ -999,12 +1041,6 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                           >
                             <Volume2 className={`${layoutColumns === '1' ? 'w-4 h-4' : 'w-3.5 h-3.5'} ${isExPlaying ? 'animate-bounce' : ''}`} />
                           </button>
-
-                          <p className={`italic leading-relaxed flex-1 pt-0.5 ${
-                            layoutColumns === '1' ? 'text-sm sm:text-base' : 'text-xs'
-                          }`}>
-                            "<HighlightedText text={ex} targetWord={entry.word} />"
-                          </p>
                         </div>
                       );
                     })}
@@ -1047,33 +1083,14 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                   )}
                 </div>
 
-                {/* Card Footer Actions */}
+                {/* Card Footer: Category details & Deep Study Action */}
                 <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-1.5">
-                    {/* Word Pronounce Button */}
-                    <button
-                      id={`pronounce-btn-${entry.id}`}
-                      onClick={() => handlePronounceAudio(entry.word, `word-${entry.id}`, 0.9)}
-                      title="Listen to word pronunciation"
-                      className={`rounded-xl font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${
-                        layoutColumns === '1' ? 'px-4 py-2 text-sm' : 'px-3 py-1.5 text-xs'
-                      } ${
-                        isWordPlaying
-                          ? 'bg-blue-600 text-white animate-pulse'
-                          : 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200/80'
-                      }`}
-                    >
-                      <Volume2 className={layoutColumns === '1' ? 'w-4 h-4' : 'w-3.5 h-3.5'} />
-                      <span>{isWordPlaying ? 'Speaking...' : 'Listen'}</span>
-                    </button>
-
-                    <button
-                      onClick={() => handleCopyWord(entry)}
-                      title="Copy word details"
-                      className="p-1.5 rounded-xl text-slate-500 hover:bg-slate-100 transition-colors"
-                    >
-                      {copiedId === entry.id ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
-                    </button>
+                  <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium truncate">
+                    <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-bold text-[11px]">
+                      {entry.category}
+                    </span>
+                    <span className="hidden sm:inline">•</span>
+                    <span className="text-[11px] text-slate-400 hidden sm:inline">{entry.examples.length} examples</span>
                   </div>
 
                   <button
@@ -1082,12 +1099,13 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                       setActiveModalWord(entry);
                       playSound('pop');
                     }}
-                    className={`flex items-center gap-1 font-black text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer ${
-                      layoutColumns === '1' ? 'px-3.5 py-2 text-sm' : 'px-2.5 py-1.5 text-xs'
+                    title={`Open full pronunciation studio, etymology, examples and story creator for ${entry.word}`}
+                    className={`flex items-center justify-center gap-1.5 font-black text-blue-700 bg-blue-50/90 hover:bg-blue-100 hover:text-blue-900 border border-blue-200/80 rounded-xl transition-all hover:scale-[1.02] active:scale-95 cursor-pointer shadow-2xs shrink-0 ${
+                      layoutColumns === '1' ? 'px-4 py-2 text-sm' : 'px-3 py-1.5 text-xs'
                     }`}
                   >
                     <span>Full Study Guide</span>
-                    <ChevronRight className="w-3.5 h-3.5" />
+                    <ChevronRight className="w-4 h-4 text-blue-600" />
                   </button>
                 </div>
               </div>
@@ -1122,10 +1140,26 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
 
             {/* Header */}
             <div>
-              <div className="flex items-center gap-2.5 flex-wrap">
+              <div className="flex items-center gap-3 flex-wrap">
                 <h2 className="text-2xl sm:text-4xl font-black text-slate-900">
                   {activeModalWord.word}
                 </h2>
+
+                {/* Sound Button right next to word title in modal */}
+                <button
+                  id="modal-word-title-sound-btn"
+                  onClick={() => handlePronounceAudio(activeModalWord.word, 'modal-title-word', 0.9)}
+                  title={`Listen to pronunciation of "${activeModalWord.word}"`}
+                  aria-label={`Listen to pronunciation of ${activeModalWord.word}`}
+                  className={`p-2.5 rounded-2xl flex items-center justify-center transition-all cursor-pointer shadow-xs ${
+                    playingAudioId === 'modal-title-word'
+                      ? 'bg-blue-600 text-white scale-105 ring-2 ring-blue-300 animate-pulse'
+                      : 'bg-blue-50 text-blue-700 hover:bg-blue-100 hover:scale-105 border border-blue-200 active:scale-95'
+                  }`}
+                >
+                  <Volume2 className={`w-5 h-5 ${playingAudioId === 'modal-title-word' ? 'animate-bounce' : ''}`} />
+                </button>
+
                 {activeModalWord.category === 'UK Common & Slang' && (
                   <span className="px-3 py-1 text-xs font-black bg-sky-100 text-sky-900 rounded-full border border-sky-300">
                     🇬🇧 UK Slang & Common
@@ -1237,24 +1271,35 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
               )}
             </div>
 
-            {/* Definition */}
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <h4 className="text-xs font-black uppercase tracking-wider text-slate-400">
-                  Definition
-                </h4>
-                <button
-                  onClick={() => handlePronounceAudio(activeModalWord.definition, 'modal-def', 0.9)}
-                  className="flex items-center gap-1 text-[11px] font-bold text-blue-600 hover:text-blue-800"
-                >
-                  <Volume2 className="w-3.5 h-3.5" />
-                  <span>Read Meaning</span>
-                </button>
-              </div>
-              <p className="text-base text-slate-800 font-semibold leading-relaxed">
-                {activeModalWord.definition}
-              </p>
-            </div>
+            {/* Definition Box with Direct Audio Button */}
+            {(() => {
+              const isModalDefPlaying = playingAudioId === 'modal-def';
+              return (
+                <div className="bg-slate-50 rounded-2xl p-4 sm:p-5 border border-slate-200/80 flex items-start justify-between gap-3">
+                  <div className="flex-1">
+                    <span className="text-xs font-black uppercase tracking-wider text-slate-400 block mb-1">
+                      Definition & Meaning
+                    </span>
+                    <p className="text-base sm:text-lg text-slate-900 font-semibold leading-relaxed">
+                      {activeModalWord.definition}
+                    </p>
+                  </div>
+                  <button
+                    id="modal-def-sound-btn"
+                    onClick={() => handlePronounceAudio(activeModalWord.definition, 'modal-def', 0.9)}
+                    title="Listen to full definition read out loud"
+                    aria-label={`Read definition: ${activeModalWord.definition}`}
+                    className={`p-2.5 rounded-xl flex items-center justify-center transition-all shrink-0 cursor-pointer ${
+                      isModalDefPlaying
+                        ? 'bg-blue-600 text-white ring-2 ring-blue-300 animate-pulse shadow-md'
+                        : 'bg-white text-blue-700 hover:bg-blue-100 shadow-2xs border border-blue-200/80 active:scale-95'
+                    }`}
+                  >
+                    <Volume2 className={`w-5 h-5 ${isModalDefPlaying ? 'animate-bounce' : ''}`} />
+                  </button>
+                </div>
+              );
+            })()}
 
             {/* Contextual Examples with Voice Read Buttons */}
             <div className="space-y-2.5">
@@ -1273,15 +1318,21 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                   return (
                     <div 
                       key={i} 
-                      className={`p-3.5 rounded-2xl border flex items-start gap-3 transition-all ${
+                      className={`p-3.5 rounded-2xl border flex items-start justify-between gap-3 transition-all ${
                         isExPlaying 
                           ? 'bg-blue-100/80 border-blue-400 text-blue-950 font-bold' 
                           : 'bg-slate-50 border-slate-200 text-slate-800'
                       }`}
                     >
+                      <div className="text-sm italic leading-relaxed flex-1 pt-0.5">
+                        <span className="font-black text-blue-600 not-italic mr-2">#{i + 1}</span>
+                        "<HighlightedText text={ex} targetWord={activeModalWord.word} />"
+                      </div>
+
                       <button
                         onClick={() => handlePronounceAudio(ex, modalExId, 0.88)}
                         title="Listen to this sentence"
+                        aria-label={`Listen to example sentence ${i + 1}`}
                         className={`p-2 rounded-xl transition-all shrink-0 cursor-pointer ${
                           isExPlaying
                             ? 'bg-blue-600 text-white animate-pulse'
@@ -1290,11 +1341,6 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                       >
                         <Volume2 className="w-4 h-4" />
                       </button>
-
-                      <div className="text-sm italic leading-relaxed flex-1 pt-0.5">
-                        <span className="font-black text-blue-600 not-italic mr-2">#{i + 1}</span>
-                        "<HighlightedText text={ex} targetWord={activeModalWord.word} />"
-                      </div>
                     </div>
                   );
                 })}

@@ -117,10 +117,11 @@ export const DailyQuestHub: React.FC<DailyQuestHubProps> = ({
               <span className="text-[11px] font-extrabold uppercase tracking-wider text-amber-700 block">
                 Word of the Day • {new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}
               </span>
-              <div className="flex items-center gap-2 mt-0.5">
+              <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                 <h2 className="text-2xl sm:text-3xl font-black text-slate-900">
                   {wordOfTheDay.word}
                 </h2>
+
                 {wordOfTheDay.isScots && (
                   <span className="px-2.5 py-0.5 text-xs font-extrabold bg-blue-50 text-blue-700 border border-blue-200/80 rounded-md">
                     🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scots Regional
@@ -130,17 +131,19 @@ export const DailyQuestHub: React.FC<DailyQuestHubProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
+            {/* Sound button placed on the right */}
             <button
-              id="wotd-pronounce-btn"
+              id="wotd-sound-btn"
               onClick={() => {
                 playSound('click');
                 speakWord(wordOfTheDay.word, { rate: 0.85 });
               }}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100/80 font-bold text-xs transition-colors"
+              title={`Listen to pronunciation of "${wordOfTheDay.word}"`}
+              aria-label={`Listen to ${wordOfTheDay.word}`}
+              className="p-2 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 shadow-2xs transition-transform active:scale-95 cursor-pointer"
             >
               <Volume2 className="w-4 h-4" />
-              <span>Pronounce</span>
             </button>
 
             <button
@@ -149,7 +152,7 @@ export const DailyQuestHub: React.FC<DailyQuestHubProps> = ({
                 onToggleStar(wordOfTheDay.id);
                 playSound('pop');
               }}
-              className={`p-2 rounded-xl transition-all ${
+              className={`p-2 rounded-xl transition-all cursor-pointer ${
                 isStarred 
                   ? 'bg-amber-100/80 text-amber-600' 
                   : 'bg-slate-100/80 text-slate-400 hover:bg-amber-50 hover:text-amber-600'
@@ -174,13 +177,28 @@ export const DailyQuestHub: React.FC<DailyQuestHubProps> = ({
               </p>
             </div>
 
-            <div>
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">
-                Definition
-              </span>
-              <p className="text-base text-slate-900 font-bold leading-relaxed">
-                {wordOfTheDay.definition}
-              </p>
+            {/* Definition with sound icon right next to definition */}
+            <div className="bg-slate-50 rounded-xl p-3 border border-slate-200/70 flex items-start justify-between gap-2">
+              <div className="flex-1">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">
+                  Definition
+                </span>
+                <p className="text-sm sm:text-base text-slate-900 font-bold leading-relaxed">
+                  {wordOfTheDay.definition}
+                </p>
+              </div>
+              <button
+                id="wotd-def-sound-btn"
+                onClick={() => {
+                  playSound('click');
+                  speakSentence(wordOfTheDay.definition, { rate: 0.9 });
+                }}
+                title="Listen to definition"
+                aria-label={`Read definition: ${wordOfTheDay.definition}`}
+                className="p-1.5 rounded-lg bg-white text-blue-700 hover:bg-blue-50 border border-blue-200 shadow-2xs shrink-0 cursor-pointer"
+              >
+                <Volume2 className="w-3.5 h-3.5" />
+              </button>
             </div>
 
             {/* Synonyms & Antonyms */}
@@ -196,7 +214,7 @@ export const DailyQuestHub: React.FC<DailyQuestHubProps> = ({
             </div>
           </div>
 
-          {/* 2 Context Examples */}
+          {/* 2 Context Examples with Sound Button to the Right */}
           <div className="bg-amber-50/60 rounded-2xl p-4 border border-amber-200/80 space-y-2.5">
             <div className="flex items-center justify-between">
               <span className="text-xs font-black uppercase tracking-wider text-amber-900 block">
@@ -205,7 +223,11 @@ export const DailyQuestHub: React.FC<DailyQuestHubProps> = ({
               <span className="text-[10px] text-amber-700 font-bold">🔊 Tap to listen</span>
             </div>
             {wordOfTheDay.examples.map((ex, idx) => (
-              <div key={idx} className="bg-white p-3 rounded-xl border border-amber-200/60 text-xs sm:text-sm text-slate-800 italic shadow-2xs flex items-start gap-2.5">
+              <div key={idx} className="bg-white p-3 rounded-xl border border-amber-200/60 text-xs sm:text-sm text-slate-800 italic shadow-2xs flex items-start justify-between gap-2.5">
+                <div className="flex-1 pt-0.5">
+                  <span className="font-bold text-amber-600 not-italic mr-1.5">#{idx + 1}</span>
+                  "{ex}"
+                </div>
                 <button
                   id={`wotd-read-ex-${idx}`}
                   onClick={() => {
@@ -213,14 +235,11 @@ export const DailyQuestHub: React.FC<DailyQuestHubProps> = ({
                     speakSentence(ex, { rate: 0.88 });
                   }}
                   title="Listen to this example"
+                  aria-label={`Listen to example ${idx + 1}`}
                   className="p-1.5 rounded-lg bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200 transition-colors shrink-0 cursor-pointer"
                 >
                   <Volume2 className="w-3.5 h-3.5" />
                 </button>
-                <div className="flex-1 pt-0.5">
-                  <span className="font-bold text-amber-600 not-italic mr-1.5">#{idx + 1}</span>
-                  "{ex}"
-                </div>
               </div>
             ))}
           </div>
