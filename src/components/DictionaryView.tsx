@@ -257,82 +257,82 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
     }, 5000);
   };
 
-  // Helper for Category Styling & Badges
+  // Helper for Category Styling & Badges (Yellow, Green, Red, Pink Palette)
   const getCategoryTheme = (entry: DictionaryEntry) => {
     if (entry.category === 'UK Common & Slang') {
       return {
-        badgeBg: 'bg-teal-100 text-teal-950 border-teal-300',
+        badgeBg: 'bg-amber-100 text-amber-950 border-amber-300',
         flag: '🇬🇧 UK Slang',
-        accentBar: 'border-t-4 border-t-teal-600',
-        exBorder: 'border-l-teal-500 bg-teal-50/50',
-        titleHover: 'group-hover:text-teal-700',
+        accentBar: 'border-t-4 border-t-amber-400',
+        exBorder: 'border-l-amber-400 bg-amber-50/60',
+        titleHover: 'group-hover:text-amber-800',
       };
     }
     if (entry.isScots || entry.category === 'School & Banter') {
       return {
-        badgeBg: 'bg-purple-100 text-purple-950 border-purple-300',
+        badgeBg: 'bg-emerald-100 text-emerald-950 border-emerald-300',
         flag: '🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scots',
-        accentBar: 'border-t-4 border-t-purple-600',
-        exBorder: 'border-l-purple-500 bg-purple-50/50',
-        titleHover: 'group-hover:text-purple-700',
+        accentBar: 'border-t-4 border-t-emerald-500',
+        exBorder: 'border-l-emerald-500 bg-emerald-50/60',
+        titleHover: 'group-hover:text-emerald-800',
       };
     }
     if (entry.isAcademic) {
       return {
-        badgeBg: 'bg-fuchsia-100 text-fuchsia-950 border-fuchsia-300',
+        badgeBg: 'bg-pink-100 text-pink-950 border-pink-300',
         flag: '🎓 Scholar',
-        accentBar: 'border-t-4 border-t-fuchsia-600',
-        exBorder: 'border-l-fuchsia-500 bg-fuchsia-50/50',
-        titleHover: 'group-hover:text-fuchsia-700',
+        accentBar: 'border-t-4 border-t-pink-400',
+        exBorder: 'border-l-pink-400 bg-pink-50/60',
+        titleHover: 'group-hover:text-pink-800',
       };
     }
     if (entry.category === 'Nature & Places') {
       return {
-        badgeBg: 'bg-emerald-100 text-emerald-950 border-emerald-300',
+        badgeBg: 'bg-teal-100 text-teal-950 border-teal-300',
         flag: '🌲 Nature',
-        accentBar: 'border-t-4 border-t-emerald-600',
-        exBorder: 'border-l-emerald-500 bg-emerald-50/50',
-        titleHover: 'group-hover:text-emerald-700',
+        accentBar: 'border-t-4 border-t-teal-500',
+        exBorder: 'border-l-teal-500 bg-teal-50/60',
+        titleHover: 'group-hover:text-teal-800',
       };
     }
     return {
-      badgeBg: 'bg-amber-100 text-amber-950 border-amber-300',
+      badgeBg: 'bg-rose-100 text-rose-950 border-rose-300',
       flag: '🍲 Culture',
-      accentBar: 'border-t-4 border-t-amber-500',
-      exBorder: 'border-l-amber-500 bg-amber-50/50',
-      titleHover: 'group-hover:text-amber-700',
+      accentBar: 'border-t-4 border-t-rose-400',
+      exBorder: 'border-l-rose-400 bg-rose-50/60',
+      titleHover: 'group-hover:text-rose-800',
     };
   };
 
   const getDifficultyBadge = (difficulty: string) => {
     if (difficulty.includes('P6-P7')) {
-      return <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-200">🟢 P6–P7 Starter</span>;
+      return <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-900 border border-emerald-300">🟢 P6–P7 Starter</span>;
     }
     if (difficulty.includes('S1-S2')) {
-      return <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-900 border border-amber-200">🟡 S1–S2 Intermediate</span>;
+      return <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-950 border border-amber-300">🟡 S1–S2 Intermediate</span>;
     }
-    return <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-purple-100 text-purple-900 border border-purple-200">🟣 S3–S4 Scholar</span>;
+    return <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-pink-100 text-pink-950 border border-pink-300">🌸 S3–S4 Scholar</span>;
   };
 
   return (
     <div className="space-y-5 pb-24 sm:pb-8">
       
       {/* Top Controls: Focus Mode Toggle, Layout Selector & Quick Helper */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-white px-4 py-2.5 rounded-2xl border border-slate-200/80 shadow-2xs">
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-white/90 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-amber-200/70 shadow-2xs">
         <div className="flex items-center gap-2">
           <span className="text-xl">📖</span>
           <span className="text-xs sm:text-sm font-black text-slate-800">
             {isFocusMode ? '🎯 Focus Reading Mode' : '🌟 Interactive Dictionary'}
           </span>
-          <span className="hidden md:inline-block px-2 py-0.5 rounded-full text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+          <span className="hidden md:inline-block px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
             {filteredEntries.length} words
           </span>
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
           {/* Layout Selector */}
-          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200/80">
-            <span className="text-[10px] font-extrabold uppercase text-slate-400 px-1 hidden sm:inline">
+          <div className="flex items-center gap-1 bg-amber-50/80 p-1 rounded-xl border border-amber-200/80">
+            <span className="text-[10px] font-extrabold uppercase text-amber-900 px-1 hidden sm:inline">
               Layout:
             </span>
             <button
@@ -342,8 +342,8 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
               aria-label="1 Word per Row"
               className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
                 layoutColumns === '1'
-                  ? 'bg-white text-blue-700 shadow-xs border border-slate-200'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                  ? 'bg-white text-emerald-800 shadow-xs border border-emerald-200'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-amber-100/60'
               }`}
             >
               <Rows className="w-3.5 h-3.5" />
@@ -356,8 +356,8 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
               aria-label="2 Words per Row"
               className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
                 layoutColumns === '2'
-                  ? 'bg-white text-blue-700 shadow-xs border border-slate-200'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                  ? 'bg-white text-emerald-800 shadow-xs border border-emerald-200'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-amber-100/60'
               }`}
             >
               <Columns2 className="w-3.5 h-3.5" />
@@ -370,8 +370,8 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
               aria-label="3 Words per Row"
               className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
                 layoutColumns === '3'
-                  ? 'bg-white text-blue-700 shadow-xs border border-slate-200'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                  ? 'bg-white text-emerald-800 shadow-xs border border-emerald-200'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-amber-100/60'
               }`}
             >
               <Columns3 className="w-3.5 h-3.5" />
@@ -390,7 +390,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs transition-all cursor-pointer ${
               isFocusMode
                 ? 'bg-amber-400 text-slate-950 shadow-xs hover:bg-amber-300'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                : 'bg-slate-100 text-slate-700 hover:bg-amber-100'
             }`}
             title={isFocusMode ? 'Switch back to full interactive mode' : 'Hide distractions for peaceful reading'}
           >
@@ -402,10 +402,10 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
 
       {/* Main Header Banner (Hidden in Focus Mode) */}
       {!isFocusMode && (
-        <div className="bg-gradient-to-r from-teal-950 via-emerald-950 via-slate-900 to-stone-950 rounded-3xl p-5 sm:p-8 text-white shadow-xl shadow-emerald-950/20 relative overflow-hidden border-2 border-white/20">
-          {/* Decorative Colorful Ambient Blurs & Patterns */}
-          <div className="absolute -right-12 -top-12 w-72 h-72 bg-gradient-to-br from-amber-400/20 via-emerald-500/25 to-teal-500/20 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute left-1/3 -bottom-10 w-60 h-60 bg-teal-400/15 rounded-full blur-2xl pointer-events-none" />
+        <div className="bg-gradient-to-br from-emerald-900 via-teal-900 to-slate-900 rounded-3xl p-5 sm:p-8 text-white shadow-xl shadow-emerald-950/15 relative overflow-hidden border-2 border-emerald-200/30">
+          {/* Decorative Colorful Ambient Blurs & Patterns (Yellow, Green, Red, Pink) */}
+          <div className="absolute -right-10 -top-10 w-72 h-72 bg-gradient-to-br from-amber-400/25 via-emerald-400/25 to-pink-400/20 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute left-1/4 -bottom-10 w-60 h-60 bg-rose-400/20 rounded-full blur-2xl pointer-events-none" />
           <div className="absolute right-6 bottom-2 opacity-15 text-8xl sm:text-9xl font-black select-none pointer-events-none transform -rotate-6">
             🦉
           </div>
@@ -425,7 +425,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
             {/* Search Input Bar */}
             <div className="pt-2 flex flex-col sm:flex-row gap-2.5">
               <div className="relative flex-1">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-teal-400" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-400" />
                 <input
                   id="dictionary-search-input"
                   type="text"
@@ -448,7 +448,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
               <button
                 id="random-word-btn"
                 onClick={handleRandomWord}
-                className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 hover:from-amber-300 hover:to-orange-400 active:scale-95 text-slate-950 font-black text-sm shadow-md hover:shadow-lg transition-all whitespace-nowrap cursor-pointer border border-amber-300"
+                className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-400 active:scale-95 text-slate-950 font-black text-sm shadow-md hover:shadow-lg transition-all whitespace-nowrap cursor-pointer border border-amber-300"
               >
                 <Shuffle className="w-4 h-4 text-slate-950" />
                 <span>Surprise Word! 🎲</span>
@@ -646,13 +646,13 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
               </span>
               <div className="flex flex-wrap items-center gap-2">
                 {[
-                  { label: '✨ All Categories', value: 'All', activeClass: 'bg-gradient-to-r from-emerald-700 to-teal-700 text-white shadow-xs', normalClass: 'bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-200' },
-                  { label: '🇬🇧 UK Common & Slang', value: 'UK Common', activeClass: 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-xs', normalClass: 'bg-teal-50 text-teal-950 hover:bg-teal-100 border-teal-200' },
-                  { label: '🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scots & Regional', value: 'Scots Slang', activeClass: 'bg-gradient-to-r from-purple-700 to-violet-800 text-white shadow-xs', normalClass: 'bg-purple-50 text-purple-950 hover:bg-purple-100 border-purple-200' },
-                  { label: '🎓 Academic & Power', value: 'Academic', activeClass: 'bg-gradient-to-r from-fuchsia-700 to-rose-700 text-white shadow-xs', normalClass: 'bg-fuchsia-50 text-fuchsia-950 hover:bg-fuchsia-100 border-fuchsia-200' },
-                  { label: '🏫 School & Banter', value: 'School & Banter', activeClass: 'bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-xs', normalClass: 'bg-amber-50 text-amber-950 hover:bg-amber-100 border-amber-200' },
-                  { label: '🌲 Nature & Places', value: 'Nature & Places', activeClass: 'bg-gradient-to-r from-green-700 to-emerald-800 text-white shadow-xs', normalClass: 'bg-green-50 text-green-950 hover:bg-green-100 border-green-200' },
-                  { label: '🍲 Food & Culture', value: 'Food & Culture', activeClass: 'bg-gradient-to-r from-rose-600 to-orange-600 text-white shadow-xs', normalClass: 'bg-rose-50 text-rose-950 hover:bg-rose-100 border-rose-200' },
+                  { label: '✨ All Categories', value: 'All', activeClass: 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-xs', normalClass: 'bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-200' },
+                  { label: '🇬🇧 UK Common & Slang', value: 'UK Common', activeClass: 'bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 shadow-xs', normalClass: 'bg-amber-50 text-amber-950 hover:bg-amber-100 border-amber-200' },
+                  { label: '🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scots & Regional', value: 'Scots Slang', activeClass: 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-xs', normalClass: 'bg-emerald-50 text-emerald-950 hover:bg-emerald-100 border-emerald-200' },
+                  { label: '🎓 Academic & Power', value: 'Academic', activeClass: 'bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-xs', normalClass: 'bg-pink-50 text-pink-950 hover:bg-pink-100 border-pink-200' },
+                  { label: '🏫 School & Banter', value: 'School & Banter', activeClass: 'bg-gradient-to-r from-rose-500 to-red-500 text-white shadow-xs', normalClass: 'bg-rose-50 text-rose-950 hover:bg-rose-100 border-rose-200' },
+                  { label: '🌲 Nature & Places', value: 'Nature & Places', activeClass: 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-xs', normalClass: 'bg-teal-50 text-teal-950 hover:bg-teal-100 border-teal-200' },
+                  { label: '🍲 Food & Culture', value: 'Food & Culture', activeClass: 'bg-gradient-to-r from-amber-500 to-rose-500 text-white shadow-xs', normalClass: 'bg-amber-50 text-amber-950 hover:bg-amber-100 border-amber-200' },
                 ].map(cat => (
                   <button
                     key={cat.value}

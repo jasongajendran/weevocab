@@ -185,8 +185,20 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col selection:bg-blue-500 selection:text-white font-sans">
+    <div className="min-h-screen bg-[#faf8f5] text-slate-900 flex flex-col selection:bg-rose-400 selection:text-white font-sans relative overflow-x-hidden">
       
+      {/* Eye-friendly Soft Pastel Backdrop Ambient Washes (Yellow, Green, Red, Pink) */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        {/* Soft Pastel Mint Green Glow */}
+        <div className="absolute -top-24 left-10 w-96 h-96 bg-emerald-200/25 rounded-full blur-3xl" />
+        {/* Soft Pastel Buttercup Yellow Glow */}
+        <div className="absolute top-1/4 -right-20 w-96 h-96 bg-amber-200/30 rounded-full blur-3xl" />
+        {/* Soft Pastel Blush Pink Glow */}
+        <div className="absolute top-2/3 -left-20 w-96 h-96 bg-pink-200/25 rounded-full blur-3xl" />
+        {/* Soft Pastel Coral Red Glow */}
+        <div className="absolute -bottom-24 right-1/4 w-96 h-96 bg-rose-200/25 rounded-full blur-3xl" />
+      </div>
+
       {/* Top Navbar */}
       <Navbar
         activeTab={activeTab}
@@ -199,7 +211,7 @@ export default function App() {
       />
 
       {/* Main Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 relative z-10">
         
         {/* Tab 1: A-Z Dictionary Explorer */}
         {activeTab === 'dictionary' && (
@@ -255,19 +267,17 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-slate-200/80 py-6 text-center text-xs text-slate-500">
+      <footer className="bg-white/85 backdrop-blur-md border-t border-amber-200/60 py-6 text-center text-xs text-slate-500 relative z-10">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <span>🦉</span>
+            <span className="text-base">🦉</span>
             <span className="font-extrabold text-slate-800">WeeVocab Scotland Junior Dictionary</span>
-            <span>• Designed for P6–S4 Students (Ages 10–15)</span>
+            <span className="text-slate-500">• For P6–S4 Students (Ages 10–15)</span>
           </div>
-          <div className="flex items-center gap-4 font-semibold text-slate-600">
-            <span>100% Offline Ready</span>
-            <span>•</span>
-            <span>Curriculum for Excellence</span>
-            <span>•</span>
-            <span>Dual Context Examples & Scots Slang</span>
+          <div className="flex items-center gap-3 font-bold text-slate-600 flex-wrap justify-center">
+            <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200/80">100% Offline Ready</span>
+            <span className="px-2 py-0.5 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80">Curriculum for Excellence</span>
+            <span className="px-2 py-0.5 rounded-full bg-rose-50 text-rose-800 border border-rose-200/80">British & Scots Audio</span>
           </div>
         </div>
       </footer>

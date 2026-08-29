@@ -148,8 +148,9 @@ export const WordVault: React.FC<WordVaultProps> = ({
     <div className="space-y-6 pb-24 sm:pb-8">
       
       {/* Vault Header */}
-      <div className="bg-gradient-to-r from-emerald-950 via-slate-900 to-purple-950 rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-emerald-950/20 relative overflow-hidden border-2 border-white/20">
-        <div className="absolute -right-10 -top-10 w-72 h-72 bg-gradient-to-br from-amber-400/25 to-emerald-500/25 rounded-full blur-3xl pointer-events-none" />
+      <div className="bg-gradient-to-br from-emerald-900 via-teal-900 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-emerald-950/15 relative overflow-hidden border-2 border-emerald-200/30">
+        <div className="absolute -right-10 -top-10 w-72 h-72 bg-gradient-to-br from-amber-400/25 via-emerald-400/25 to-pink-400/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute left-1/4 -bottom-10 w-60 h-60 bg-rose-400/20 rounded-full blur-2xl pointer-events-none" />
         <div className="absolute right-8 bottom-3 opacity-15 text-8xl font-black select-none pointer-events-none">
           ⭐
         </div>
@@ -175,9 +176,9 @@ export const WordVault: React.FC<WordVaultProps> = ({
                 setShowAddModal(true);
                 playSound('click');
               }}
-              className="flex items-center gap-2 px-5 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-black text-sm shadow-md hover:from-emerald-400 hover:to-teal-400 active:scale-95 transition-all whitespace-nowrap cursor-pointer hover:scale-105"
+              className="flex items-center gap-2 px-5 py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 to-yellow-400 hover:from-amber-300 hover:to-yellow-300 text-slate-950 font-black text-sm shadow-md active:scale-95 transition-all whitespace-nowrap cursor-pointer hover:scale-105 border border-amber-300"
             >
-              <Plus className="w-5 h-5 text-white font-black" />
+              <Plus className="w-5 h-5 text-slate-950 font-black" />
               <span>Add Custom Word</span>
             </button>
           </div>
@@ -185,11 +186,11 @@ export const WordVault: React.FC<WordVaultProps> = ({
       </div>
 
       {importStatus && (
-        <div className="p-3.5 bg-blue-50 border-2 border-blue-200 rounded-2xl text-xs sm:text-sm font-black text-blue-900 flex items-center justify-between shadow-xs animate-fadeIn">
+        <div className="p-3.5 bg-emerald-50 border-2 border-emerald-200 rounded-2xl text-xs sm:text-sm font-black text-emerald-950 flex items-center justify-between shadow-xs animate-fadeIn">
           <span>{importStatus}</span>
           <button
             onClick={() => setImportStatus(null)}
-            className="text-blue-500 hover:text-blue-700 p-1"
+            className="text-emerald-700 hover:text-emerald-900 p-1"
           >
             ✕
           </button>
@@ -197,7 +198,7 @@ export const WordVault: React.FC<WordVaultProps> = ({
       )}
 
       {/* Sub navigation bar */}
-      <div className="flex items-center justify-between flex-wrap gap-2 bg-slate-100 p-2 rounded-2xl border border-slate-200">
+      <div className="flex items-center justify-between flex-wrap gap-2 bg-white/90 backdrop-blur-md p-2 rounded-2xl border border-amber-200/70 shadow-2xs">
         <div className="flex items-center gap-1.5 flex-wrap">
           <button
             id="subtab-starred"
@@ -207,11 +208,11 @@ export const WordVault: React.FC<WordVaultProps> = ({
             }}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer ${
               activeSubTab === 'starred'
-                ? 'bg-gradient-to-r from-amber-400 to-orange-500 text-amber-950 shadow-md scale-105'
-                : 'text-slate-700 hover:text-slate-900 hover:bg-white/60'
+                ? 'bg-gradient-to-r from-amber-400 to-yellow-400 text-slate-950 shadow-md scale-105 border border-amber-300'
+                : 'text-slate-700 hover:text-slate-900 hover:bg-amber-50'
             }`}
           >
-            <Star className={`w-4 h-4 ${activeSubTab === 'starred' ? 'fill-amber-950 text-amber-950' : 'text-amber-500 fill-amber-500'}`} />
+            <Star className={`w-4 h-4 ${activeSubTab === 'starred' ? 'fill-slate-950 text-slate-950' : 'text-amber-500 fill-amber-500'}`} />
             <span>Starred Words ({starredEntries.length})</span>
           </button>
 
@@ -223,11 +224,11 @@ export const WordVault: React.FC<WordVaultProps> = ({
             }}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer ${
               activeSubTab === 'flashcards'
-                ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md scale-105'
-                : 'text-slate-700 hover:text-slate-900 hover:bg-white/60'
+                ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md scale-105'
+                : 'text-slate-700 hover:text-slate-900 hover:bg-emerald-50'
             }`}
           >
-            <Layers className="w-4 h-4 text-indigo-400" />
+            <Layers className="w-4 h-4 text-emerald-400" />
             <span>Interactive Flashcards</span>
           </button>
 
@@ -239,11 +240,11 @@ export const WordVault: React.FC<WordVaultProps> = ({
             }}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer ${
               activeSubTab === 'custom'
-                ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-md scale-105'
-                : 'text-slate-700 hover:text-slate-900 hover:bg-white/60'
+                ? 'bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-md scale-105'
+                : 'text-slate-700 hover:text-slate-900 hover:bg-pink-50'
             }`}
           >
-            <BookOpen className="w-4 h-4 text-teal-400" />
+            <BookOpen className="w-4 h-4 text-pink-400" />
             <span>Custom Words ({customEntries.length})</span>
           </button>
         </div>

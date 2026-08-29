@@ -1,21 +1,29 @@
 @import "tailwindcss";
 
-/* Custom Scroller Styles */
+/* Custom Pleasant Pastel Scroller Styles */
 .custom-scrollbar::-webkit-scrollbar {
-  height: 6px;
-  width: 6px;
+  height: 7px;
+  width: 7px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #fef7ee;
   border-radius: 9999px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #93c5fd;
+  background: #a7f3d0;
   border-radius: 9999px;
+  border: 1px solid #6ee7b7;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #3b82f6;
+  background: #34d399;
+}
+
+/* Eye-friendly smooth text rendering */
+body {
+  background-color: #faf7f2;
+  color: #1e293b;
+  -webkit-font-smoothing: antialiased;
 }

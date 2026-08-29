@@ -8,6 +8,7 @@ import { ALPHABET_GAP_ENTRIES } from './alphabetGapWords';
 import { MORE_KIDS_VOCABULARY_ENTRIES } from './moreKidsVocabulary';
 import { ALPHABET_EXPANSION_PART1 } from './alphabetExpansionPart1';
 import { ALPHABET_EXPANSION_PART2 } from './alphabetExpansionPart2';
+import { JUNIOR_EQUAL_ALPHABET_ENTRIES } from './juniorEqualAlphabetWords';
 
 // Merge all vocabulary collections and deduplicate by word id
 const allRawEntries: DictionaryEntry[] = [
@@ -20,6 +21,7 @@ const allRawEntries: DictionaryEntry[] = [
   ...MORE_KIDS_VOCABULARY_ENTRIES,
   ...ALPHABET_EXPANSION_PART1,
   ...ALPHABET_EXPANSION_PART2,
+  ...JUNIOR_EQUAL_ALPHABET_ENTRIES,
 ];
 
 const seenIds = new Set<string>();
