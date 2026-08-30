@@ -37,9 +37,9 @@ export const ScrollToTop: React.FC = () => {
       onClick={scrollToTop}
       aria-label="Move to top of page"
       title="Move to top"
-      className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-50 p-3 rounded-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white shadow-2xl shadow-blue-900/40 hover:scale-110 active:scale-95 transition-all duration-200 border-2 border-white/80 focus:outline-hidden focus:ring-4 focus:ring-blue-300 cursor-pointer select-none group"
+      className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-50 p-3 rounded-full bg-gradient-to-r from-emerald-800 via-teal-800 to-emerald-900 text-amber-100 shadow-2xl shadow-emerald-950/40 hover:scale-110 active:scale-95 transition-all duration-200 border-2 border-emerald-600/70 focus:outline-hidden focus:ring-4 focus:ring-emerald-400 cursor-pointer select-none group"
     >
-      <ArrowUp className="w-5 h-5 stroke-[3] group-hover:-translate-y-0.5 transition-transform" />
+      <ArrowUp className="w-5 h-5 stroke-[3] group-hover:-translate-y-0.5 transition-transform text-amber-200" />
     </button>
   );
 };

@@ -2,12 +2,13 @@ import React, { useState, useMemo } from 'react';
 import confetti from 'canvas-confetti';
 import { 
   Flame, Sparkles, CheckCircle2, Award, Calendar, Volume2, 
-  HelpCircle, ArrowRight, Star, ShieldCheck, Trophy, Target, AlertCircle 
+  HelpCircle, ArrowRight, Star, ShieldCheck, Trophy, Target, AlertCircle, Zap, BookOpen
 } from 'lucide-react';
 import { DictionaryEntry, UserProgress } from '../types/dictionary';
 import { BADGES } from '../data/dictionaryData';
-import { speakWord, speakSentence } from '../utils/speech';
+import { speakWord, speakSentence, cancelSpeech } from '../utils/speech';
 import { playSound } from '../utils/soundEffects';
+import { SoundWaveIcon } from './SoundWaveIcon';
 
 interface DailyQuestHubProps {
   entries: DictionaryEntry[];
@@ -76,27 +77,45 @@ export const DailyQuestHub: React.FC<DailyQuestHubProps> = ({
 
   const isStarred = userProgress.starredWordIds.includes(wordOfTheDay.id);
 
+  const [playingAudioId, setPlayingAudioId] = useState<string | null>(null);
+
+  const handlePronounce = (text: string, id: string, rate: number = 0.9) => {
+    if (playingAudioId === id) {
+      cancelSpeech();
+      setPlayingAudioId(null);
+      return;
+    }
+    setPlayingAudioId(id);
+    speakSentence(text, {
+      rate,
+      onEnd: () => setPlayingAudioId((prev) => (prev === id ? null : prev)),
+    });
+  };
+
   // 3 Daily Quests definition
   const dailyQuests = [
     {
       id: 'daily-wotd-quiz',
-      title: 'Conquer Word of the Day Quiz',
+      title: '🎯 Daily Word Quiz',
       desc: 'Test your understanding of today’s featured Scottish term',
       exp: 30,
+      badgeColor: 'from-amber-500 to-yellow-500',
       completed: userProgress.completedDailyQuests.includes('daily-wotd-quiz') || (quizAnswered && quizCorrect)
     },
     {
       id: 'daily-vault-star',
-      title: 'Expand Your Vault',
-      desc: 'Bookmark at least 2 words to your personal Word Vault',
+      title: '⭐ Expand Word Vault',
+      desc: 'Bookmark at least 2 words to your personal study bank',
       exp: 25,
+      badgeColor: 'from-emerald-600 to-teal-600',
       completed: userProgress.starredWordIds.length >= 2
     },
     {
       id: 'daily-game-challenge',
-      title: 'Highland Arcade Champion',
-      desc: 'Achieve a score in any interactive vocabulary game today',
+      title: '🎮 Arcade Champion',
+      desc: 'Score in any interactive Highland mini-game today',
       exp: 35,
+      badgeColor: 'from-indigo-600 to-purple-600',
       completed: Object.values(userProgress.gameHighScores).some((s: number) => s > 0)
     }
   ];
@@ -105,45 +124,45 @@ export const DailyQuestHub: React.FC<DailyQuestHubProps> = ({
     <div className="space-y-6 pb-24 sm:pb-8">
       
       {/* Daily Banner */}
-      <div className="bg-gradient-to-r from-amber-500 via-orange-500 to-rose-600 rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-orange-950/15 relative overflow-hidden border-2 border-white/20">
-        <div className="absolute -right-10 -top-10 w-72 h-72 bg-gradient-to-br from-yellow-300/30 to-rose-500/30 rounded-full blur-3xl pointer-events-none" />
+      <div className="bg-gradient-to-br from-[#12281d] via-[#1b3d2b] to-[#14281f] rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-emerald-950/20 relative overflow-hidden border border-emerald-700/30">
+        <div className="absolute -right-10 -top-10 w-72 h-72 bg-gradient-to-br from-amber-400/20 via-emerald-400/20 to-teal-400/15 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute right-8 bottom-3 opacity-15 text-8xl font-black select-none pointer-events-none">
-          🔥
+          🌿
         </div>
 
-        <div className="relative z-10 max-w-2xl space-y-3.5">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-xs font-black text-amber-100 shadow-2xs">
+        <div className="relative z-10 max-w-2xl space-y-2.5">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-emerald-400/30 text-xs font-black text-amber-200 shadow-2xs">
             <Flame className="w-4 h-4 text-amber-300 fill-amber-300 animate-bounce" />
-            <span>Daily Word Quest & Streak Challenge</span>
+            <span>Daily Streak: {userProgress.streak} Days 🔥</span>
           </div>
-          <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-white">
-            Today’s Scottish Word Quest
+          <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-amber-100">
+            Daily Scottish Quest
           </h1>
-          <p className="text-sm sm:text-base text-amber-100 leading-relaxed font-medium">
-            Keep your <strong className="text-white font-black underline decoration-amber-300 underline-offset-4">{userProgress.streak}-day streak</strong> blazing! Master today's Scottish term, complete 3 daily quests, and unlock authentic Tartan Badges.
+          <p className="text-sm sm:text-base text-emerald-100/90 leading-relaxed font-medium">
+            Master today's Scottish term, complete 3 daily quests, and level up your Tartan Scholar rank!
           </p>
         </div>
       </div>
 
       {/* Word of the Day Spotlight Card */}
-      <div className="bg-white rounded-3xl p-6 sm:p-8 border-2 border-amber-200 shadow-sm space-y-6">
-        <div className="flex items-center justify-between flex-wrap gap-2 border-b border-slate-100 pb-4">
+      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-emerald-900/10 shadow-sm space-y-6">
+        <div className="flex items-center justify-between flex-wrap gap-2 border-b border-emerald-900/10 pb-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-400 to-orange-500 text-white flex items-center justify-center shadow-md shadow-amber-500/25 border-2 border-white/40">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-800 to-teal-800 text-amber-100 flex items-center justify-center shadow-md shadow-emerald-950/15 border border-emerald-600/30">
               <Calendar className="w-6 h-6" />
             </div>
             <div>
-              <span className="text-[11px] font-black uppercase tracking-wider text-amber-800 block">
-                Word of the Day • {new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}
+              <span className="text-[11px] font-black uppercase tracking-wider text-emerald-800 block">
+                Word of the Day • {new Date().toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}
               </span>
               <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                <h2 className="text-2xl sm:text-3xl font-black text-slate-900">
+                <h2 className="text-2xl sm:text-3xl font-black text-[#14281f]">
                   {wordOfTheDay.word}
                 </h2>
 
                 {wordOfTheDay.isScots && (
-                  <span className="px-3 py-0.5 text-xs font-black bg-gradient-to-r from-purple-600 to-emerald-600 text-white rounded-lg shadow-2xs">
-                    🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scots Regional
+                  <span className="px-2.5 py-0.5 text-xs font-black bg-gradient-to-r from-emerald-800 to-teal-800 text-amber-100 rounded-lg shadow-2xs">
+                    🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scots
                   </span>
                 )}
               </div>
@@ -151,18 +170,19 @@ export const DailyQuestHub: React.FC<DailyQuestHubProps> = ({
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-            {/* Sound button placed on the right */}
+            {/* Sound button with SoundWaveIcon */}
             <button
               id="wotd-sound-btn"
-              onClick={() => {
-                playSound('click');
-                speakWord(wordOfTheDay.word, { rate: 0.85 });
-              }}
+              onClick={() => handlePronounce(wordOfTheDay.word, 'wotd-main', 0.85)}
               title={`Listen to pronunciation of "${wordOfTheDay.word}"`}
               aria-label={`Listen to ${wordOfTheDay.word}`}
-              className="p-2.5 rounded-2xl bg-gradient-to-tr from-amber-100 to-orange-100 text-amber-900 hover:from-amber-500 hover:to-orange-500 hover:text-white border border-amber-300 shadow-2xs transition-all hover:scale-108 active:scale-95 cursor-pointer"
+              className={`p-2.5 rounded-2xl border shadow-2xs transition-all hover:scale-108 active:scale-95 cursor-pointer ${
+                playingAudioId === 'wotd-main'
+                  ? 'bg-emerald-800 text-amber-100 border-emerald-700 ring-2 ring-emerald-300'
+                  : 'bg-emerald-50 text-emerald-900 hover:bg-emerald-800 hover:text-amber-100 border-emerald-200'
+              }`}
             >
-              <Volume2 className="w-5 h-5" />
+              <SoundWaveIcon isPlaying={playingAudioId === 'wotd-main'} size="sm" />
             </button>
 
             <button
@@ -173,11 +193,11 @@ export const DailyQuestHub: React.FC<DailyQuestHubProps> = ({
               }}
               className={`p-2.5 rounded-2xl transition-all cursor-pointer ${
                 isStarred 
-                  ? 'bg-gradient-to-r from-amber-400 to-orange-400 text-amber-950 shadow-md border border-amber-300 ring-2 ring-amber-300/40 scale-105' 
-                  : 'bg-slate-100 text-slate-400 hover:bg-amber-50 hover:text-amber-600 border border-slate-200'
+                  ? 'bg-gradient-to-r from-amber-400 to-yellow-400 text-slate-950 shadow-md border border-amber-300 ring-2 ring-amber-300/40 scale-105' 
+                  : 'bg-emerald-50 text-emerald-900/40 hover:bg-amber-50 hover:text-amber-700 border border-emerald-200'
               }`}
             >
-              <Star className={`w-5 h-5 ${isStarred ? 'fill-amber-950 text-amber-950' : ''}`} />
+              <Star className={`w-5 h-5 ${isStarred ? 'fill-slate-950 text-slate-950' : ''}`} />
             </button>
           </div>
         </div>
@@ -185,99 +205,105 @@ export const DailyQuestHub: React.FC<DailyQuestHubProps> = ({
         {/* Phonetic & Meaning */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-3">
-            <div>
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">
-                Phonetic & Part of Speech
-              </span>
-              <p className="text-sm font-semibold text-slate-700">
-                <span className="font-mono text-slate-900 font-bold mr-2">{wordOfTheDay.phonetic}</span>
-                <span className="text-purple-700 mr-2 font-bold">({wordOfTheDay.phoneticGuide})</span>
-                <span className="bg-slate-100 px-2 py-0.5 rounded-md text-xs font-bold">{wordOfTheDay.partOfSpeech}</span>
-              </p>
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="font-mono text-[#14281f] font-bold text-sm">{wordOfTheDay.phonetic}</span>
+              <span className="text-emerald-900 font-extrabold text-xs bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">🗣️ {wordOfTheDay.phoneticGuide}</span>
+              <span className="bg-sky-100 text-sky-900 px-2 py-0.5 rounded-md text-xs font-black border border-sky-300">{wordOfTheDay.partOfSpeech}</span>
             </div>
 
-            {/* Definition with sound icon right next to definition */}
-            <div className="bg-slate-50 rounded-xl p-3 border border-slate-200/70 flex items-start justify-between gap-2">
+            {/* Definition */}
+            <div className="bg-gradient-to-br from-emerald-50/60 to-teal-50/40 rounded-2xl p-3.5 border border-emerald-900/10 flex items-start justify-between gap-2 shadow-2xs">
               <div className="flex-1">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">
-                  Definition
-                </span>
-                <p className="text-sm sm:text-base text-slate-900 font-bold leading-relaxed">
+                <p className="text-sm sm:text-base text-[#14281f] font-bold leading-relaxed">
                   {wordOfTheDay.definition}
                 </p>
               </div>
               <button
                 id="wotd-def-sound-btn"
-                onClick={() => {
-                  playSound('click');
-                  speakSentence(wordOfTheDay.definition, { rate: 0.9 });
-                }}
+                onClick={() => handlePronounce(wordOfTheDay.definition, 'wotd-def', 0.9)}
                 title="Listen to definition"
                 aria-label={`Read definition: ${wordOfTheDay.definition}`}
-                className="p-1.5 rounded-lg bg-white text-amber-800 hover:bg-amber-50 border border-amber-200 shadow-2xs shrink-0 cursor-pointer"
+                className={`p-2 rounded-xl transition-all shrink-0 cursor-pointer shadow-2xs border ${
+                  playingAudioId === 'wotd-def'
+                    ? 'bg-emerald-800 text-amber-100 border-emerald-700'
+                    : 'bg-white text-emerald-900 hover:bg-emerald-800 hover:text-white border-emerald-200'
+                }`}
               >
-                <Volume2 className="w-3.5 h-3.5" />
+                <SoundWaveIcon isPlaying={playingAudioId === 'wotd-def'} size="sm" />
               </button>
             </div>
 
             {/* Synonyms & Antonyms */}
-            <div className="space-y-1 text-xs">
-              <div>
-                <strong className="text-emerald-700">Synonyms: </strong>
-                <span className="text-slate-700 font-medium">{wordOfTheDay.synonyms.join(', ')}</span>
-              </div>
-              <div>
-                <strong className="text-rose-700">Antonyms: </strong>
-                <span className="text-slate-700 font-medium">{wordOfTheDay.antonyms.join(', ') || 'None'}</span>
-              </div>
+            <div className="space-y-1.5 text-xs">
+              {wordOfTheDay.synonyms.length > 0 && (
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="font-black text-emerald-900">✨ Synonyms:</span>
+                  {wordOfTheDay.synonyms.map((s, idx) => (
+                    <span key={idx} className="px-2 py-0.5 bg-emerald-50 text-emerald-950 border border-emerald-200 rounded-md font-bold">
+                      {s}
+                    </span>
+                  ))}
+                </div>
+              )}
+              {wordOfTheDay.antonyms.length > 0 && (
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="font-black text-amber-900">⚡ Antonyms:</span>
+                  {wordOfTheDay.antonyms.map((a, idx) => (
+                    <span key={idx} className="px-2 py-0.5 bg-amber-50 text-amber-950 border border-amber-200 rounded-md font-bold">
+                      {a}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
-          {/* 2 Context Examples with Sound Button to the Right */}
-          <div className="bg-amber-50/60 rounded-2xl p-4 border border-amber-200/80 space-y-2.5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-black uppercase tracking-wider text-amber-900 block">
-                Examples in Action:
-              </span>
-            </div>
-            {wordOfTheDay.examples.map((ex, idx) => (
-              <div key={idx} className="bg-white p-3 rounded-xl border border-amber-200/60 text-xs sm:text-sm text-slate-800 italic shadow-2xs flex items-start justify-between gap-2.5">
-                <div className="flex-1 pt-0.5">
-                  <span className="font-bold text-amber-600 not-italic mr-1.5">#{idx + 1}</span>
-                  "{ex}"
+          {/* Context Examples */}
+          <div className="bg-gradient-to-br from-amber-50/70 to-yellow-50/50 rounded-2xl p-4 border border-amber-200 space-y-2.5">
+            <span className="text-xs font-black uppercase tracking-wider text-amber-950 block">
+              💬 In Context:
+            </span>
+            {wordOfTheDay.examples.map((ex, idx) => {
+              const exId = `wotd-ex-${idx}`;
+              return (
+                <div key={idx} className="bg-white p-3 rounded-xl border border-amber-200 text-xs sm:text-sm text-[#14281f] italic shadow-2xs flex items-start justify-between gap-2.5">
+                  <div className="flex-1 pt-0.5 font-medium">
+                    "{ex}"
+                  </div>
+                  <button
+                    id={`wotd-read-ex-${idx}`}
+                    onClick={() => handlePronounce(ex, exId, 0.88)}
+                    title="Listen to this example"
+                    aria-label={`Listen to example ${idx + 1}`}
+                    className={`p-2 rounded-xl border shadow-2xs transition-colors shrink-0 cursor-pointer ${
+                      playingAudioId === exId
+                        ? 'bg-emerald-800 text-amber-100 border-emerald-700'
+                        : 'bg-amber-50 text-amber-950 hover:bg-amber-100 border-amber-200'
+                    }`}
+                  >
+                    <SoundWaveIcon isPlaying={playingAudioId === exId} size="sm" />
+                  </button>
                 </div>
-                <button
-                  id={`wotd-read-ex-${idx}`}
-                  onClick={() => {
-                    playSound('click');
-                    speakSentence(ex, { rate: 0.88 });
-                  }}
-                  title="Listen to this example"
-                  aria-label={`Listen to example ${idx + 1}`}
-                  className="p-1.5 rounded-lg bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200 transition-colors shrink-0 cursor-pointer"
-                >
-                  <Volume2 className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
         {/* Word of the Day Quick Challenge / Quiz */}
-        <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-3">
+        <div className="bg-emerald-50/30 rounded-2xl p-5 border border-emerald-900/10 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
-              <Target className="w-4 h-4 text-amber-500" />
+            <span className="text-xs font-black uppercase tracking-wider text-[#14281f] flex items-center gap-1.5">
+              <Target className="w-4 h-4 text-amber-600" />
               Daily Mastery Check (+30 EXP):
             </span>
             {quizAnswered && quizCorrect && (
-              <span className="text-xs font-bold text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full">
+              <span className="text-xs font-bold text-emerald-950 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-300">
                 ✓ Quest Completed!
               </span>
             )}
           </div>
-          <p className="text-sm font-semibold text-slate-800">
-            Which definition accurately describes <strong className="text-purple-700 font-black">"{wordOfTheDay.word}"</strong>?
+          <p className="text-sm font-semibold text-[#14281f]">
+            Which definition accurately describes <strong className="text-emerald-900 font-black">"{wordOfTheDay.word}"</strong>?
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -285,14 +311,14 @@ export const DailyQuestHub: React.FC<DailyQuestHubProps> = ({
               const isSelected = selectedOption === opt.definition;
               const isCorrect = opt.isCorrect;
 
-              let btnClass = 'bg-white border-2 border-slate-200 text-slate-800 hover:border-amber-400';
+              let btnClass = 'bg-white border-2 border-emerald-900/10 text-[#14281f] hover:border-emerald-500 hover:bg-emerald-50/40';
               if (quizAnswered) {
                 if (isCorrect) {
-                  btnClass = 'bg-emerald-600 border-emerald-700 text-white font-bold shadow-xs';
+                  btnClass = 'bg-emerald-800 border-emerald-900 text-amber-100 font-bold shadow-xs';
                 } else if (isSelected && !isCorrect) {
-                  btnClass = 'bg-rose-500 border-rose-600 text-white font-bold';
+                  btnClass = 'bg-amber-700 border-amber-800 text-amber-100 font-bold';
                 } else {
-                  btnClass = 'bg-slate-50 border-slate-200 text-slate-400 opacity-60';
+                  btnClass = 'bg-emerald-50/30 border-emerald-900/10 text-[#4b6354] opacity-60';
                 }
               }
 
@@ -307,7 +333,7 @@ export const DailyQuestHub: React.FC<DailyQuestHubProps> = ({
                   <span className="leading-snug">{opt.definition}</span>
                   {quizAnswered && (
                     <span className={`text-[11px] pt-1 mt-0.5 border-t ${
-                      isCorrect ? 'border-white/30 text-emerald-100 font-bold' : isSelected ? 'border-white/30 text-rose-100 font-bold' : 'border-slate-200 text-slate-500'
+                      isCorrect ? 'border-white/30 text-amber-200 font-bold' : isSelected ? 'border-white/30 text-amber-200 font-bold' : 'border-emerald-900/10 text-[#4b6354]'
                     }`}>
                       {isCorrect ? `✓ Meaning of "${wordOfTheDay.word}"` : `Belongs to: "${opt.word}"`}
                     </span>
@@ -319,20 +345,20 @@ export const DailyQuestHub: React.FC<DailyQuestHubProps> = ({
 
           {/* Feedback banner */}
           {quizAnswered && !quizCorrect && selectedOption && (
-            <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-950 space-y-1 animate-fadeIn">
-              <div className="font-bold text-rose-800 flex items-center gap-1.5">
-                <AlertCircle className="w-4 h-4 text-rose-600" />
+            <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-950 space-y-1 animate-fadeIn">
+              <div className="font-bold text-amber-900 flex items-center gap-1.5">
+                <AlertCircle className="w-4 h-4 text-amber-700" />
                 <span>Wrong choice review:</span>
               </div>
               {(() => {
                 const selectedOpt = quizOptions.find(o => o.definition === selectedOption);
                 return selectedOpt ? (
                   <p className="leading-snug">
-                    You selected the definition for <strong className="text-rose-900">"{selectedOpt.word}"</strong> ({selectedOpt.definition}).
+                    You selected the definition for <strong className="text-amber-950">"{selectedOpt.word}"</strong> ({selectedOpt.definition}).
                   </p>
                 ) : null;
               })()}
-              <p className="text-emerald-900 font-medium leading-snug pt-1 border-t border-rose-200/60">
+              <p className="text-emerald-900 font-medium leading-snug pt-1 border-t border-amber-200">
                 <strong>"{wordOfTheDay.word}"</strong> actually means: {wordOfTheDay.definition}
               </p>
             </div>
@@ -341,13 +367,13 @@ export const DailyQuestHub: React.FC<DailyQuestHubProps> = ({
       </div>
 
       {/* Daily Quests List */}
-      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-4">
+      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-emerald-900/10 shadow-xs space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-xl font-bold text-slate-900">Today's Daily Quests</h3>
-            <p className="text-xs text-slate-500">Complete quests daily to boost your Tartan Scholar rank!</p>
+            <h3 className="text-xl font-bold text-[#14281f]">Today's Daily Quests</h3>
+            <p className="text-xs text-[#4b6354]">Complete quests daily to boost your Tartan Scholar rank!</p>
           </div>
-          <span className="text-xs font-bold px-3 py-1 bg-purple-50 text-purple-900 rounded-full border border-purple-200">
+          <span className="text-xs font-bold px-3 py-1 bg-emerald-50 text-emerald-950 rounded-full border border-emerald-200">
             {dailyQuests.filter(q => q.completed).length} / 3 Complete
           </span>
         </div>
@@ -358,34 +384,36 @@ export const DailyQuestHub: React.FC<DailyQuestHubProps> = ({
               key={quest.id}
               className={`p-4 rounded-2xl border transition-all ${
                 quest.completed
-                  ? 'bg-emerald-50/60 border-emerald-200 text-emerald-950'
-                  : 'bg-slate-50 border-slate-200 text-slate-800'
+                  ? 'bg-gradient-to-br from-emerald-50 to-teal-50/80 border-emerald-300 text-emerald-950 shadow-2xs ring-1 ring-emerald-300'
+                  : 'bg-white hover:bg-emerald-50/20 border-emerald-900/10 text-[#14281f] shadow-2xs'
               }`}
             >
               <div className="flex items-start justify-between gap-2 mb-2">
-                <span className="font-bold text-sm leading-snug">{quest.title}</span>
+                <span className="font-black text-sm leading-snug">{quest.title}</span>
                 {quest.completed ? (
-                  <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                  <span className="inline-flex items-center gap-1 text-[11px] font-black text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-300">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" /> Done
+                  </span>
                 ) : (
-                  <span className="text-xs font-black text-amber-600 bg-amber-100 px-2 py-0.5 rounded-md shrink-0">
+                  <span className="text-xs font-black text-amber-950 bg-gradient-to-r from-amber-300 to-yellow-400 px-2 py-0.5 rounded-md shrink-0 border border-amber-300 shadow-2xs">
                     +{quest.exp} XP
                   </span>
                 )}
               </div>
-              <p className="text-xs text-slate-600 leading-relaxed">{quest.desc}</p>
+              <p className="text-xs text-[#4b6354] leading-relaxed font-medium">{quest.desc}</p>
             </div>
           ))}
         </div>
       </div>
 
       {/* Tartan Trophy & Badge Cabinet */}
-      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-4">
+      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-emerald-900/10 shadow-xs space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Trophy className="w-5 h-5 text-amber-500" />
-            <h3 className="text-xl font-bold text-slate-900">Tartan Trophy & Badge Cabinet</h3>
+            <Trophy className="w-5 h-5 text-amber-600" />
+            <h3 className="text-xl font-bold text-[#14281f]">Tartan Trophy & Badge Cabinet</h3>
           </div>
-          <span className="text-xs font-bold text-slate-500">
+          <span className="text-xs font-bold text-[#4b6354]">
             {userProgress.unlockedBadges.length} of {BADGES.length} Badges Unlocked
           </span>
         </div>
@@ -399,20 +427,20 @@ export const DailyQuestHub: React.FC<DailyQuestHubProps> = ({
                 id={`badge-card-${badge.id}`}
                 className={`p-4 rounded-2xl border flex items-start gap-3 transition-all ${
                   isUnlocked
-                    ? 'bg-gradient-to-tr from-amber-50 to-orange-50 border-amber-300 shadow-xs'
-                    : 'bg-slate-50 border-slate-200 opacity-60'
+                    ? 'bg-gradient-to-tr from-emerald-50/80 to-lime-50/60 border-emerald-300 shadow-xs'
+                    : 'bg-emerald-50/20 border-emerald-900/10 opacity-60'
                 }`}
               >
-                <div className="text-3xl p-2 bg-white rounded-2xl shadow-2xs shrink-0">
+                <div className="text-3xl p-2 bg-white rounded-2xl shadow-2xs shrink-0 border border-emerald-900/10">
                   {badge.icon}
                 </div>
                 <div>
                   <div className="flex items-center gap-1.5">
-                    <h4 className="font-bold text-sm text-slate-900">{badge.title}</h4>
-                    {isUnlocked && <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />}
+                    <h4 className="font-bold text-sm text-[#14281f]">{badge.title}</h4>
+                    {isUnlocked && <ShieldCheck className="w-4 h-4 text-emerald-700 shrink-0" />}
                   </div>
-                  <p className="text-xs text-slate-600 leading-snug mt-1">{badge.description}</p>
-                  <span className="inline-block mt-2 text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-md bg-white border border-slate-200 text-slate-600">
+                  <p className="text-xs text-[#4b6354] leading-snug mt-1">{badge.description}</p>
+                  <span className="inline-block mt-2 text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-md bg-white border border-emerald-900/10 text-emerald-900">
                     {isUnlocked ? '🏆 Unlocked' : '🔒 In Progress'}
                   </span>
                 </div>

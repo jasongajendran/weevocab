@@ -3,11 +3,12 @@ import confetti from 'canvas-confetti';
 import { 
   X, Volume2, Mic, Star, Sparkles, CheckCircle2, AlertCircle, 
   Award, MessageSquare, Compass, HelpCircle, Zap, Check, RotateCcw, 
-  Layers, ChevronRight, ShieldCheck, Flame, Lightbulb
+  Layers, ChevronRight, ShieldCheck, Flame, Lightbulb, BookOpen, Tag, Quote
 } from 'lucide-react';
 import { DictionaryEntry } from '../types/dictionary';
 import { startVoicePractice, RecognitionResult } from '../utils/speech';
 import { playSound } from '../utils/soundEffects';
+import { SoundWaveIcon } from './SoundWaveIcon';
 
 interface WordStudyModalProps {
   word: DictionaryEntry;
@@ -255,7 +256,7 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
       return {
         level: 'Formal & Academic',
         dots: 5,
-        badgeBg: 'bg-purple-100 text-purple-900 border-purple-300',
+        badgeBg: 'bg-emerald-100 text-emerald-950 border-emerald-300',
         tone: 'Essays, presentations, debate, and formal writing',
         advice: 'Use this term in high-level coursework, analytical essays, and formal discussions to convey precision.',
       };
@@ -264,7 +265,7 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
       return {
         level: 'Casual & Conversational',
         dots: 2,
-        badgeBg: 'bg-amber-100 text-amber-900 border-amber-300',
+        badgeBg: 'bg-amber-100 text-amber-950 border-amber-300',
         tone: 'Playground banter, daily texts, casual chat with friends',
         advice: 'Common in relaxed spoken conversation and banter. Keep for informal settings rather than exam essays.',
       };
@@ -273,7 +274,7 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
       return {
         level: 'Dialect & Cultural Expressive',
         dots: 3,
-        badgeBg: 'bg-sky-100 text-sky-900 border-sky-300',
+        badgeBg: 'bg-teal-100 text-teal-950 border-teal-300',
         tone: 'Scottish storytelling, regional conversation, local heritage',
         advice: 'Deeply expressive in Scottish storytelling, literature, poetry, and regional dialogue.',
       };
@@ -281,7 +282,7 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
     return {
       level: 'Everyday Standard UK',
       dots: 3,
-      badgeBg: 'bg-emerald-100 text-emerald-900 border-emerald-300',
+      badgeBg: 'bg-lime-100 text-lime-950 border-lime-300',
       tone: 'General everyday UK English across all ages',
       advice: 'Versatile and widely recognized in both spoken conversation and general writing.',
     };
@@ -306,11 +307,11 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
 
   return (
     <div 
-      className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto animate-fadeIn"
+      className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto animate-fadeIn"
       onClick={onClose}
     >
       <div 
-        className="bg-white rounded-3xl max-w-2xl w-full p-5 sm:p-7 shadow-2xl border border-slate-200 relative my-6 text-left max-h-[92vh] overflow-y-auto space-y-5"
+        className="bg-white rounded-3xl max-w-2xl w-full p-5 sm:p-7 shadow-2xl border border-emerald-900/15 relative my-6 text-left max-h-[92vh] overflow-y-auto space-y-5"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
@@ -318,17 +319,17 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
           id="close-modal-btn"
           onClick={onClose}
           aria-label="Close Study Guide"
-          className="absolute right-4 top-4 p-2 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+          className="absolute right-4 top-4 p-2 rounded-full text-[#4b6354] hover:text-[#14281f] hover:bg-emerald-50 transition-colors cursor-pointer"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* Modal Header & Quick Audio */}
-        <div className="border-b border-slate-100 pb-4">
+        <div className="border-b border-emerald-900/10 pb-4">
           <div className="flex items-start justify-between gap-3 pr-8">
             <div>
               <div className="flex items-center gap-2.5 flex-wrap">
-                <h2 className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight">
+                <h2 className="text-2xl sm:text-4xl font-black text-[#14281f] tracking-tight">
                   {word.word}
                 </h2>
 
@@ -337,18 +338,18 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
                 </span>
 
                 {word.isScots && (
-                  <span className="px-2.5 py-0.5 text-xs font-bold rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200">
+                  <span className="px-2.5 py-0.5 text-xs font-bold rounded-lg bg-emerald-50 text-emerald-900 border border-emerald-200">
                     🏴󠁧󠁢󠁳󠁣󠁴󠁿 {word.scotsRegion}
                   </span>
                 )}
               </div>
 
-              <div className="flex items-center gap-2.5 mt-2 text-sm text-slate-600 flex-wrap">
-                <span className="font-extrabold text-slate-800 bg-slate-100 px-2 py-0.5 rounded-md text-xs">
+              <div className="flex items-center gap-2.5 mt-2 text-sm text-[#4b6354] flex-wrap">
+                <span className="font-extrabold text-[#14281f] bg-emerald-50 px-2 py-0.5 rounded-md text-xs border border-emerald-200">
                   {word.partOfSpeech}
                 </span>
-                <span className="font-mono text-slate-500 font-bold text-xs">{word.phonetic}</span>
-                <span className="text-purple-700 font-extrabold text-xs">
+                <span className="font-mono text-[#4b6354] font-bold text-xs">{word.phonetic}</span>
+                <span className="text-emerald-800 font-extrabold text-xs">
                   📖 {word.phoneticGuide}
                 </span>
               </div>
@@ -363,11 +364,11 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
                 aria-label={`Listen to pronunciation of ${word.word}`}
                 className={`p-3 rounded-2xl flex items-center justify-center transition-all cursor-pointer ${
                   playingAudioId === 'modal-title-word'
-                    ? 'bg-gradient-to-tr from-purple-600 via-emerald-600 to-amber-500 text-white scale-110 ring-4 ring-purple-300 animate-pulse shadow-lg'
-                    : 'bg-gradient-to-tr from-purple-50 to-emerald-50 text-purple-900 hover:from-purple-600 hover:to-indigo-600 hover:text-white hover:scale-108 border border-purple-200 shadow-2xs active:scale-95'
+                    ? 'bg-gradient-to-tr from-emerald-800 via-teal-800 to-amber-500 text-amber-100 scale-110 ring-4 ring-emerald-300 shadow-lg'
+                    : 'bg-emerald-50 text-emerald-900 hover:bg-emerald-800 hover:text-amber-100 hover:scale-108 border border-emerald-200 shadow-2xs active:scale-95'
                 }`}
               >
-                <Volume2 className={`w-5 h-5 ${playingAudioId === 'modal-title-word' ? 'animate-bounce' : ''}`} />
+                <SoundWaveIcon isPlaying={playingAudioId === 'modal-title-word'} size="lg" />
               </button>
 
               <button
@@ -379,21 +380,129 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
                 title={isStarred ? 'Remove from Vault' : 'Save to Vault'}
                 className={`p-3 rounded-2xl transition-all cursor-pointer ${
                   isStarred
-                    ? 'bg-gradient-to-r from-amber-400 to-orange-400 text-amber-950 shadow-md border border-amber-300 ring-2 ring-amber-300/40 scale-105'
-                    : 'bg-slate-100 text-slate-400 hover:bg-amber-50 hover:text-amber-600 border border-slate-200'
+                    ? 'bg-gradient-to-r from-amber-400 to-yellow-400 text-slate-950 shadow-md border border-amber-300 ring-2 ring-amber-300/40 scale-105'
+                    : 'bg-emerald-50/70 text-slate-400 hover:bg-amber-50 hover:text-amber-600 border border-emerald-900/10'
                 }`}
               >
-                <Star className={`w-5 h-5 ${isStarred ? 'fill-amber-950 text-amber-950' : ''}`} />
+                <Star className={`w-5 h-5 ${isStarred ? 'fill-slate-950 text-slate-950' : ''}`} />
               </button>
             </div>
           </div>
         </div>
 
+        {/* Section: Meaning & Primary Definition */}
+        <div className="bg-gradient-to-br from-emerald-50/80 to-amber-50/50 rounded-2xl p-4 sm:p-5 border-2 border-emerald-800/20 shadow-xs space-y-2.5">
+          <div className="flex items-center justify-between">
+            <span className="font-black text-xs uppercase tracking-wider text-emerald-950 flex items-center gap-1.5">
+              <BookOpen className="w-4 h-4 text-emerald-800" />
+              Definition & Meaning
+            </span>
+            <span className="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-800 text-amber-100 shadow-2xs">
+              {word.difficulty}
+            </span>
+          </div>
+          <p className="text-base sm:text-lg font-bold text-[#14281f] leading-relaxed">
+            {word.definition}
+          </p>
+        </div>
+
+        {/* Section: Example Sentences in Action with Voice Audio */}
+        {word.examples && word.examples.length > 0 && (
+          <div className="bg-white rounded-2xl p-4 sm:p-5 border border-emerald-900/15 space-y-3 shadow-2xs">
+            <div className="flex items-center justify-between">
+              <span className="font-black text-xs uppercase tracking-wider text-emerald-950 flex items-center gap-1.5">
+                <Quote className="w-4 h-4 text-emerald-800" />
+                Contextual Example Sentences ({word.examples.length})
+              </span>
+              <span className="text-[10px] font-bold text-[#4b6354]">
+                Tap speaker icon to listen
+              </span>
+            </div>
+
+            <div className="space-y-2.5">
+              {word.examples.map((example, idx) => {
+                const audioKey = `modal-example-${word.id}-${idx}`;
+                const isPlaying = playingAudioId === audioKey;
+                return (
+                  <div 
+                    key={idx}
+                    className="flex items-start justify-between gap-3 p-3.5 rounded-xl bg-emerald-50/40 border-l-4 border-l-emerald-700 border-y border-r border-emerald-900/10 text-xs sm:text-sm font-medium text-[#14281f] hover:bg-emerald-50/80 transition-colors"
+                  >
+                    <div className="space-y-1 flex-1">
+                      <span className="text-[10px] font-black uppercase text-emerald-800 tracking-wider block">
+                        Example {idx + 1}
+                      </span>
+                      <p className="italic leading-relaxed">
+                        "{example}"
+                      </p>
+                    </div>
+
+                    <button
+                      id={`modal-listen-ex-${idx}`}
+                      onClick={() => onPlayAudio(example, audioKey, 0.9)}
+                      title="Listen to this example sentence"
+                      aria-label={`Listen to example ${idx + 1}`}
+                      className={`p-2.5 rounded-xl transition-all shrink-0 cursor-pointer ${
+                        isPlaying
+                          ? 'bg-emerald-800 text-amber-100 scale-110 shadow-md ring-2 ring-emerald-400'
+                          : 'bg-white text-emerald-900 hover:bg-emerald-800 hover:text-amber-100 border border-emerald-200 shadow-2xs'
+                      }`}
+                    >
+                      <SoundWaveIcon isPlaying={isPlaying} size="sm" />
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Section: Synonyms & Antonyms */}
+        {((word.synonyms && word.synonyms.length > 0) || (word.antonyms && word.antonyms.length > 0)) && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {word.synonyms && word.synonyms.length > 0 && (
+              <div className="bg-emerald-50/30 p-3.5 rounded-2xl border border-emerald-900/10 space-y-1.5">
+                <span className="text-[11px] font-black uppercase tracking-wider text-emerald-900 flex items-center gap-1">
+                  <Tag className="w-3.5 h-3.5 text-emerald-700" /> Synonyms / Similar Terms:
+                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  {word.synonyms.map((syn, idx) => (
+                    <span 
+                      key={idx}
+                      className="px-2.5 py-1 rounded-lg bg-white text-xs font-bold text-emerald-950 border border-emerald-200/80 shadow-2xs"
+                    >
+                      {syn}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {word.antonyms && word.antonyms.length > 0 && (
+              <div className="bg-amber-50/30 p-3.5 rounded-2xl border border-amber-900/10 space-y-1.5">
+                <span className="text-[11px] font-black uppercase tracking-wider text-amber-900 flex items-center gap-1">
+                  <Tag className="w-3.5 h-3.5 text-amber-700" /> Antonyms / Opposites:
+                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  {word.antonyms.map((ant, idx) => (
+                    <span 
+                      key={idx}
+                      className="px-2.5 py-1 rounded-lg bg-white text-xs font-bold text-amber-950 border border-amber-200/80 shadow-2xs"
+                    >
+                      {ant}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Section 1: Pronunciation Studio & Voice Test Lab */}
-        <div className="bg-gradient-to-br from-purple-50/70 via-slate-50 to-emerald-50/60 rounded-3xl p-4 sm:p-5 border-2 border-purple-200 space-y-3.5 shadow-2xs">
+        <div className="bg-emerald-50/30 rounded-3xl p-4 sm:p-5 border border-emerald-900/15 space-y-3.5 shadow-2xs">
           <div className="flex items-center justify-between flex-wrap gap-2">
-            <span className="text-xs font-black uppercase tracking-wider text-purple-950 flex items-center gap-1.5">
-              <div className="p-1 rounded-lg bg-purple-700 text-white">
+            <span className="text-xs font-black uppercase tracking-wider text-emerald-950 flex items-center gap-1.5">
+              <div className="p-1 rounded-lg bg-emerald-800 text-amber-100">
                 <Volume2 className="w-3.5 h-3.5" />
               </div>
               Pronunciation Studio & Voice Practice
@@ -404,7 +513,7 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
               <button
                 id="modal-pronounce-normal"
                 onClick={() => onPlayAudio(word.word, 'modal-word-norm', 0.9)}
-                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-black text-xs shadow-md shadow-purple-500/25 transition-all hover:scale-105 cursor-pointer"
+                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-800 hover:bg-emerald-700 text-amber-100 font-black text-xs shadow-md transition-all hover:scale-105 cursor-pointer border border-emerald-700"
               >
                 <Volume2 className="w-3.5 h-3.5" />
                 <span>Normal Speed</span>
@@ -412,23 +521,23 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
               <button
                 id="modal-pronounce-slow"
                 onClick={() => onPlayAudio(word.word, 'modal-word-slow', 0.6)}
-                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white text-purple-900 border-2 border-purple-200 hover:bg-purple-50 font-black text-xs transition-all hover:scale-105 shadow-2xs cursor-pointer"
+                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white text-emerald-900 border border-emerald-300 hover:bg-emerald-50 font-black text-xs transition-all hover:scale-105 shadow-2xs cursor-pointer"
               >
-                <Volume2 className="w-3.5 h-3.5 text-purple-700" />
+                <Volume2 className="w-3.5 h-3.5 text-emerald-700" />
                 <span>0.6x Slow Coach</span>
               </button>
             </div>
           </div>
 
           {/* Interactive Voice Mic */}
-          <div className="bg-white rounded-2xl p-4 border border-purple-100 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-2xs">
+          <div className="bg-white rounded-2xl p-4 border border-emerald-900/10 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-2xs">
             <div className="text-left w-full sm:w-auto">
-              <p className="text-xs font-black text-slate-900 flex items-center gap-1.5">
-                <Mic className="w-4 h-4 text-purple-700" />
+              <p className="text-xs font-black text-[#14281f] flex items-center gap-1.5">
+                <Mic className="w-4 h-4 text-emerald-700" />
                 Test your pronunciation with your microphone:
               </p>
-              <p className="text-[11px] text-slate-500 font-medium mt-0.5">
-                Tap the button and clearly say <span className="font-black text-purple-800">"{word.word}"</span>
+              <p className="text-[11px] text-[#4b6354] font-medium mt-0.5">
+                Tap the button and clearly say <span className="font-black text-emerald-900">"{word.word}"</span>
               </p>
             </div>
 
@@ -438,8 +547,8 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
               disabled={isRecording}
               className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black transition-all cursor-pointer shrink-0 ${
                 isRecording
-                  ? 'bg-rose-500 text-white animate-pulse shadow-lg'
-                  : 'bg-gradient-to-r from-purple-600 to-emerald-600 hover:from-purple-500 hover:to-emerald-500 text-white shadow-md shadow-purple-500/25 hover:scale-105 active:scale-95'
+                  ? 'bg-rose-600 text-white animate-pulse shadow-lg'
+                  : 'bg-gradient-to-r from-emerald-800 to-teal-800 hover:from-emerald-700 hover:to-teal-700 text-amber-100 shadow-md hover:scale-105 active:scale-95 border border-emerald-700'
               }`}
             >
               {isRecording ? <Mic className="w-4 h-4 animate-bounce" /> : <Mic className="w-4 h-4" />}
@@ -451,19 +560,19 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
           {voiceResult && (
             <div className={`p-3 rounded-xl border text-xs flex items-center gap-2.5 ${
               voiceResult.isMatch 
-                ? 'bg-emerald-50 border-emerald-200 text-emerald-900' 
-                : 'bg-amber-50 border-amber-200 text-amber-900'
+                ? 'bg-emerald-50 border-emerald-300 text-emerald-950' 
+                : 'bg-amber-50 border-amber-300 text-amber-950'
             }`}>
               {voiceResult.isMatch ? (
                 <>
-                  <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                  <CheckCircle2 className="w-5 h-5 text-emerald-700 shrink-0" />
                   <div>
                     <span className="font-black">Brilliant pronunciation!</span> You spoke "{voiceResult.transcript}", which matched perfectly!
                   </div>
                 </>
               ) : (
                 <>
-                  <AlertCircle className="w-5 h-5 text-amber-600 shrink-0" />
+                  <AlertCircle className="w-5 h-5 text-amber-700 shrink-0" />
                   <div>
                     <span className="font-black">Good attempt!</span> We detected "{voiceResult.transcript}". Try listening to the 0.6x Slow Coach to nail the vowels!
                   </div>
@@ -473,66 +582,66 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
           )}
 
           {voiceError && (
-            <p className="text-xs text-rose-600 font-medium">⚠️ {voiceError}</p>
+            <p className="text-xs text-rose-700 font-medium">⚠️ {voiceError}</p>
           )}
         </div>
 
         {/* Section 2: Etymology & Cultural Heritage Story (Exclusive non-duplicate content) */}
         {word.loreOrFunFact && (
-          <div className="bg-amber-50/90 rounded-2xl p-4 sm:p-5 border border-amber-300 text-amber-950 space-y-2">
+          <div className="bg-amber-50/70 rounded-2xl p-4 sm:p-5 border border-amber-300/80 text-amber-950 space-y-2">
             <div className="flex items-center justify-between">
               <span className="font-black text-xs uppercase tracking-wider text-amber-900 flex items-center gap-1.5">
-                <Sparkles className="w-4 h-4 text-amber-600" />
+                <Sparkles className="w-4 h-4 text-amber-700" />
                 Origin, Etymology & Cultural Heritage
               </span>
-              <span className="text-[10px] font-extrabold px-2 py-0.5 bg-amber-200/80 rounded-md text-amber-900">
+              <span className="text-[10px] font-extrabold px-2 py-0.5 bg-amber-200/70 rounded-md text-amber-900 border border-amber-300">
                 Word History
               </span>
             </div>
-            <p className="text-xs sm:text-sm leading-relaxed text-amber-900 font-medium">
+            <p className="text-xs sm:text-sm leading-relaxed text-amber-950 font-medium">
               {word.loreOrFunFact}
             </p>
           </div>
         )}
 
         {/* Section 3: Formality Meter & Conversational Register */}
-        <div className="bg-slate-50 rounded-2xl p-4 sm:p-5 border border-slate-200 space-y-3">
+        <div className="bg-emerald-50/20 rounded-2xl p-4 sm:p-5 border border-emerald-900/15 space-y-3">
           <div className="flex items-center justify-between flex-wrap gap-2">
-            <span className="text-xs font-black uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
-              <Compass className="w-4 h-4 text-slate-500" />
+            <span className="text-xs font-black uppercase tracking-wider text-[#4b6354] flex items-center gap-1.5">
+              <Compass className="w-4 h-4 text-emerald-700" />
               Usage Register & Formality Meter
             </span>
-            <span className="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-800">
+            <span className="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-950 border border-emerald-200">
               {formalityDetails.level}
             </span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-            <div className="bg-white p-3 rounded-xl border border-slate-200/80 space-y-1">
-              <span className="font-black text-slate-700 block flex items-center gap-1">
-                <MessageSquare className="w-3.5 h-3.5 text-blue-500" /> Where to Use:
+            <div className="bg-white p-3 rounded-xl border border-emerald-900/10 space-y-1">
+              <span className="font-black text-[#14281f] block flex items-center gap-1">
+                <MessageSquare className="w-3.5 h-3.5 text-emerald-700" /> Where to Use:
               </span>
-              <p className="text-slate-600 leading-snug">{formalityDetails.tone}</p>
+              <p className="text-[#4b6354] leading-snug">{formalityDetails.tone}</p>
             </div>
 
-            <div className="bg-white p-3 rounded-xl border border-slate-200/80 space-y-1">
-              <span className="font-black text-slate-700 block flex items-center gap-1">
-                <Lightbulb className="w-3.5 h-3.5 text-amber-500" /> Pro-Tip for Learners:
+            <div className="bg-white p-3 rounded-xl border border-emerald-900/10 space-y-1">
+              <span className="font-black text-[#14281f] block flex items-center gap-1">
+                <Lightbulb className="w-3.5 h-3.5 text-amber-600" /> Pro-Tip for Learners:
               </span>
-              <p className="text-slate-600 leading-snug">{formalityDetails.advice}</p>
+              <p className="text-[#4b6354] leading-snug">{formalityDetails.advice}</p>
             </div>
           </div>
 
           {/* Natural Phrasal Collocations */}
           <div>
-            <span className="text-[11px] font-black uppercase tracking-wider text-slate-400 block mb-1.5">
+            <span className="text-[11px] font-black uppercase tracking-wider text-[#4b6354] block mb-1.5">
               Natural Word Pairings & Collocations:
             </span>
             <div className="flex flex-wrap gap-1.5">
               {collocations.map((phrase, idx) => (
                 <span 
                   key={idx} 
-                  className="px-2.5 py-1 bg-white text-slate-700 border border-slate-200/90 rounded-lg text-xs font-bold shadow-2xs hover:border-blue-300 transition-colors"
+                  className="px-2.5 py-1 bg-white text-[#14281f] border border-emerald-900/15 rounded-lg text-xs font-bold shadow-2xs hover:border-emerald-400 transition-colors"
                 >
                   "{phrase}"
                 </span>
@@ -542,11 +651,11 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
         </div>
 
         {/* Section 4: Interactive Quick Mastery Challenge (Active Recall) */}
-        <div className="bg-emerald-50/70 rounded-2xl p-4 sm:p-5 border border-emerald-200 space-y-3">
+        <div className="bg-emerald-50/40 rounded-2xl p-4 sm:p-5 border border-emerald-900/15 space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Zap className="w-4 h-4 text-emerald-600" />
-              <span className="text-xs font-black uppercase tracking-wider text-emerald-900">
+              <Zap className="w-4 h-4 text-emerald-700" />
+              <span className="text-xs font-black uppercase tracking-wider text-emerald-950">
                 Quick Mastery Challenge (Active Recall)
               </span>
             </div>
@@ -554,7 +663,7 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
               <button
                 onClick={handleResetQuiz}
                 title="Try another attempt"
-                className="flex items-center gap-1 text-xs font-bold text-emerald-700 hover:text-emerald-900 cursor-pointer"
+                className="flex items-center gap-1 text-xs font-bold text-emerald-800 hover:text-emerald-950 cursor-pointer"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 <span>Retry</span>
@@ -562,7 +671,7 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
             )}
           </div>
 
-          <p className="text-xs sm:text-sm font-bold text-slate-800">
+          <p className="text-xs sm:text-sm font-bold text-[#14281f]">
             {quiz.question}
           </p>
 
@@ -572,12 +681,12 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
               const isSelected = selectedOption === idx;
               const isCorrect = option.isCorrect;
               
-              let btnStyle = 'bg-white border-2 border-emerald-200/90 text-slate-800 hover:bg-emerald-50/80 hover:border-emerald-400 hover:shadow-xs';
+              let btnStyle = 'bg-white border border-emerald-900/15 text-[#14281f] hover:bg-emerald-50 hover:border-emerald-400 hover:shadow-xs';
               if (quizAnswered) {
                 if (isCorrect) {
-                  btnStyle = 'bg-emerald-600 text-white border-emerald-600 font-black shadow-md ring-2 ring-emerald-300';
+                  btnStyle = 'bg-emerald-800 text-amber-100 border-emerald-700 font-black shadow-md ring-2 ring-emerald-400';
                 } else if (isSelected && !isCorrect) {
-                  btnStyle = 'bg-rose-500 text-white border-rose-500 font-bold shadow-sm ring-2 ring-rose-300';
+                  btnStyle = 'bg-rose-700 text-white border-rose-700 font-bold shadow-sm ring-2 ring-rose-300';
                 } else {
                   btnStyle = 'bg-slate-50 text-slate-400 border-slate-200 opacity-60';
                 }
@@ -596,7 +705,7 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
                     </span>
                     {quizAnswered && isCorrect && (
                       <div className="flex items-center gap-1 bg-white/20 px-2 py-0.5 rounded-md text-[11px] font-black shrink-0">
-                        <Check className="w-3.5 h-3.5 text-white" />
+                        <Check className="w-3.5 h-3.5 text-amber-200" />
                         <span>Correct</span>
                       </div>
                     )}
@@ -612,7 +721,7 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
                   {quizAnswered && (
                     <div className={`text-xs pt-1.5 mt-1 border-t ${
                       isCorrect 
-                        ? 'border-white/30 text-emerald-50 font-medium' 
+                        ? 'border-white/30 text-emerald-100 font-medium' 
                         : isSelected 
                         ? 'border-white/30 text-rose-50 font-medium' 
                         : 'border-slate-200 text-slate-500'
@@ -637,35 +746,35 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
 
           {/* Feedback banner with full explanations */}
           {quizAnswered && (
-            <div className={`p-4 rounded-2xl border-2 animate-fadeIn space-y-2.5 ${
+            <div className={`p-4 rounded-2xl border animate-fadeIn space-y-2.5 ${
               quizScore 
-                ? 'bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-300 text-emerald-950 shadow-xs' 
-                : 'bg-gradient-to-br from-rose-50 to-orange-50 border-rose-300 text-rose-950 shadow-xs'
+                ? 'bg-emerald-50 border-emerald-300 text-emerald-950 shadow-xs' 
+                : 'bg-rose-50 border-rose-300 text-rose-950 shadow-xs'
             }`}>
               {quizScore ? (
                 <div className="flex items-start gap-2.5">
-                  <Award className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                  <Award className="w-5 h-5 text-emerald-700 shrink-0 mt-0.5" />
                   <div className="space-y-1">
-                    <p className="font-black text-xs sm:text-sm text-emerald-900">
+                    <p className="font-black text-xs sm:text-sm text-emerald-950">
                       Spot on! You've mastered "{word.word}"!
                     </p>
-                    <p className="text-xs text-emerald-800 leading-relaxed font-medium">
+                    <p className="text-xs text-emerald-900 leading-relaxed font-medium">
                       "{word.word}" fits correctly because it means: {word.definition}
                     </p>
                   </div>
                 </div>
               ) : (
                 <div className="flex items-start gap-2.5">
-                  <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
+                  <AlertCircle className="w-5 h-5 text-rose-700 shrink-0 mt-0.5" />
                   <div className="space-y-2 flex-1">
-                    <p className="font-black text-xs sm:text-sm text-rose-900">
+                    <p className="font-black text-xs sm:text-sm text-rose-950">
                       Not quite, but let's review both words:
                     </p>
                     
                     {/* Chosen Wrong Option Explanation */}
                     {selectedOption !== null && quiz.options[selectedOption] && !quiz.options[selectedOption].isCorrect && (
                       <div className="bg-white/90 p-2.5 rounded-xl border border-rose-200 text-xs text-rose-950 font-medium">
-                        <span className="font-black text-rose-700 block mb-0.5">
+                        <span className="font-black text-rose-800 block mb-0.5">
                           ❌ You chose "{quiz.options[selectedOption].word || quiz.options[selectedOption].text}":
                         </span>
                         <span>{quiz.options[selectedOption].definition}</span>
@@ -674,7 +783,7 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
 
                     {/* Correct Option Explanation */}
                     <div className="bg-emerald-50/90 p-2.5 rounded-xl border border-emerald-200 text-xs text-emerald-950 font-medium">
-                      <span className="font-black text-emerald-800 block mb-0.5">
+                      <span className="font-black text-emerald-900 block mb-0.5">
                         ✅ "{quiz.correctWord}" fits correctly because:
                       </span>
                       <span>{quiz.correctDefinition}</span>
@@ -687,10 +796,10 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
         </div>
 
         {/* Modal Footer Actions */}
-        <div className="pt-2 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100">
+        <div className="pt-2 flex flex-wrap items-center justify-between gap-3 border-t border-emerald-900/10">
           <button
             onClick={onClose}
-            className="px-4 py-2.5 rounded-xl font-bold text-xs text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors cursor-pointer"
+            className="px-4 py-2.5 rounded-xl font-bold text-xs text-[#14281f] bg-emerald-50 hover:bg-emerald-100 transition-colors cursor-pointer"
           >
             Back to Dictionary
           </button>
@@ -703,7 +812,7 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
                 onClose();
                 onOpenAIBard(w);
               }}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-black text-xs shadow-md hover:scale-[1.02] active:scale-95 transition-all cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-800 to-teal-800 hover:from-emerald-700 hover:to-teal-700 text-amber-100 font-black text-xs shadow-md hover:scale-[1.02] active:scale-95 transition-all cursor-pointer border border-emerald-700"
             >
               <Sparkles className="w-4 h-4 text-amber-300" />
               <span>Create Scottish Tale with Hamish AI</span>

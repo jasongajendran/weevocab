@@ -1,29 +1,55 @@
 @import "tailwindcss";
 
-/* Custom Pleasant Pastel Scroller Styles */
+/* Custom Pleasant Subtle Yellow-Green Scroller Styles */
 .custom-scrollbar::-webkit-scrollbar {
   height: 7px;
   width: 7px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #fef7ee;
+  background: #f3f6ed;
   border-radius: 9999px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #a7f3d0;
+  background: #c3d9be;
   border-radius: 9999px;
-  border: 1px solid #6ee7b7;
+  border: 1px solid #a3c89d;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #34d399;
+  background: #7ca874;
 }
 
-/* Eye-friendly smooth text rendering */
+/* Eye-friendly smooth botanical text rendering and background */
 body {
-  background-color: #faf7f2;
-  color: #1e293b;
+  background-color: #f7f9f3;
+  color: #172a1f;
   -webkit-font-smoothing: antialiased;
 }
+
+/* Audio Sound Wave Equalizer Animations */
+@keyframes soundWave {
+  0%, 100% {
+    transform: scaleY(0.25);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scaleY(1.2);
+    opacity: 1;
+  }
+}
+
+.animate-sound-wave-1 {
+  animation: soundWave 0.45s ease-in-out infinite alternate;
+}
+.animate-sound-wave-2 {
+  animation: soundWave 0.35s ease-in-out infinite alternate;
+}
+.animate-sound-wave-3 {
+  animation: soundWave 0.5s ease-in-out infinite alternate;
+}
+.animate-sound-wave-4 {
+  animation: soundWave 0.4s ease-in-out infinite alternate;
+}
+

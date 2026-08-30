@@ -13,6 +13,7 @@ import { playSound } from '../utils/soundEffects';
 import { GlobalPageVerticalScrubber } from './GlobalPageVerticalScrubber';
 import { HighlightedText } from '../utils/textHighlight';
 import { WordStudyModal } from './WordStudyModal';
+import { SoundWaveIcon } from './SoundWaveIcon';
 
 interface DictionaryViewProps {
   entries: DictionaryEntry[];
@@ -204,7 +205,6 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
 
   // Speak word or sentence with active animation feedback
   const handlePronounceAudio = (text: string, audioId: string, rate: number = 0.9) => {
-    playSound('click');
     if (playingAudioId === audioId) {
       cancelSpeech();
       setPlayingAudioId(null);
@@ -257,82 +257,99 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
     }, 5000);
   };
 
-  // Helper for Category Styling & Badges (Yellow, Green, Red, Pink Palette)
+  // Helper for Category Styling & Badges with rich vibrant colors
   const getCategoryTheme = (entry: DictionaryEntry) => {
     if (entry.category === 'UK Common & Slang') {
       return {
-        badgeBg: 'bg-amber-100 text-amber-950 border-amber-300',
+        badgeBg: 'bg-amber-100 text-amber-950 border-amber-300 font-black',
         flag: '🇬🇧 UK Slang',
-        accentBar: 'border-t-4 border-t-amber-400',
-        exBorder: 'border-l-amber-400 bg-amber-50/60',
-        titleHover: 'group-hover:text-amber-800',
+        accentBar: 'border-t-4 border-t-amber-500',
+        exBorder: 'border-l-amber-500 bg-amber-50/60',
+        titleHover: 'group-hover:text-amber-700',
       };
     }
     if (entry.isScots || entry.category === 'School & Banter') {
       return {
-        badgeBg: 'bg-emerald-100 text-emerald-950 border-emerald-300',
+        badgeBg: 'bg-emerald-100 text-emerald-950 border-emerald-300 font-black',
         flag: '🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scots',
-        accentBar: 'border-t-4 border-t-emerald-500',
-        exBorder: 'border-l-emerald-500 bg-emerald-50/60',
-        titleHover: 'group-hover:text-emerald-800',
+        accentBar: 'border-t-4 border-t-emerald-600',
+        exBorder: 'border-l-emerald-600 bg-emerald-50/60',
+        titleHover: 'group-hover:text-emerald-700',
       };
     }
     if (entry.isAcademic) {
       return {
-        badgeBg: 'bg-pink-100 text-pink-950 border-pink-300',
+        badgeBg: 'bg-indigo-100 text-indigo-950 border-indigo-300 font-black',
         flag: '🎓 Scholar',
-        accentBar: 'border-t-4 border-t-pink-400',
-        exBorder: 'border-l-pink-400 bg-pink-50/60',
-        titleHover: 'group-hover:text-pink-800',
+        accentBar: 'border-t-4 border-t-indigo-600',
+        exBorder: 'border-l-indigo-600 bg-indigo-50/60',
+        titleHover: 'group-hover:text-indigo-700',
       };
     }
     if (entry.category === 'Nature & Places') {
       return {
-        badgeBg: 'bg-teal-100 text-teal-950 border-teal-300',
+        badgeBg: 'bg-teal-100 text-teal-950 border-teal-300 font-black',
         flag: '🌲 Nature',
-        accentBar: 'border-t-4 border-t-teal-500',
-        exBorder: 'border-l-teal-500 bg-teal-50/60',
-        titleHover: 'group-hover:text-teal-800',
+        accentBar: 'border-t-4 border-t-teal-600',
+        exBorder: 'border-l-teal-600 bg-teal-50/60',
+        titleHover: 'group-hover:text-teal-700',
       };
     }
     return {
-      badgeBg: 'bg-rose-100 text-rose-950 border-rose-300',
+      badgeBg: 'bg-rose-100 text-rose-950 border-rose-300 font-black',
       flag: '🍲 Culture',
-      accentBar: 'border-t-4 border-t-rose-400',
-      exBorder: 'border-l-rose-400 bg-rose-50/60',
-      titleHover: 'group-hover:text-rose-800',
+      accentBar: 'border-t-4 border-t-rose-500',
+      exBorder: 'border-l-rose-500 bg-rose-50/60',
+      titleHover: 'group-hover:text-rose-700',
     };
+  };
+
+  const getPartOfSpeechBadge = (pos: string) => {
+    const p = pos.toLowerCase();
+    if (p.includes('noun')) {
+      return <span className="px-2 py-0.5 rounded-lg text-[11px] font-black bg-sky-100 text-sky-900 border border-sky-300">n.</span>;
+    }
+    if (p.includes('verb')) {
+      return <span className="px-2 py-0.5 rounded-lg text-[11px] font-black bg-emerald-100 text-emerald-900 border border-emerald-300">v.</span>;
+    }
+    if (p.includes('adj')) {
+      return <span className="px-2 py-0.5 rounded-lg text-[11px] font-black bg-amber-100 text-amber-900 border border-amber-300">adj.</span>;
+    }
+    if (p.includes('adv')) {
+      return <span className="px-2 py-0.5 rounded-lg text-[11px] font-black bg-purple-100 text-purple-900 border border-purple-300">adv.</span>;
+    }
+    return <span className="px-2 py-0.5 rounded-lg text-[11px] font-black bg-teal-100 text-teal-900 border border-teal-300">phr.</span>;
   };
 
   const getDifficultyBadge = (difficulty: string) => {
     if (difficulty.includes('P6-P7')) {
-      return <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-900 border border-emerald-300">🟢 P6–P7 Starter</span>;
+      return <span className="px-2 py-0.5 rounded-lg text-[10px] font-black bg-emerald-100 text-emerald-950 border border-emerald-300">🟢 P6–P7</span>;
     }
     if (difficulty.includes('S1-S2')) {
-      return <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-950 border border-amber-300">🟡 S1–S2 Intermediate</span>;
+      return <span className="px-2 py-0.5 rounded-lg text-[10px] font-black bg-amber-100 text-amber-950 border border-amber-300">🟡 S1–S2</span>;
     }
-    return <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-pink-100 text-pink-950 border border-pink-300">🌸 S3–S4 Scholar</span>;
+    return <span className="px-2 py-0.5 rounded-lg text-[10px] font-black bg-purple-100 text-purple-950 border border-purple-300">🟣 S3–S4</span>;
   };
 
   return (
     <div className="space-y-5 pb-24 sm:pb-8">
       
       {/* Top Controls: Focus Mode Toggle, Layout Selector & Quick Helper */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-white/90 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-amber-200/70 shadow-2xs">
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-white/90 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-emerald-900/10 shadow-2xs">
         <div className="flex items-center gap-2">
           <span className="text-xl">📖</span>
-          <span className="text-xs sm:text-sm font-black text-slate-800">
-            {isFocusMode ? '🎯 Focus Reading Mode' : '🌟 Interactive Dictionary'}
+          <span className="text-xs sm:text-sm font-black text-[#14281f]">
+            {isFocusMode ? '🎯 Focus Reading Mode' : '🌿 Interactive Dictionary'}
           </span>
-          <span className="hidden md:inline-block px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+          <span className="hidden md:inline-block px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-900 border border-emerald-200">
             {filteredEntries.length} words
           </span>
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
           {/* Layout Selector */}
-          <div className="flex items-center gap-1 bg-amber-50/80 p-1 rounded-xl border border-amber-200/80">
-            <span className="text-[10px] font-extrabold uppercase text-amber-900 px-1 hidden sm:inline">
+          <div className="flex items-center gap-1 bg-emerald-50/80 p-1 rounded-xl border border-emerald-200/80">
+            <span className="text-[10px] font-extrabold uppercase text-emerald-900 px-1 hidden sm:inline">
               Layout:
             </span>
             <button
@@ -342,8 +359,8 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
               aria-label="1 Word per Row"
               className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
                 layoutColumns === '1'
-                  ? 'bg-white text-emerald-800 shadow-xs border border-emerald-200'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-amber-100/60'
+                  ? 'bg-emerald-800 text-amber-100 shadow-xs border border-emerald-800'
+                  : 'text-[#2a4436] hover:text-emerald-950 hover:bg-emerald-100/60'
               }`}
             >
               <Rows className="w-3.5 h-3.5" />
@@ -356,8 +373,8 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
               aria-label="2 Words per Row"
               className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
                 layoutColumns === '2'
-                  ? 'bg-white text-emerald-800 shadow-xs border border-emerald-200'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-amber-100/60'
+                  ? 'bg-emerald-800 text-amber-100 shadow-xs border border-emerald-800'
+                  : 'text-[#2a4436] hover:text-emerald-950 hover:bg-emerald-100/60'
               }`}
             >
               <Columns2 className="w-3.5 h-3.5" />
@@ -370,8 +387,8 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
               aria-label="3 Words per Row"
               className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
                 layoutColumns === '3'
-                  ? 'bg-white text-emerald-800 shadow-xs border border-emerald-200'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-amber-100/60'
+                  ? 'bg-emerald-800 text-amber-100 shadow-xs border border-emerald-800'
+                  : 'text-[#2a4436] hover:text-emerald-950 hover:bg-emerald-100/60'
               }`}
             >
               <Columns3 className="w-3.5 h-3.5" />
@@ -390,7 +407,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs transition-all cursor-pointer ${
               isFocusMode
                 ? 'bg-amber-400 text-slate-950 shadow-xs hover:bg-amber-300'
-                : 'bg-slate-100 text-slate-700 hover:bg-amber-100'
+                : 'bg-emerald-50 text-[#2a4436] border border-emerald-200 hover:bg-emerald-100'
             }`}
             title={isFocusMode ? 'Switch back to full interactive mode' : 'Hide distractions for peaceful reading'}
           >
@@ -400,60 +417,51 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
         </div>
       </div>
 
-      {/* Main Header Banner (Hidden in Focus Mode) */}
+      {/* Main Header Banner (Hidden in Focus Mode) - Simple, Short & Fast */}
       {!isFocusMode && (
-        <div className="bg-gradient-to-br from-emerald-900 via-teal-900 to-slate-900 rounded-3xl p-5 sm:p-8 text-white shadow-xl shadow-emerald-950/15 relative overflow-hidden border-2 border-emerald-200/30">
-          {/* Decorative Colorful Ambient Blurs & Patterns (Yellow, Green, Red, Pink) */}
-          <div className="absolute -right-10 -top-10 w-72 h-72 bg-gradient-to-br from-amber-400/25 via-emerald-400/25 to-pink-400/20 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute left-1/4 -bottom-10 w-60 h-60 bg-rose-400/20 rounded-full blur-2xl pointer-events-none" />
-          <div className="absolute right-6 bottom-2 opacity-15 text-8xl sm:text-9xl font-black select-none pointer-events-none transform -rotate-6">
-            🦉
+        <div className="bg-gradient-to-r from-[#14281f] via-[#1a382b] to-[#14281f] rounded-2xl p-3.5 sm:p-4 text-white shadow-xs border border-emerald-800/40">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="space-y-0.5">
+              <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-white/10 text-[10px] font-black text-amber-200">
+                <Sparkles className="w-3 h-3 text-amber-300" />
+                <span>UK & Scottish Junior Dictionary</span>
+              </div>
+              <h1 className="text-base sm:text-lg font-black text-amber-100 tracking-tight">
+                British & Scottish Vocabulary
+              </h1>
+            </div>
+
+            {/* Quick Surprise Button */}
+            <button
+              id="random-word-btn"
+              onClick={handleRandomWord}
+              className="flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-400 hover:from-amber-300 hover:to-yellow-300 active:scale-95 text-slate-950 font-black text-xs shadow-xs transition-all whitespace-nowrap cursor-pointer border border-amber-300 shrink-0 self-end sm:self-auto"
+            >
+              <Shuffle className="w-3.5 h-3.5 text-slate-950" />
+              <span>Surprise Word! 🎲</span>
+            </button>
           </div>
 
-          <div className="relative z-10 max-w-3xl space-y-3.5">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/30 text-xs font-black text-amber-300 shadow-xs">
-              <Sparkles className="w-4 h-4 text-amber-300 animate-pulse" />
-              <span>🇬🇧 UK Common & 🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scottish Junior Vocabulary Quest</span>
-            </div>
-            <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-white leading-tight">
-              Junior UK & Scottish Dictionary
-            </h1>
-            <p className="text-xs sm:text-sm text-emerald-100 leading-relaxed font-medium">
-              Explore 450+ top UK common words, Scottish regional slang, and academic power terms. Every entry includes <strong>voice audio for words & sentences</strong>, dual school contexts, and fun mastery quizzes!
-            </p>
-
-            {/* Search Input Bar */}
-            <div className="pt-2 flex flex-col sm:flex-row gap-2.5">
-              <div className="relative flex-1">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-400" />
-                <input
-                  id="dictionary-search-input"
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search any word, meaning, slang, or synonym (e.g. chuffed, dreich, analyse)..."
-                  className="w-full pl-11 pr-10 py-3.5 rounded-2xl bg-white text-slate-900 placeholder:text-slate-400 font-bold text-sm sm:text-base shadow-lg border-2 border-white/80 focus:outline-hidden focus:ring-4 focus:ring-amber-400/50 transition-all"
-                />
-                {searchQuery && (
-                  <button
-                    id="clear-search-btn"
-                    onClick={() => setSearchQuery('')}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1.5 rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                )}
-              </div>
-
+          {/* Search Input Bar */}
+          <div className="mt-2.5 relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-700" />
+            <input
+              id="dictionary-search-input"
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search word, meaning, or slang (e.g. chuffed, dreich, braw, analyse)..."
+              className="w-full pl-9 pr-9 py-2.5 rounded-xl bg-white text-slate-900 placeholder:text-[#527060] font-bold text-xs sm:text-sm shadow-xs border border-emerald-200 focus:outline-hidden focus:ring-2 focus:ring-amber-400 transition-all"
+            />
+            {searchQuery && (
               <button
-                id="random-word-btn"
-                onClick={handleRandomWord}
-                className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-400 active:scale-95 text-slate-950 font-black text-sm shadow-md hover:shadow-lg transition-all whitespace-nowrap cursor-pointer border border-amber-300"
+                id="clear-search-btn"
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1 rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
               >
-                <Shuffle className="w-4 h-4 text-slate-950" />
-                <span>Surprise Word! 🎲</span>
+                <X className="w-3.5 h-3.5" />
               </button>
-            </div>
+            )}
           </div>
         </div>
       )}
@@ -468,7 +476,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Type any word or meaning to search..."
-            className="w-full pl-11 pr-10 py-3 rounded-2xl bg-white text-slate-900 placeholder:text-slate-400 font-semibold text-sm sm:text-base shadow-xs border border-slate-300 focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
+            className="w-full pl-11 pr-10 py-3 rounded-2xl bg-white text-slate-900 placeholder:text-slate-400 font-semibold text-sm sm:text-base shadow-xs border border-emerald-200 focus:outline-hidden focus:ring-2 focus:ring-emerald-700"
           />
           {searchQuery && (
             <button
@@ -482,11 +490,11 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
       )}
 
       {/* A to Z Alphabet Navigation Bar (Mobile Swipeable & Touch Optimized) */}
-      <div className="bg-white rounded-2xl p-3.5 sm:p-4 shadow-xs border border-slate-200/80 space-y-2">
+      <div className="bg-white rounded-2xl p-3.5 sm:p-4 shadow-xs border border-emerald-900/10 space-y-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
-              <BookOpen className="w-4 h-4 text-emerald-700" />
+            <span className="text-xs font-black uppercase tracking-wider text-[#203a2b] flex items-center gap-1.5">
+              <BookOpen className="w-4 h-4 text-emerald-800" />
               A–Z Alphabet Scroller:
             </span>
             {selectedLetter && (
@@ -496,7 +504,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                   setSelectedLetter(null);
                   playSound('click');
                 }}
-                className="text-xs font-black text-emerald-800 hover:text-emerald-950 hover:underline px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200"
+                className="text-xs font-black text-emerald-900 hover:text-emerald-950 hover:underline px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-300"
               >
                 Show All (A–Z) ✕
               </button>
@@ -508,14 +516,14 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
             <button
               onClick={() => scrollAlphabetBar('left')}
               title="Scroll A-Z left"
-              className="p-1.5 rounded-lg bg-slate-100 hover:bg-emerald-100 text-slate-700 border border-slate-200 shadow-2xs cursor-pointer transition-colors"
+              className="p-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#203a2b] border border-emerald-200 shadow-2xs cursor-pointer transition-colors"
             >
               <ChevronLeft className="w-3.5 h-3.5" />
             </button>
             <button
               onClick={() => scrollAlphabetBar('right')}
               title="Scroll A-Z right"
-              className="p-1.5 rounded-lg bg-slate-100 hover:bg-emerald-100 text-slate-700 border border-slate-200 shadow-2xs cursor-pointer transition-colors"
+              className="p-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#203a2b] border border-emerald-200 shadow-2xs cursor-pointer transition-colors"
             >
               <ChevronRight className="w-3.5 h-3.5" />
             </button>
@@ -525,10 +533,10 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
         {/* Swipeable Horizontal Alphabet Pill Bar with visible custom scrollbar and smooth touch scrolling */}
         <div
           ref={alphabetBarRef}
-          className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto pb-2.5 pt-0.5 scroll-smooth custom-scrollbar"
+          className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pt-2 pb-3 px-1 scroll-smooth custom-scrollbar"
           style={{
             scrollbarWidth: 'thin',
-            scrollbarColor: '#6ee7b7 #f1f5f9',
+            scrollbarColor: '#4d7c5f #eef6f0',
           }}
         >
           <button
@@ -539,8 +547,8 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
             }}
             className={`px-4 py-2 min-h-[40px] rounded-xl font-black text-xs sm:text-sm whitespace-nowrap transition-all shrink-0 cursor-pointer ${
               selectedLetter === null
-                ? 'bg-gradient-to-r from-emerald-700 to-teal-700 text-white shadow-md shadow-emerald-700/30 scale-[1.03]'
-                : 'bg-slate-100 text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 border border-slate-200'
+                ? 'bg-gradient-to-r from-emerald-800 to-teal-800 text-amber-100 shadow-md shadow-emerald-950/20 ring-2 ring-emerald-600'
+                : 'bg-emerald-50/60 text-[#2a4436] hover:bg-emerald-100 hover:text-emerald-950 border border-emerald-200/80'
             }`}
           >
             All ({entries.length})
@@ -560,16 +568,16 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                 }}
                 className={`relative px-3.5 py-2 min-h-[40px] min-w-[40px] rounded-xl font-black text-xs sm:text-sm transition-all shrink-0 cursor-pointer flex items-center justify-center gap-1.5 ${
                   isSelected
-                    ? 'bg-gradient-to-tr from-emerald-700 via-teal-600 to-amber-500 text-white shadow-md shadow-emerald-700/30 scale-110 ring-2 ring-emerald-300'
+                    ? 'bg-gradient-to-tr from-emerald-800 via-teal-800 to-emerald-900 text-amber-100 shadow-md shadow-emerald-950/25 ring-2 ring-amber-400 border-2 border-emerald-500'
                     : count > 0
-                    ? 'bg-slate-100 text-slate-800 hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-300 border border-slate-200/80 shadow-2xs'
-                    : 'bg-slate-50 text-slate-300 cursor-not-allowed opacity-40'
+                    ? 'bg-white text-[#1b3425] hover:bg-emerald-50 hover:text-emerald-950 hover:border-emerald-400 border border-emerald-900/15 shadow-2xs'
+                    : 'bg-emerald-50/30 text-emerald-900/30 cursor-not-allowed opacity-40 border border-transparent'
                 }`}
                 title={count > 0 ? `${count} word${count > 1 ? 's' : ''} starting with ${letter}` : `No words starting with ${letter}`}
               >
                 <span className="text-sm">{letter}</span>
                 {count > 0 && (
-                  <span className={`text-[10px] font-black px-1.5 py-0.2 rounded-full ${isSelected ? 'bg-white/30 text-white' : 'bg-slate-200 text-slate-600'}`}>
+                  <span className={`text-[10px] font-black px-1.5 py-0.2 rounded-full ${isSelected ? 'bg-amber-400 text-emerald-950 font-black' : 'bg-emerald-100 text-emerald-900'}`}>
                     {count}
                   </span>
                 )}
@@ -580,29 +588,29 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
       </div>
 
       {/* Collapsible Filter Bar */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition-all">
+      <div className="bg-white rounded-2xl border border-emerald-900/10 shadow-2xs overflow-hidden transition-all">
         {/* Accordion Header */}
         <div 
           onClick={() => {
             setIsFilterOpen(!isFilterOpen);
             playSound('click');
           }}
-          className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-slate-50 to-emerald-50/40 hover:bg-emerald-50/70 cursor-pointer border-b border-slate-200/80 select-none transition-colors"
+          className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-emerald-50/60 to-lime-50/40 hover:bg-emerald-50/90 cursor-pointer border-b border-emerald-900/10 select-none transition-colors"
         >
           <div className="flex items-center gap-2 flex-wrap">
-            <div className="p-1 rounded-lg bg-emerald-100 text-emerald-800">
+            <div className="p-1 rounded-lg bg-emerald-100 text-emerald-900">
               <Filter className="w-4 h-4" />
             </div>
-            <span className="font-extrabold text-xs sm:text-sm text-slate-900">
+            <span className="font-extrabold text-xs sm:text-sm text-[#14281f]">
               Filter Categories & Regions
             </span>
             {activeFiltersCount > 0 && (
-              <span className="px-2.5 py-0.5 text-[11px] font-black bg-gradient-to-r from-emerald-700 to-teal-700 text-white rounded-full shadow-2xs">
+              <span className="px-2.5 py-0.5 text-[11px] font-black bg-gradient-to-r from-emerald-800 to-teal-800 text-amber-100 rounded-full shadow-2xs">
                 {activeFiltersCount} Active
               </span>
             )}
             {!isFilterOpen && (
-              <span className="text-xs text-slate-500 font-bold truncate max-w-[200px] sm:max-w-md hidden sm:inline">
+              <span className="text-xs text-[#4b6354] font-bold truncate max-w-[200px] sm:max-w-md hidden sm:inline">
                 • {selectedCategory} • {selectedRegion} • {selectedDifficulty}
               </span>
             )}
@@ -621,7 +629,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                   setSelectedDifficulty('All');
                   playSound('click');
                 }}
-                className="text-xs font-black text-rose-600 hover:text-rose-800 hover:underline px-2 py-1 cursor-pointer"
+                className="text-xs font-black text-amber-800 hover:text-amber-950 hover:underline px-2 py-1 cursor-pointer"
               >
                 Reset All
               </button>
@@ -629,9 +637,9 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
             <button
               id="filter-accordion-toggle-btn"
               aria-label={isFilterOpen ? 'Collapse filter section' : 'Expand filter section'}
-              className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-200/80 transition-colors"
+              className="p-1.5 rounded-lg text-emerald-800 hover:bg-emerald-100/80 transition-colors"
             >
-              {isFilterOpen ? <ChevronUp className="w-4 h-4 text-emerald-700 font-bold" /> : <ChevronDown className="w-4 h-4 text-slate-600" />}
+              {isFilterOpen ? <ChevronUp className="w-4 h-4 text-emerald-800 font-bold" /> : <ChevronDown className="w-4 h-4 text-[#4b6354]" />}
             </button>
           </div>
         </div>
@@ -641,18 +649,18 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
           <div className="p-4 space-y-3.5 animate-in fade-in duration-150">
             {/* Category Filter Chips */}
             <div>
-              <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 block mb-2">
+              <span className="text-[11px] font-black uppercase tracking-wider text-[#4b6354] block mb-2">
                 Vocabulary Categories:
               </span>
               <div className="flex flex-wrap items-center gap-2">
                 {[
-                  { label: '✨ All Categories', value: 'All', activeClass: 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-xs', normalClass: 'bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-200' },
+                  { label: '🌿 All Categories', value: 'All', activeClass: 'bg-gradient-to-r from-emerald-800 to-teal-800 text-amber-100 shadow-xs', normalClass: 'bg-emerald-50/70 text-[#2a4436] hover:bg-emerald-100 border-emerald-200' },
                   { label: '🇬🇧 UK Common & Slang', value: 'UK Common', activeClass: 'bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 shadow-xs', normalClass: 'bg-amber-50 text-amber-950 hover:bg-amber-100 border-amber-200' },
-                  { label: '🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scots & Regional', value: 'Scots Slang', activeClass: 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-xs', normalClass: 'bg-emerald-50 text-emerald-950 hover:bg-emerald-100 border-emerald-200' },
-                  { label: '🎓 Academic & Power', value: 'Academic', activeClass: 'bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-xs', normalClass: 'bg-pink-50 text-pink-950 hover:bg-pink-100 border-pink-200' },
-                  { label: '🏫 School & Banter', value: 'School & Banter', activeClass: 'bg-gradient-to-r from-rose-500 to-red-500 text-white shadow-xs', normalClass: 'bg-rose-50 text-rose-950 hover:bg-rose-100 border-rose-200' },
-                  { label: '🌲 Nature & Places', value: 'Nature & Places', activeClass: 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-xs', normalClass: 'bg-teal-50 text-teal-950 hover:bg-teal-100 border-teal-200' },
-                  { label: '🍲 Food & Culture', value: 'Food & Culture', activeClass: 'bg-gradient-to-r from-amber-500 to-rose-500 text-white shadow-xs', normalClass: 'bg-amber-50 text-amber-950 hover:bg-amber-100 border-amber-200' },
+                  { label: '🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scots & Regional', value: 'Scots Slang', activeClass: 'bg-gradient-to-r from-emerald-800 to-teal-800 text-amber-100 shadow-xs', normalClass: 'bg-emerald-50 text-emerald-950 hover:bg-emerald-100 border-emerald-200' },
+                  { label: '🎓 Academic & Power', value: 'Academic', activeClass: 'bg-gradient-to-r from-lime-800 to-emerald-900 text-amber-100 shadow-xs', normalClass: 'bg-lime-50 text-lime-950 hover:bg-lime-100 border-lime-200' },
+                  { label: '🏫 School & Banter', value: 'School & Banter', activeClass: 'bg-gradient-to-r from-emerald-700 to-lime-700 text-white shadow-xs', normalClass: 'bg-emerald-50 text-emerald-950 hover:bg-emerald-100 border-emerald-200' },
+                  { label: '🌲 Nature & Places', value: 'Nature & Places', activeClass: 'bg-gradient-to-r from-teal-800 to-emerald-800 text-amber-100 shadow-xs', normalClass: 'bg-teal-50 text-teal-950 hover:bg-teal-100 border-teal-200' },
+                  { label: '🍲 Food & Culture', value: 'Food & Culture', activeClass: 'bg-gradient-to-r from-yellow-700 to-amber-700 text-amber-100 shadow-xs', normalClass: 'bg-yellow-50 text-yellow-950 hover:bg-yellow-100 border-yellow-200' },
                 ].map(cat => (
                   <button
                     key={cat.value}
@@ -663,7 +671,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                     }}
                     className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer border ${
                       selectedCategory === cat.value
-                        ? `${cat.activeClass} scale-105 ring-2 ring-white`
+                        ? `${cat.activeClass} scale-105 ring-2 ring-emerald-300`
                         : `${cat.normalClass}`
                     }`}
                   >
@@ -674,9 +682,9 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
             </div>
 
             {/* Region & Difficulty Dropdowns */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-100">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-emerald-900/10">
               <div className="flex items-center gap-2.5 bg-gradient-to-r from-emerald-50/60 to-teal-50/60 px-3.5 py-2.5 rounded-xl border border-emerald-200/80">
-                <div className="p-1 rounded-lg bg-emerald-100 text-emerald-800">
+                <div className="p-1 rounded-lg bg-emerald-100 text-emerald-900">
                   <MapPin className="w-4 h-4 shrink-0" />
                 </div>
                 <div className="flex-1">
@@ -688,7 +696,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                     value={selectedRegion}
                     onChange={(e) => setSelectedRegion(e.target.value)}
                     aria-label="Filter by UK or Scottish region"
-                    className="w-full bg-transparent font-black text-slate-800 focus:outline-hidden text-xs cursor-pointer"
+                    className="w-full bg-transparent font-black text-[#14281f] focus:outline-hidden text-xs cursor-pointer"
                   >
                     <option value="All">All UK & Scottish Regions</option>
                     <option value="UK Wide & Common">UK Wide & Common</option>
@@ -707,12 +715,12 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                 </div>
               </div>
 
-              <div className="flex items-center gap-2.5 bg-gradient-to-r from-purple-50/50 to-pink-50/50 px-3.5 py-2.5 rounded-xl border border-purple-200/80">
-                <div className="p-1 rounded-lg bg-purple-100 text-purple-700">
+              <div className="flex items-center gap-2.5 bg-gradient-to-r from-lime-50/50 to-emerald-50/50 px-3.5 py-2.5 rounded-xl border border-lime-200/80">
+                <div className="p-1 rounded-lg bg-lime-100 text-lime-900">
                   <GraduationCap className="w-4 h-4 shrink-0" />
                 </div>
                 <div className="flex-1">
-                  <label htmlFor="difficulty-filter-select" className="text-[10px] font-black text-purple-900 uppercase block">
+                  <label htmlFor="difficulty-filter-select" className="text-[10px] font-black text-lime-950 uppercase block">
                     School Stage
                   </label>
                   <select
@@ -720,7 +728,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                     value={selectedDifficulty}
                     onChange={(e) => setSelectedDifficulty(e.target.value)}
                     aria-label="Filter by school stage and difficulty"
-                    className="w-full bg-transparent font-black text-slate-800 focus:outline-hidden text-xs cursor-pointer"
+                    className="w-full bg-transparent font-black text-[#14281f] focus:outline-hidden text-xs cursor-pointer"
                   >
                     <option value="All">All School Stages (P6–S4)</option>
                     <option value="P6-P7">Primary 6–7 (Starter)</option>
@@ -735,9 +743,9 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
       </div>
 
       {/* Results Count, Active Filters & Layout Selector */}
-      <div className="flex flex-wrap items-center justify-between gap-2.5 text-xs text-slate-600 px-1">
+      <div className="flex flex-wrap items-center justify-between gap-2.5 text-xs text-[#4b6354] px-1">
         <div className="flex items-center gap-1.5 flex-wrap">
-          <span>Showing <strong className="font-black text-slate-900">{filteredEntries.length}</strong> of <strong className="font-black text-slate-900">{entries.length}</strong> terms</span>
+          <span>Showing <strong className="font-black text-[#14281f]">{filteredEntries.length}</strong> of <strong className="font-black text-[#14281f]">{entries.length}</strong> terms</span>
           {selectedLetter && <span> • Letter <strong>'{selectedLetter}'</strong></span>}
           {searchQuery && <span> • Matching <strong>"{searchQuery}"</strong></span>}
           {activeFiltersCount > 0 && (
@@ -751,7 +759,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                 setSelectedDifficulty('All');
                 playSound('click');
               }}
-              className="ml-1 text-blue-600 hover:text-blue-800 font-extrabold hover:underline cursor-pointer"
+              className="ml-1 text-emerald-800 hover:text-emerald-950 font-extrabold hover:underline cursor-pointer"
             >
               Clear Filters
             </button>
@@ -759,8 +767,8 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
         </div>
 
         {/* Layout Mode Selector in Results Bar */}
-        <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200 shadow-2xs">
-          <span className="text-[10px] font-extrabold uppercase text-slate-400 px-1">
+        <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-emerald-900/10 shadow-2xs">
+          <span className="text-[10px] font-extrabold uppercase text-[#4b6354] px-1">
             Layout:
           </span>
           <button
@@ -770,8 +778,8 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
             aria-label="1 Word per Row"
             className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
               layoutColumns === '1'
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                ? 'bg-emerald-800 text-amber-100 shadow-xs'
+                : 'text-[#2a4436] hover:text-emerald-950 hover:bg-emerald-50'
             }`}
           >
             <Rows className="w-3.5 h-3.5" />
@@ -784,8 +792,8 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
             aria-label="2 Words per Row"
             className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
               layoutColumns === '2'
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                ? 'bg-emerald-800 text-amber-100 shadow-xs'
+                : 'text-[#2a4436] hover:text-emerald-950 hover:bg-emerald-50'
             }`}
           >
             <Columns2 className="w-3.5 h-3.5" />
@@ -798,8 +806,8 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
             aria-label="3 Words per Row"
             className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
               layoutColumns === '3'
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                ? 'bg-emerald-800 text-amber-100 shadow-xs'
+                : 'text-[#2a4436] hover:text-emerald-950 hover:bg-emerald-50'
             }`}
           >
             <Columns3 className="w-3.5 h-3.5" />
@@ -817,12 +825,12 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
 
       {/* Word Cards Grid / Grouped Sections */}
       {filteredEntries.length === 0 ? (
-        <div className="bg-white rounded-3xl p-10 text-center border border-slate-200 shadow-xs max-w-md mx-auto">
-          <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-3 text-3xl">
+        <div className="bg-white rounded-3xl p-10 text-center border border-emerald-900/10 shadow-xs max-w-md mx-auto">
+          <div className="w-16 h-16 bg-emerald-50 text-emerald-800 rounded-2xl flex items-center justify-center mx-auto mb-3 text-3xl">
             🔍
           </div>
-          <h3 className="text-lg font-black text-slate-900 mb-1">No words match your filters</h3>
-          <p className="text-xs text-slate-500 mb-4">
+          <h3 className="text-lg font-black text-[#14281f] mb-1">No words match your filters</h3>
+          <p className="text-xs text-[#4b6354] mb-4">
             Try checking spelling, searching for another word, or resetting your filter choices.
           </p>
           <button
@@ -833,7 +841,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
               setSelectedRegion('All');
               setSelectedDifficulty('All');
             }}
-            className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-all"
+            className="px-5 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-amber-100 font-bold text-xs rounded-xl transition-all"
           >
             Reset All Filters
           </button>
@@ -851,15 +859,15 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
             return (
               <div key={group.letter} id={`letter-section-${group.letter}`} className="relative space-y-3.5 scroll-mt-24">
                 {/* Section Header with anchor and count */}
-                <div className="flex items-center justify-between border-b-2 border-emerald-200/80 pb-2 pt-1">
+                <div className="flex items-center justify-between border-b-2 border-emerald-200 pb-2 pt-1">
                   <div className="flex items-center gap-2.5">
-                    <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-emerald-700 to-teal-800 text-white font-black text-base sm:text-lg flex items-center justify-center shadow-xs">
+                    <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-emerald-800 to-teal-900 text-amber-100 font-black text-base sm:text-lg flex items-center justify-center shadow-xs">
                       {group.letter}
                     </span>
-                    <span className="font-extrabold text-slate-800 text-sm sm:text-base">
+                    <span className="font-extrabold text-[#14281f] text-sm sm:text-base">
                       Letter {group.letter}
                     </span>
-                    <span className="text-[11px] sm:text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
+                    <span className="text-[11px] sm:text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-950 border border-emerald-200">
                       {group.entries.length} {group.entries.length === 1 ? 'word' : 'words'}
                     </span>
                   </div>
@@ -871,7 +879,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                     }}
                     title="Move to top"
                     aria-label="Move to top"
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-emerald-700 hover:bg-emerald-50 transition-colors cursor-pointer"
+                    className="p-1.5 rounded-lg text-[#4b6354] hover:text-emerald-900 hover:bg-emerald-50 transition-colors cursor-pointer"
                   >
                     <ArrowUp className="w-4 h-4 stroke-[2.5]" />
                   </button>
@@ -888,8 +896,8 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
               <div
                 key={entry.id}
                 id={`word-card-${entry.id}`}
-                className={`bg-white rounded-3xl border-2 border-slate-200/90 hover:border-emerald-400 hover:shadow-xl transition-all duration-250 flex flex-col justify-between group ${theme.accentBar} ${
-                  layoutColumns === '1' ? 'p-6 sm:p-7 shadow-xs' : 'p-5 shadow-xs'
+                className={`bg-white rounded-3xl border border-emerald-900/10 hover:border-emerald-600 hover:shadow-lg hover:shadow-emerald-950/10 transition-all duration-250 flex flex-col justify-between group ${theme.accentBar} ${
+                  layoutColumns === '1' ? 'p-6 sm:p-7 shadow-2xs' : 'p-5 shadow-2xs'
                 }`}
               >
                 <div>
@@ -897,7 +905,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                   <div className="flex items-start justify-between gap-3 mb-3 pr-3 sm:pr-3.5">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <h2 className={`font-black text-slate-900 tracking-tight transition-colors ${theme.titleHover} ${
+                        <h2 className={`font-black text-[#14281f] tracking-tight transition-colors ${theme.titleHover} ${
                           layoutColumns === '1' ? 'text-2xl sm:text-3xl' : 'text-xl sm:text-2xl'
                         }`}>
                           {entry.word}
@@ -919,20 +927,20 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                           aria-label={isStarred ? `Remove ${entry.word} from Vault` : `Save ${entry.word} to Vault`}
                           className={`p-1.5 rounded-xl transition-all cursor-pointer inline-flex items-center justify-center ${
                             isStarred 
-                              ? 'bg-gradient-to-r from-amber-400 to-orange-400 text-amber-950 shadow-xs scale-105 border border-amber-300 ring-2 ring-amber-300/40' 
-                              : 'bg-slate-100 text-slate-400 hover:text-amber-500 hover:bg-amber-50 border border-slate-200'
+                              ? 'bg-gradient-to-r from-amber-400 to-yellow-400 text-slate-950 shadow-xs scale-105 border border-amber-300 ring-2 ring-amber-300/40' 
+                              : 'bg-emerald-50/60 text-[#4b6354] hover:text-amber-600 hover:bg-amber-50 border border-emerald-200/80'
                           }`}
                         >
-                          <Star className={`w-3.5 h-3.5 ${isStarred ? 'fill-amber-950 text-amber-950' : ''}`} />
+                          <Star className={`w-3.5 h-3.5 ${isStarred ? 'fill-slate-950 text-slate-950' : ''}`} />
                         </button>
                       </div>
                       
                       {/* Phonetic & Pronunciation Guide */}
                       <div className="flex items-center gap-2 mt-1 flex-wrap">
-                        <span className={`font-mono font-black text-slate-500 ${layoutColumns === '1' ? 'text-sm' : 'text-xs'}`}>
+                        <span className={`font-mono font-bold text-[#4b6354] ${layoutColumns === '1' ? 'text-sm' : 'text-xs'}`}>
                           {entry.phonetic}
                         </span>
-                        <span className={`text-purple-800 font-extrabold italic bg-purple-50 px-2 py-0.5 rounded-md border border-purple-200 ${layoutColumns === '1' ? 'text-xs' : 'text-[11px]'}`} title={entry.phoneticGuide}>
+                        <span className={`text-emerald-950 font-extrabold italic bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200 ${layoutColumns === '1' ? 'text-xs' : 'text-[11px]'}`} title={entry.phoneticGuide}>
                           🗣️ {entry.phoneticGuide}
                         </span>
                       </div>
@@ -946,68 +954,57 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                       aria-label={`Listen to pronunciation of ${entry.word}`}
                       className={`w-8.5 h-8.5 rounded-xl flex items-center justify-center transition-all cursor-pointer shrink-0 ${
                         isWordPlaying
-                          ? 'bg-gradient-to-tr from-emerald-700 via-teal-600 to-amber-500 text-white shadow-md ring-2 ring-emerald-300 animate-pulse'
-                          : 'bg-gradient-to-tr from-emerald-50 to-teal-100 text-emerald-800 hover:from-emerald-700 hover:to-teal-700 hover:text-white shadow-2xs border border-emerald-200 hover:scale-105 active:scale-95'
+                          ? 'bg-gradient-to-tr from-emerald-800 via-teal-800 to-amber-500 text-white shadow-md ring-2 ring-emerald-300'
+                          : 'bg-gradient-to-tr from-emerald-50 to-lime-50 text-emerald-900 hover:from-emerald-800 hover:to-teal-800 hover:text-white shadow-2xs border border-emerald-200 hover:scale-105 active:scale-95'
                       }`}
                     >
-                      <Volume2 className={`w-4 h-4 ${isWordPlaying ? 'animate-bounce' : ''}`} />
+                      <SoundWaveIcon isPlaying={isWordPlaying} size="sm" />
                     </button>
                   </div>
 
                   {/* Tags & Metadata Bar */}
-                  <div className="flex items-center gap-2 mb-3.5 text-xs flex-wrap">
-                    <span className="font-black text-slate-800 bg-slate-100 px-2.5 py-0.5 rounded-lg border border-slate-200">
-                      {entry.partOfSpeech}
-                    </span>
+                  <div className="flex items-center gap-1.5 mb-3 text-xs flex-wrap">
+                    {getPartOfSpeechBadge(entry.partOfSpeech)}
                     {getDifficultyBadge(entry.difficulty)}
-                    <span className="text-slate-600 font-bold flex items-center gap-1 text-[11px] bg-slate-50 px-2 py-0.5 rounded-lg border border-slate-200/80" title={entry.scotsRegion}>
-                      <MapPin className="w-3 h-3 text-emerald-600 shrink-0" />
-                      {entry.scotsRegion}
+                    <span className="text-[#204030] font-bold flex items-center gap-1 text-[11px] bg-emerald-50/80 px-2 py-0.5 rounded-lg border border-emerald-200/90 shadow-2xs" title={entry.scotsRegion}>
+                      <MapPin className="w-3 h-3 text-emerald-700 shrink-0" />
+                      {entry.scotsRegion.replace(' & Scotland', '').replace('UK Wide & Common', 'UK Wide')}
                     </span>
                   </div>
 
-                  {/* Definition Box with Direct Sound Icon (Vertical Alignment Guide 2/4) */}
+                  {/* Definition Box with Direct Sound Icon */}
                   {(() => {
                     const isDefPlaying = playingAudioId === `card-def-${entry.id}`;
                     return (
-                      <div className="bg-gradient-to-br from-slate-50 to-emerald-50/30 rounded-2xl p-3 sm:p-3.5 border border-slate-200 mb-3 flex items-start justify-between gap-3 group/def shadow-2xs">
+                      <div className="bg-gradient-to-br from-emerald-50/60 to-lime-50/40 rounded-2xl p-3 sm:p-3.5 border border-emerald-900/10 mb-3 flex items-start justify-between gap-3 group/def shadow-2xs">
                         <div className="flex-1 min-w-0">
-                          <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 block mb-0.5">
-                            Definition:
-                          </span>
-                          <p className={`font-bold text-slate-800 leading-relaxed ${
+                          <p className={`font-bold text-[#14281f] leading-relaxed ${
                             layoutColumns === '1' ? 'text-base sm:text-lg' : 'text-sm'
                           }`}>
                             {entry.definition}
                           </p>
                         </div>
 
-                        {/* 2. Definition Sound Icon */}
+                        {/* Definition Sound Icon */}
                         <button
                           id={`def-sound-btn-${entry.id}`}
                           onClick={() => handlePronounceAudio(entry.definition, `card-def-${entry.id}`, 0.9)}
-                          title="Listen to definition read out loud"
+                          title="Listen to definition"
                           aria-label={`Listen to definition: ${entry.definition}`}
                           className={`w-8.5 h-8.5 rounded-xl flex items-center justify-center transition-all shrink-0 cursor-pointer ${
                             isDefPlaying
-                              ? 'bg-emerald-700 text-white shadow-md ring-2 ring-emerald-300 animate-pulse'
-                              : 'bg-white text-emerald-800 hover:bg-emerald-700 hover:text-white shadow-2xs border border-emerald-200 hover:scale-105 active:scale-95'
+                              ? 'bg-emerald-800 text-white shadow-md ring-2 ring-emerald-300'
+                              : 'bg-white text-emerald-900 hover:bg-emerald-800 hover:text-white shadow-2xs border border-emerald-200 hover:scale-105 active:scale-95'
                           }`}
                         >
-                          <Volume2 className={`w-4 h-4 ${isDefPlaying ? 'animate-bounce' : ''}`} />
+                          <SoundWaveIcon isPlaying={isDefPlaying} size="sm" />
                         </button>
                       </div>
                     );
                   })()}
 
-                  {/* Example Sentences with Voice Read-Aloud Buttons (Vertical Alignment Guides 3/4 & 4/4) */}
+                  {/* Example Sentences */}
                   <div className="space-y-2 mb-3.5">
-                    <div className="flex items-center justify-between px-1">
-                      <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 flex items-center gap-1">
-                        <span>💬</span> Context Examples:
-                      </span>
-                    </div>
-
                     {entry.examples.map((ex, idx) => {
                       const exAudioId = `card-${entry.id}-ex-${idx}`;
                       const isExPlaying = playingAudioId === exAudioId;
@@ -1015,10 +1012,10 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                       return (
                         <div 
                           key={idx} 
-                          className={`flex items-start justify-between gap-3 p-3 sm:p-3.5 rounded-2xl border border-slate-200/90 border-l-4 transition-all shadow-2xs ${
+                          className={`flex items-start justify-between gap-3 p-3 sm:p-3.5 rounded-2xl border border-emerald-900/10 border-l-4 transition-all shadow-2xs ${
                             isExPlaying 
-                              ? 'bg-emerald-100/80 border-l-emerald-700 text-emerald-950 font-bold' 
-                              : `${theme.exBorder} bg-slate-50/90 text-slate-800`
+                              ? 'bg-emerald-100/90 border-l-emerald-800 text-emerald-950 font-bold' 
+                              : `${theme.exBorder} text-[#14281f]`
                           }`}
                         >
                           <p className={`italic leading-relaxed flex-1 min-w-0 pt-0.5 font-medium ${
@@ -1027,7 +1024,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                             "<HighlightedText text={ex} targetWord={entry.word} />"
                           </p>
 
-                          {/* 3 & 4. Example Sound Button */}
+                          {/* Example Sound Button */}
                           <button
                             id={`read-ex-${entry.id}-${idx}`}
                             onClick={() => handlePronounceAudio(ex, exAudioId, 0.88)}
@@ -1035,24 +1032,24 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                             aria-label={`Listen to example sentence: ${ex}`}
                             className={`w-8.5 h-8.5 rounded-xl flex items-center justify-center transition-all shrink-0 cursor-pointer ${
                               isExPlaying
-                                ? 'bg-emerald-700 text-white animate-pulse shadow-md ring-2 ring-emerald-300'
-                                : 'bg-white text-emerald-800 hover:bg-emerald-700 hover:text-white shadow-2xs border border-emerald-200 hover:scale-105 active:scale-95'
+                                ? 'bg-emerald-800 text-white shadow-md ring-2 ring-emerald-300'
+                                : 'bg-white text-emerald-900 hover:bg-emerald-800 hover:text-white shadow-2xs border border-emerald-200 hover:scale-105 active:scale-95'
                             }`}
                           >
-                            <Volume2 className={`w-4 h-4 ${isExPlaying ? 'animate-bounce' : ''}`} />
+                            <SoundWaveIcon isPlaying={isExPlaying} size="sm" />
                           </button>
                         </div>
                       );
                     })}
                   </div>
 
-                  {/* Synonyms & Antonyms preview tags - All displayed */}
-                  {!isFocusMode && (
+                  {/* Synonyms & Antonyms preview tags */}
+                  {(entry.synonyms.length > 0 || entry.antonyms.length > 0) && (
                     <div className="space-y-2 text-xs mb-3.5">
                       {entry.synonyms.length > 0 && (
                         <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="font-black text-emerald-800 text-[11px] flex items-center gap-1">
-                            <span>✨</span> Synonyms:
+                          <span className="font-black text-emerald-900 text-[11px] flex items-center gap-1">
+                            ✨ Synonyms:
                           </span>
                           {entry.synonyms.map((syn, idx) => (
                             <button
@@ -1068,14 +1065,14 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
 
                       {entry.antonyms.length > 0 && (
                         <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="font-black text-rose-800 text-[11px] flex items-center gap-1">
-                            <span>⚡</span> Antonyms:
+                          <span className="font-black text-amber-900 text-[11px] flex items-center gap-1">
+                            ⚡ Antonyms:
                           </span>
                           {entry.antonyms.map((ant, idx) => (
                             <button
                               key={idx}
                               onClick={() => setSearchQuery(ant)}
-                              className="px-2.5 py-0.5 bg-rose-50 text-rose-950 border border-rose-300 rounded-lg text-[11px] font-black hover:bg-rose-100 hover:scale-105 cursor-pointer transition-all shadow-2xs"
+                              className="px-2.5 py-0.5 bg-amber-50 text-amber-950 border border-amber-300 rounded-lg text-[11px] font-black hover:bg-amber-100 hover:scale-105 cursor-pointer transition-all shadow-2xs"
                             >
                               {ant}
                             </button>
@@ -1087,7 +1084,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                 </div>
 
                 {/* Card Footer: Deep Study Action */}
-                <div className="pt-3 border-t border-slate-100 flex items-center justify-end">
+                <div className="pt-3 border-t border-emerald-900/10 flex items-center justify-end">
                   <button
                     id={`open-detail-btn-${entry.id}`}
                     onClick={() => {
@@ -1095,12 +1092,12 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                       playSound('pop');
                     }}
                     title={`Open full pronunciation studio, etymology, and mastery challenge for ${entry.word}`}
-                    className={`flex items-center justify-center gap-2 font-black text-white bg-gradient-to-r from-emerald-700 via-teal-700 to-purple-800 hover:from-emerald-600 hover:to-teal-600 rounded-2xl transition-all hover:scale-[1.03] active:scale-95 cursor-pointer shadow-md shadow-emerald-700/25 shrink-0 ${
+                    className={`flex items-center justify-center gap-2 font-black text-amber-100 bg-gradient-to-r from-emerald-900 via-teal-800 to-emerald-800 hover:from-emerald-800 hover:to-teal-700 rounded-2xl transition-all hover:scale-[1.03] active:scale-95 cursor-pointer shadow-md shadow-emerald-950/15 shrink-0 border border-emerald-700/40 ${
                       layoutColumns === '1' ? 'px-5 py-2.5 text-sm' : 'px-4 py-2 text-xs'
                     }`}
                   >
-                    <span>Full Study Guide</span>
-                    <ChevronRight className="w-4 h-4 text-white" />
+                    <span>⚡ Study Lab & Lore</span>
+                    <ChevronRight className="w-4 h-4 text-amber-300" />
                   </button>
                 </div>
               </div>

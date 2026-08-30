@@ -474,12 +474,35 @@ export const unlockSpeechEngine = () => {
   } catch (e) {}
 };
 
+// Global references to prevent GC dropping onend/onstart events and guarantee instant UI feedback
+let activeUtterance: SpeechSynthesisUtterance | null = null;
+let fallbackEndTimer: any = null;
+let currentOnEndCallback: (() => void) | null = null;
+
+export const cancelSpeech = () => {
+  if (fallbackEndTimer) {
+    clearTimeout(fallbackEndTimer);
+    fallbackEndTimer = null;
+  }
+  if (currentOnEndCallback) {
+    const cb = currentOnEndCallback;
+    currentOnEndCallback = null;
+    cb();
+  }
+  if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+    try {
+      window.speechSynthesis.cancel();
+    } catch (e) {}
+  }
+  activeUtterance = null;
+};
+
 /**
  * Speak word with device-calibrated British young female voice.
  */
 export const speakWord = (
   text: string, 
-  options?: { rate?: number; pitch?: number; onEnd?: () => void }
+  options?: { rate?: number; pitch?: number; onStart?: () => void; onEnd?: () => void }
 ) => {
   speakSentence(text, options);
 };
@@ -489,26 +512,44 @@ export const speakWord = (
  */
 export const speakSentence = (
   text: string,
-  options?: { rate?: number; pitch?: number; onEnd?: () => void }
+  options?: { rate?: number; pitch?: number; onStart?: () => void; onEnd?: () => void }
 ) => {
   if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
     console.warn('Speech synthesis not supported on this device/browser.');
+    options?.onEnd?.();
     return;
   }
 
-  try {
-    unlockSpeechEngine();
-    window.speechSynthesis.cancel();
-  } catch (e) {}
+  // Clear previous active timers & callbacks cleanly
+  if (fallbackEndTimer) {
+    clearTimeout(fallbackEndTimer);
+    fallbackEndTimer = null;
+  }
+  if (currentOnEndCallback) {
+    const oldCb = currentOnEndCallback;
+    currentOnEndCallback = null;
+    oldCb();
+  }
 
   // Clean special characters & markdown for smooth speech
   const cleanText = text.replace(/[*_#`~[\]]/g, '').trim();
-  if (!cleanText) return;
+  if (!cleanText) {
+    options?.onEnd?.();
+    return;
+  }
+
+  // If already speaking, cancel previous speech
+  try {
+    if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+      window.speechSynthesis.cancel();
+    }
+  } catch (e) {}
 
   const utterance = new SpeechSynthesisUtterance(cleanText);
+  activeUtterance = utterance; // Prevent browser garbage collection from cutting events
+
   const settings = loadVoiceSettings();
   const device = detectDevicePlatform();
-
   const { voice, pitchBoost } = getBestBritishFemaleVoice();
 
   // Apply device-specific baseline tuning
@@ -530,24 +571,66 @@ export const speakSentence = (
     utterance.voice = voice;
   }
 
-  if (options?.onEnd) {
-    utterance.onend = options.onEnd;
-  }
-
-  utterance.onerror = (e) => {
-    // Recover silently if speech was cancelled by next action
-    if (e.error !== 'canceled' && e.error !== 'interrupted') {
-      console.warn('TTS playback issue:', e.error);
+  let hasEnded = false;
+  const triggerEnd = () => {
+    if (hasEnded) return;
+    hasEnded = true;
+    if (fallbackEndTimer) {
+      clearTimeout(fallbackEndTimer);
+      fallbackEndTimer = null;
     }
+    if (activeUtterance === utterance) {
+      activeUtterance = null;
+    }
+    currentOnEndCallback = null;
     if (options?.onEnd) {
       options.onEnd();
     }
   };
 
+  currentOnEndCallback = triggerEnd;
+
+  utterance.onstart = () => {
+    if (options?.onStart) {
+      options.onStart();
+    }
+  };
+
+  utterance.onend = () => {
+    triggerEnd();
+  };
+
+  utterance.onerror = (e) => {
+    if (e.error !== 'canceled' && e.error !== 'interrupted') {
+      console.warn('TTS playback issue:', e.error);
+    }
+    triggerEnd();
+  };
+
+  // Accurate duration estimation to turn off animation right as speech ends
+  // Standard speech is ~140 wpm (~2.3 words/sec, ~14 chars/sec)
+  const words = cleanText.split(/\s+/).filter(Boolean);
+  const wordCount = Math.max(1, words.length);
+  const charCount = cleanText.length;
+  const effectiveRate = utterance.rate || 0.94;
+
+  const estimatedDurationMs = Math.round(
+    Math.max(
+      500, // minimum single-word duration
+      ((wordCount * 250 + charCount * 38) / effectiveRate) + 150
+    )
+  );
+
+  // Precision fallback timer to shut off the animation when speech ends without delay
+  fallbackEndTimer = setTimeout(() => {
+    triggerEnd();
+  }, estimatedDurationMs);
+
   try {
     window.speechSynthesis.speak(utterance);
   } catch (err) {
     console.error('Error executing speech synthesis:', err);
+    triggerEnd();
   }
 };
 
@@ -557,14 +640,6 @@ export const speakSentence = (
 export const testBritishVoicePreview = (customText?: string) => {
   const sample = customText || "Hello! I am your British and Scottish study companion. Let's learn some braw vocabulary together!";
   speakSentence(sample);
-};
-
-export const cancelSpeech = () => {
-  if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-    try {
-      window.speechSynthesis.cancel();
-    } catch (e) {}
-  }
 };
 
 export const isSpeechRecognitionSupported = (): boolean => {
