@@ -1,5 +1,5 @@
-import React from 'react';
-import { BookOpen, Gamepad2, Sparkles, Flame, Volume2, VolumeX, Wifi, WifiOff, Star, Award } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { BookOpen, Gamepad2, Sparkles, Flame, Volume2, VolumeX, Wifi, WifiOff, Star, Award, Maximize2, Minimize2 } from 'lucide-react';
 import { UserProgress } from '../types/dictionary';
 
 interface NavbarProps {
@@ -24,6 +24,42 @@ export const Navbar: React.FC<NavbarProps> = ({
   // Calculate level progress (each level takes 100 XP)
   const expInCurrentLevel = userProgress.exp % 100;
   const currentLevel = Math.floor(userProgress.exp / 100) + 1;
+
+  // Fullscreen state & handler
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(Boolean(document.fullscreenElement || (document as any).webkitFullscreenElement));
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+    };
+  }, []);
+
+  const toggleFullscreen = () => {
+    try {
+      if (!document.fullscreenElement && !(document as any).webkitFullscreenElement) {
+        const root = document.documentElement;
+        if (root.requestFullscreen) {
+          root.requestFullscreen().catch(() => {});
+        } else if ((root as any).webkitRequestFullscreen) {
+          (root as any).webkitRequestFullscreen();
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen().catch(() => {});
+        } else if ((document as any).webkitExitFullscreen) {
+          (document as any).webkitExitFullscreen();
+        }
+      }
+    } catch {
+      // Fallback
+    }
+  };
 
   return (
     <header className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-xl border-b border-slate-800 shadow-md transition-all">
@@ -121,6 +157,31 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <div className="p-1 rounded-lg bg-slate-800 text-slate-400 border border-slate-700">
                   <VolumeX className="w-4 h-4" />
                 </div>
+              )}
+            </button>
+
+            {/* Fullscreen Maximize / Restore Toggle - Prominent & Clearly Labeled */}
+            <button
+              id="fullscreen-toggle-btn"
+              onClick={toggleFullscreen}
+              title={isFullscreen ? 'Exit Full Screen (Normal View)' : 'Maximise to Full Screen'}
+              aria-label={isFullscreen ? 'Exit Full Screen' : 'Maximise to Full Screen'}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black transition-all cursor-pointer shadow-2xs border ${
+                isFullscreen
+                  ? 'bg-amber-950/80 text-amber-300 border-amber-600/70 hover:bg-amber-900 ring-2 ring-amber-500/30'
+                  : 'bg-slate-800 hover:bg-slate-750 text-slate-200 border-slate-700 hover:border-slate-600 hover:text-white'
+              }`}
+            >
+              {isFullscreen ? (
+                <>
+                  <Minimize2 className="w-3.5 h-3.5 text-amber-300" />
+                  <span>Exit Fullscreen</span>
+                </>
+              ) : (
+                <>
+                  <Maximize2 className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Full Screen</span>
+                </>
               )}
             </button>
 

@@ -876,28 +876,13 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
         </div>
 
         {/* Pinned Modal Footer Actions */}
-        <div className="shrink-0 bg-slate-900/98 backdrop-blur-md border-t border-slate-800 px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-3 z-20">
+        <div className="shrink-0 bg-slate-900/98 backdrop-blur-md border-t border-slate-800 px-4 sm:px-6 py-3.5 flex items-center justify-between gap-3 z-20">
           <button
             onClick={onClose}
             className="px-4 py-2 rounded-xl font-black text-xs text-slate-300 bg-slate-800 hover:bg-slate-700 hover:text-white transition-colors cursor-pointer border border-slate-700"
           >
             ← Back to Dictionary
           </button>
-
-          {onOpenAIBard && (
-            <button
-              id="modal-generate-story-btn"
-              onClick={() => {
-                const w = word;
-                onClose();
-                onOpenAIBard(w);
-              }}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black text-xs shadow-md hover:scale-[1.02] active:scale-95 transition-all cursor-pointer border border-amber-400"
-            >
-              <Sparkles className="w-4 h-4 text-slate-950 fill-slate-950" />
-              <span>Create Scottish Tale with Hamish AI</span>
-            </button>
-          )}
         </div>
       </div>
     </div>

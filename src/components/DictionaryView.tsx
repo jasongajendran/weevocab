@@ -1,11 +1,11 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { 
   Search, Volume2, Mic, MicOff, Star, Sparkles, Shuffle, X, 
   BookOpen, ChevronRight, CheckCircle2, AlertCircle, BookmarkCheck,
   Tag, MapPin, Layers, GraduationCap, ChevronDown, ChevronUp,
   Eye, EyeOff, VolumeX, Radio, Compass, Filter, ChevronLeft, ArrowUp,
-  Rows, Columns2, Columns3
+  Rows, Columns2, Columns3, RotateCcw, Maximize2, Minimize2
 } from 'lucide-react';
 import { DictionaryEntry, WordCategory, ScottishRegion } from '../types/dictionary';
 import { speakWord, speakSentence, cancelSpeech, startVoicePractice, isSpeechRecognitionSupported, RecognitionResult } from '../utils/speech';
@@ -45,6 +45,63 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
   const handleLayoutChange = (cols: '1' | '2' | '3') => {
     setLayoutColumns(cols);
     localStorage.setItem('scots_dict_layout_cols', cols);
+    playSound('click');
+  };
+
+  // Shuffle Words state & handler
+  const [isShuffled, setIsShuffled] = useState<boolean>(false);
+  const [shuffledSeed, setShuffledSeed] = useState<number>(0);
+
+  // Fullscreen state & handler
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(Boolean(document.fullscreenElement || (document as any).webkitFullscreenElement));
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+    };
+  }, []);
+
+  const toggleFullscreen = () => {
+    try {
+      if (!document.fullscreenElement && !(document as any).webkitFullscreenElement) {
+        const root = document.documentElement;
+        if (root.requestFullscreen) {
+          root.requestFullscreen().catch(() => {});
+        } else if ((root as any).webkitRequestFullscreen) {
+          (root as any).webkitRequestFullscreen();
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen().catch(() => {});
+        } else if ((document as any).webkitExitFullscreen) {
+          (document as any).webkitExitFullscreen();
+        }
+      }
+    } catch {
+      // Fallback
+    }
+  };
+
+  const handleShuffleWords = () => {
+    setIsShuffled(true);
+    setShuffledSeed((prev) => prev + 1);
+    playSound('pop');
+    confetti({
+      particleCount: 50,
+      spread: 60,
+      origin: { y: 0.5 },
+      colors: ['#10b981', '#f59e0b', '#3b82f6', '#ec4899', '#8b5cf6']
+    });
+  };
+
+  const handleResetAlphabetical = () => {
+    setIsShuffled(false);
     playSound('click');
   };
 
@@ -145,6 +202,17 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
     });
     return Array.from(set).sort();
   }, [filteredEntries]);
+
+  // Shuffled or Alphabetical display entries
+  const displayEntries = useMemo(() => {
+    if (!isShuffled) return filteredEntries;
+    const copy = [...filteredEntries];
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+  }, [filteredEntries, isShuffled, shuffledSeed]);
 
   // Group filtered entries by starting letter
   const groupedByLetter = useMemo(() => {
@@ -346,6 +414,233 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
     return <span className="px-2 py-0.5 rounded-lg text-[10px] font-black bg-purple-950/80 text-purple-300 border border-purple-700/60">🟣 S3–S4</span>;
   };
 
+  // Reusable Word Card Renderer
+  const renderWordCard = (entry: DictionaryEntry) => {
+    const isStarred = starredWordIds.includes(entry.id);
+    const theme = getCategoryTheme(entry);
+    const isWordPlaying = playingAudioId === `word-${entry.id}`;
+
+    return (
+      <div
+        key={entry.id}
+        id={`word-card-${entry.id}`}
+        className={`bg-slate-900/90 rounded-3xl border border-slate-800 hover:border-slate-600 hover:shadow-lg transition-all duration-250 flex flex-col justify-between group ${theme.accentBar} ${
+          layoutColumns === '1' ? 'p-6 sm:p-7 shadow-2xs' : 'p-5 shadow-2xs'
+        }`}
+      >
+        <div>
+          {/* Top Bar: Word, Badges & Bookmark on Left; Audio Icon Aligned */}
+          <div className="flex items-start justify-between gap-3 mb-3 pr-3 sm:pr-3.5">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h2 className={`font-black text-white tracking-tight transition-colors ${theme.titleHover} ${
+                  layoutColumns === '1' ? 'text-2xl sm:text-3xl' : 'text-xl sm:text-2xl'
+                }`}>
+                  {entry.word}
+                </h2>
+
+                <span className={`px-2.5 py-0.5 text-[11px] font-black rounded-lg border shadow-2xs ${theme.badgeBg}`}>
+                  {theme.flag}
+                </span>
+
+                {/* Star / Bookmark Button next to word & badge */}
+                <button
+                  id={`star-btn-${entry.id}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onToggleStar(entry.id);
+                    playSound('pop');
+                  }}
+                  title={isStarred ? 'Remove from My Vault' : 'Save to My Vault'}
+                  aria-label={isStarred ? `Remove ${entry.word} from Vault` : `Save ${entry.word} to Vault`}
+                  className={`p-1.5 rounded-xl transition-all cursor-pointer inline-flex items-center justify-center ${
+                    isStarred 
+                      ? 'bg-gradient-to-r from-amber-400 to-yellow-400 text-slate-950 shadow-xs scale-105 border border-amber-300 ring-2 ring-amber-300/40' 
+                      : 'bg-slate-800 text-slate-400 hover:text-amber-300 hover:bg-slate-755 border border-slate-700'
+                  }`}
+                >
+                  <Star className={`w-3.5 h-3.5 ${isStarred ? 'fill-slate-950 text-slate-950' : ''}`} />
+                </button>
+              </div>
+              
+              {/* Phonetic & Pronunciation Guide */}
+              <div className="flex items-center gap-2 mt-1 flex-wrap">
+                <span className={`font-mono font-bold text-cyan-300 ${layoutColumns === '1' ? 'text-sm' : 'text-xs'}`}>
+                  {entry.phonetic}
+                </span>
+                <span className={`text-slate-300 font-bold italic bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700 ${layoutColumns === '1' ? 'text-xs' : 'text-[11px]'}`} title={entry.phoneticGuide}>
+                  🗣️ {entry.phoneticGuide}
+                </span>
+              </div>
+            </div>
+
+            {/* Word Pronunciation Sound Icon */}
+            <button
+              id={`word-sound-btn-${entry.id}`}
+              onClick={() => handlePronounceAudio(entry.word, `word-${entry.id}`, 0.9)}
+              title={`Listen to pronunciation of "${entry.word}"`}
+              aria-label={`Listen to pronunciation of ${entry.word}`}
+              className={`w-8.5 h-8.5 rounded-xl flex items-center justify-center transition-all cursor-pointer shrink-0 ${
+                isWordPlaying
+                  ? 'bg-emerald-600 text-white shadow-md ring-2 ring-emerald-400'
+                  : 'bg-slate-800 text-slate-300 hover:bg-emerald-600 hover:text-white shadow-2xs border border-slate-700 hover:scale-105 active:scale-95'
+              }`}
+            >
+              <SoundWaveIcon isPlaying={isWordPlaying} size="sm" />
+            </button>
+          </div>
+
+          {/* Tags & Metadata Bar */}
+          <div className="flex items-center gap-1.5 mb-3 text-xs flex-wrap">
+            {getPartOfSpeechBadge(entry.partOfSpeech)}
+            {getDifficultyBadge(entry.difficulty)}
+            <span className="text-slate-300 font-bold flex items-center gap-1 text-[11px] bg-slate-800 px-2 py-0.5 rounded-lg border border-slate-700 shadow-2xs" title={entry.scotsRegion}>
+              <MapPin className="w-3 h-3 text-emerald-400 shrink-0" />
+              {entry.scotsRegion.replace(' & Scotland', '').replace('UK Wide & Common', 'UK Wide')}
+            </span>
+          </div>
+
+          {/* Definition Box with Direct Sound Icon */}
+          {(() => {
+            const isDefPlaying = playingAudioId === `card-def-${entry.id}`;
+            return (
+              <div className="bg-slate-800/80 rounded-2xl p-3 sm:p-3.5 border border-slate-700 mb-3 flex items-start justify-between gap-3 group/def shadow-2xs">
+                <div className="flex-1 min-w-0">
+                  <p className={`font-semibold text-slate-100 leading-relaxed ${
+                    layoutColumns === '1' ? 'text-base sm:text-lg' : 'text-sm'
+                  }`}>
+                    {entry.definition}
+                  </p>
+                </div>
+
+                {/* Definition Sound Icon */}
+                <button
+                  id={`def-sound-btn-${entry.id}`}
+                  onClick={() => handlePronounceAudio(entry.definition, `card-def-${entry.id}`, 0.9)}
+                  title="Listen to definition"
+                  aria-label={`Listen to definition: ${entry.definition}`}
+                  className={`w-8.5 h-8.5 rounded-xl flex items-center justify-center transition-all shrink-0 cursor-pointer ${
+                    isDefPlaying
+                      ? 'bg-emerald-600 text-white shadow-md ring-2 ring-emerald-400'
+                      : 'bg-slate-900 text-slate-300 hover:bg-emerald-600 hover:text-white shadow-2xs border border-slate-700 hover:scale-105 active:scale-95'
+                  }`}
+                >
+                  <SoundWaveIcon isPlaying={isDefPlaying} size="sm" />
+                </button>
+              </div>
+            );
+          })()}
+
+          {/* Example Sentences */}
+          <div className="space-y-2 mb-3.5">
+            {entry.examples.map((ex, idx) => {
+              const exAudioId = `card-${entry.id}-ex-${idx}`;
+              const isExPlaying = playingAudioId === exAudioId;
+
+              return (
+                <div 
+                  key={idx} 
+                  className={`flex items-start justify-between gap-3 p-3 sm:p-3.5 rounded-2xl border transition-all shadow-2xs ${
+                    isExPlaying 
+                      ? 'bg-slate-800 border-l-4 border-l-amber-400 border-slate-700 text-slate-100 font-bold' 
+                      : `${theme.exBorder} border-slate-750 text-slate-200`
+                  }`}
+                >
+                  <p className={`italic leading-relaxed flex-1 min-w-0 pt-0.5 font-medium ${
+                    layoutColumns === '1' ? 'text-sm sm:text-base' : 'text-xs'
+                  }`}>
+                    "<HighlightedText text={ex} targetWord={entry.word} />"
+                  </p>
+
+                  {/* Example Sound Button */}
+                  <button
+                    id={`read-ex-${entry.id}-${idx}`}
+                    onClick={() => handlePronounceAudio(ex, exAudioId, 0.88)}
+                    title="Listen to this example sentence"
+                    aria-label={`Listen to example sentence: ${ex}`}
+                    className={`w-8.5 h-8.5 rounded-xl flex items-center justify-center transition-all shrink-0 cursor-pointer ${
+                      isExPlaying
+                        ? 'bg-amber-400 text-slate-950 shadow-md ring-2 ring-amber-300'
+                        : 'bg-slate-900 text-slate-300 hover:bg-amber-400 hover:text-slate-950 shadow-2xs border border-slate-700 hover:scale-105 active:scale-95'
+                    }`}
+                  >
+                    <SoundWaveIcon isPlaying={isExPlaying} size="sm" />
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Synonyms & Antonyms preview tags */}
+          {(entry.synonyms.length > 0 || entry.antonyms.length > 0) && (
+            <div className="space-y-2 text-xs mb-3.5">
+              {entry.synonyms.length > 0 && (
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="font-bold text-emerald-400 text-[11px] flex items-center gap-1">
+                    ✨ Synonyms:
+                  </span>
+                  {entry.synonyms.map((syn, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setSearchQuery(syn)}
+                      className="px-2.5 py-0.5 bg-emerald-950/60 text-emerald-300 border border-emerald-700/50 rounded-lg text-[11px] font-bold hover:bg-emerald-900 hover:scale-105 cursor-pointer transition-all shadow-2xs"
+                    >
+                      {syn}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {entry.antonyms.length > 0 && (
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="font-bold text-amber-400 text-[11px] flex items-center gap-1">
+                    ⚡ Antonyms:
+                  </span>
+                  {entry.antonyms.map((ant, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setSearchQuery(ant)}
+                      className="px-2.5 py-0.5 bg-amber-950/60 text-amber-300 border border-amber-700/50 rounded-lg text-[11px] font-bold hover:bg-amber-900 hover:scale-105 cursor-pointer transition-all shadow-2xs"
+                    >
+                      {ant}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Card Footer: Deep Study Action */}
+        <div className="pt-3 border-t border-slate-800 flex items-center justify-between gap-2">
+          <span className="text-[11px] font-medium text-slate-400 flex items-center gap-1">
+            <span>✨</span>
+            <span className="hidden sm:inline">Etymology, voice & quiz</span>
+            <span className="sm:hidden">Study lab</span>
+          </span>
+
+          <button
+            id={`open-detail-btn-${entry.id}`}
+            onClick={() => {
+              setActiveModalWord(entry);
+              playSound('pop');
+            }}
+            title={`Open full pronunciation studio, etymology, and mastery challenge for ${entry.word}`}
+            className={`group flex items-center justify-center gap-1.5 sm:gap-2 font-black rounded-xl transition-all hover:scale-[1.02] active:scale-95 cursor-pointer shadow-2xs shrink-0 border ${theme.studyBtn} ${
+              layoutColumns === '1' ? 'px-4 py-2 text-sm' : 'px-3 py-1.5 text-xs'
+            }`}
+          >
+            <div className={`w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-lg flex items-center justify-center text-[10px] font-black shrink-0 ${theme.studyIconBg}`}>
+              ⚡
+            </div>
+            <span>Study Lab & Lore</span>
+            <ChevronRight className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-0.5 ${theme.studyChevron}`} />
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-5 pb-24 sm:pb-8">
       
@@ -368,17 +663,58 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
               </div>
             </div>
 
-            {/* Aligned Right Controls: Surprise Word, Layout Selector & Focus Mode */}
+            {/* Aligned Right Controls: Shuffle, Surprise Word, Fullscreen, Layout Selector & Focus Mode */}
             <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+              {/* Shuffle Words Button */}
+              <button
+                id="shuffle-words-btn"
+                onClick={handleShuffleWords}
+                title={isShuffled ? 'Shuffle words again in random order' : 'Shuffle words in random order'}
+                aria-label="Shuffle dictionary words"
+                className={`flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl font-black text-xs sm:text-sm shadow-md transition-all whitespace-nowrap cursor-pointer shrink-0 border ${
+                  isShuffled
+                    ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-emerald-400 ring-2 ring-emerald-400/40 hover:scale-[1.03]'
+                    : 'bg-slate-800 hover:bg-slate-750 text-amber-300 border-slate-700 hover:border-amber-400 hover:text-amber-200 hover:scale-[1.02]'
+                }`}
+              >
+                <Shuffle className={`w-3.5 h-3.5 ${isShuffled ? 'text-white' : 'text-amber-400'}`} />
+                <span>Shuffle Words 🔀</span>
+              </button>
+
               {/* Quick Surprise Word Button */}
               <button
                 id="random-word-btn"
                 onClick={handleRandomWord}
                 title="Explore a random Scottish or British term"
-                className="flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-300 active:scale-95 text-slate-950 font-black text-xs sm:text-sm shadow-md transition-all whitespace-nowrap cursor-pointer border border-amber-300 shrink-0 hover:scale-[1.03]"
+                className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-300 active:scale-95 text-slate-950 font-black text-xs sm:text-sm shadow-md transition-all whitespace-nowrap cursor-pointer border border-amber-300 shrink-0 hover:scale-[1.03]"
               >
-                <Shuffle className="w-3.5 h-3.5 text-slate-950 stroke-[2.5]" />
+                <Sparkles className="w-3.5 h-3.5 text-slate-950 stroke-[2.5]" />
                 <span>Surprise Word! 🎲</span>
+              </button>
+
+              {/* Fullscreen Maximize / Exit Toggle */}
+              <button
+                id="dict-fullscreen-btn"
+                onClick={toggleFullscreen}
+                title={isFullscreen ? 'Exit Full Screen (Normal View)' : 'Maximise to Full Screen'}
+                aria-label={isFullscreen ? 'Exit Full Screen' : 'Maximise to Full Screen'}
+                className={`flex items-center gap-1 px-2.5 py-1.5 rounded-xl font-bold text-xs border transition-all cursor-pointer ${
+                  isFullscreen
+                    ? 'bg-amber-950/80 text-amber-300 border-amber-600/70 hover:bg-amber-900 ring-2 ring-amber-500/30'
+                    : 'bg-slate-800 hover:bg-slate-750 text-slate-300 hover:text-white border-slate-700'
+                }`}
+              >
+                {isFullscreen ? (
+                  <>
+                    <Minimize2 className="w-3.5 h-3.5 text-amber-300" />
+                    <span className="hidden md:inline">Exit Fullscreen</span>
+                  </>
+                ) : (
+                  <>
+                    <Maximize2 className="w-3.5 h-3.5 text-emerald-400" />
+                    <span className="hidden md:inline">Full Screen</span>
+                  </>
+                )}
               </button>
 
               {/* Layout Mode Selector */}
@@ -757,6 +1093,11 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
           <span className="text-slate-300 font-medium">
             Showing <strong className="font-black text-amber-300">{filteredEntries.length}</strong> of <strong className="font-black text-slate-100">{entries.length}</strong> terms
           </span>
+          {isShuffled && (
+            <span className="text-amber-300 font-bold bg-amber-950/80 px-2 py-0.5 rounded-md border border-amber-600/50 flex items-center gap-1">
+              🔀 Shuffled Order
+            </span>
+          )}
           {selectedLetter && <span className="text-slate-400"> • Letter <strong className="text-emerald-300 font-bold">'{selectedLetter}'</strong></span>}
           {searchQuery && <span className="text-slate-400"> • Matching <strong className="text-emerald-300 font-bold">"{searchQuery}"</strong></span>}
           {activeFiltersCount > 0 && (
@@ -787,7 +1128,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
       </div>
 
       {/* Global Page Vertical Scrubber pinned to whole page scroll on right edge (hidden during active modal study to prevent touch conflicts) */}
-      {!activeModalWord && (
+      {!activeModalWord && !isShuffled && (
         <GlobalPageVerticalScrubber
           entries={filteredEntries}
           onScrollToWord={scrollToWordCard}
@@ -816,6 +1157,52 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
           >
             Reset All Filters
           </button>
+        </div>
+      ) : isShuffled ? (
+        <div className="space-y-6">
+          {/* Shuffled Mode Banner */}
+          <div className="bg-slate-900 rounded-2xl p-3.5 sm:p-4 border border-slate-800 flex flex-wrap items-center justify-between gap-3 shadow-xs">
+            <div className="flex items-center gap-2.5">
+              <span className="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center text-lg border border-amber-500/30 shrink-0">
+                🔀
+              </span>
+              <div>
+                <h3 className="font-extrabold text-white text-sm sm:text-base">
+                  Shuffled Vocabulary ({displayEntries.length} terms)
+                </h3>
+                <p className="text-xs text-slate-400">
+                  Words are randomized for spontaneous exploration and flashcard-style learning.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                id="shuffle-again-btn"
+                onClick={handleShuffleWords}
+                className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>Shuffle Again</span>
+              </button>
+              <button
+                id="reset-alphabetical-btn"
+                onClick={handleResetAlphabetical}
+                className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white font-bold text-xs border border-slate-700 transition-all cursor-pointer"
+              >
+                <span>Reset to A–Z</span>
+              </button>
+            </div>
+          </div>
+
+          <div className={
+            layoutColumns === '1'
+              ? 'grid grid-cols-1 gap-6 max-w-4xl mx-auto w-full'
+              : layoutColumns === '2'
+              ? 'grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 w-full'
+              : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 w-full'
+          }>
+            {displayEntries.map(renderWordCard)}
+          </div>
         </div>
       ) : (
         <div className="space-y-8">
@@ -858,231 +1245,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
 
                 {/* Grid of cards for this letter group formatted with responsive layout */}
                 <div className={gridClasses}>
-                {group.entries.map((entry) => {
-            const isStarred = starredWordIds.includes(entry.id);
-            const theme = getCategoryTheme(entry);
-            const isWordPlaying = playingAudioId === `word-${entry.id}`;
-
-            return (
-              <div
-                key={entry.id}
-                id={`word-card-${entry.id}`}
-                className={`bg-slate-900/90 rounded-3xl border border-slate-800 hover:border-slate-600 hover:shadow-lg transition-all duration-250 flex flex-col justify-between group ${theme.accentBar} ${
-                  layoutColumns === '1' ? 'p-6 sm:p-7 shadow-2xs' : 'p-5 shadow-2xs'
-                }`}
-              >
-                <div>
-                  {/* Top Bar: Word, Badges & Bookmark on Left; Audio Icon Aligned in Straight Vertical Column */}
-                  <div className="flex items-start justify-between gap-3 mb-3 pr-3 sm:pr-3.5">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h2 className={`font-black text-white tracking-tight transition-colors ${theme.titleHover} ${
-                          layoutColumns === '1' ? 'text-2xl sm:text-3xl' : 'text-xl sm:text-2xl'
-                        }`}>
-                          {entry.word}
-                        </h2>
-
-                        <span className={`px-2.5 py-0.5 text-[11px] font-black rounded-lg border shadow-2xs ${theme.badgeBg}`}>
-                          {theme.flag}
-                        </span>
-
-                        {/* Star / Bookmark Button next to word & badge */}
-                        <button
-                          id={`star-btn-${entry.id}`}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onToggleStar(entry.id);
-                            playSound('pop');
-                          }}
-                          title={isStarred ? 'Remove from My Vault' : 'Save to My Vault'}
-                          aria-label={isStarred ? `Remove ${entry.word} from Vault` : `Save ${entry.word} to Vault`}
-                          className={`p-1.5 rounded-xl transition-all cursor-pointer inline-flex items-center justify-center ${
-                            isStarred 
-                              ? 'bg-gradient-to-r from-amber-400 to-yellow-400 text-slate-950 shadow-xs scale-105 border border-amber-300 ring-2 ring-amber-300/40' 
-                              : 'bg-slate-800 text-slate-400 hover:text-amber-300 hover:bg-slate-750 border border-slate-700'
-                          }`}
-                        >
-                          <Star className={`w-3.5 h-3.5 ${isStarred ? 'fill-slate-950 text-slate-950' : ''}`} />
-                        </button>
-                      </div>
-                      
-                      {/* Phonetic & Pronunciation Guide */}
-                      <div className="flex items-center gap-2 mt-1 flex-wrap">
-                        <span className={`font-mono font-bold text-cyan-300 ${layoutColumns === '1' ? 'text-sm' : 'text-xs'}`}>
-                          {entry.phonetic}
-                        </span>
-                        <span className={`text-slate-300 font-bold italic bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700 ${layoutColumns === '1' ? 'text-xs' : 'text-[11px]'}`} title={entry.phoneticGuide}>
-                          🗣️ {entry.phoneticGuide}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* 1. Word Pronunciation Sound Icon (Vertical Alignment Guide 1/4) */}
-                    <button
-                      id={`word-sound-btn-${entry.id}`}
-                      onClick={() => handlePronounceAudio(entry.word, `word-${entry.id}`, 0.9)}
-                      title={`Listen to pronunciation of "${entry.word}"`}
-                      aria-label={`Listen to pronunciation of ${entry.word}`}
-                      className={`w-8.5 h-8.5 rounded-xl flex items-center justify-center transition-all cursor-pointer shrink-0 ${
-                        isWordPlaying
-                          ? 'bg-emerald-600 text-white shadow-md ring-2 ring-emerald-400'
-                          : 'bg-slate-800 text-slate-300 hover:bg-emerald-600 hover:text-white shadow-2xs border border-slate-700 hover:scale-105 active:scale-95'
-                      }`}
-                    >
-                      <SoundWaveIcon isPlaying={isWordPlaying} size="sm" />
-                    </button>
-                  </div>
-
-                  {/* Tags & Metadata Bar */}
-                  <div className="flex items-center gap-1.5 mb-3 text-xs flex-wrap">
-                    {getPartOfSpeechBadge(entry.partOfSpeech)}
-                    {getDifficultyBadge(entry.difficulty)}
-                    <span className="text-slate-300 font-bold flex items-center gap-1 text-[11px] bg-slate-800 px-2 py-0.5 rounded-lg border border-slate-700 shadow-2xs" title={entry.scotsRegion}>
-                      <MapPin className="w-3 h-3 text-emerald-400 shrink-0" />
-                      {entry.scotsRegion.replace(' & Scotland', '').replace('UK Wide & Common', 'UK Wide')}
-                    </span>
-                  </div>
-
-                  {/* Definition Box with Direct Sound Icon */}
-                  {(() => {
-                    const isDefPlaying = playingAudioId === `card-def-${entry.id}`;
-                    return (
-                      <div className="bg-slate-800/80 rounded-2xl p-3 sm:p-3.5 border border-slate-700 mb-3 flex items-start justify-between gap-3 group/def shadow-2xs">
-                        <div className="flex-1 min-w-0">
-                          <p className={`font-semibold text-slate-100 leading-relaxed ${
-                            layoutColumns === '1' ? 'text-base sm:text-lg' : 'text-sm'
-                          }`}>
-                            {entry.definition}
-                          </p>
-                        </div>
-
-                        {/* Definition Sound Icon */}
-                        <button
-                          id={`def-sound-btn-${entry.id}`}
-                          onClick={() => handlePronounceAudio(entry.definition, `card-def-${entry.id}`, 0.9)}
-                          title="Listen to definition"
-                          aria-label={`Listen to definition: ${entry.definition}`}
-                          className={`w-8.5 h-8.5 rounded-xl flex items-center justify-center transition-all shrink-0 cursor-pointer ${
-                            isDefPlaying
-                              ? 'bg-emerald-600 text-white shadow-md ring-2 ring-emerald-400'
-                              : 'bg-slate-900 text-slate-300 hover:bg-emerald-600 hover:text-white shadow-2xs border border-slate-700 hover:scale-105 active:scale-95'
-                          }`}
-                        >
-                          <SoundWaveIcon isPlaying={isDefPlaying} size="sm" />
-                        </button>
-                      </div>
-                    );
-                  })()}
-
-                  {/* Example Sentences */}
-                  <div className="space-y-2 mb-3.5">
-                    {entry.examples.map((ex, idx) => {
-                      const exAudioId = `card-${entry.id}-ex-${idx}`;
-                      const isExPlaying = playingAudioId === exAudioId;
-
-                      return (
-                        <div 
-                          key={idx} 
-                          className={`flex items-start justify-between gap-3 p-3 sm:p-3.5 rounded-2xl border transition-all shadow-2xs ${
-                            isExPlaying 
-                              ? 'bg-slate-800 border-l-4 border-l-amber-400 border-slate-700 text-slate-100 font-bold' 
-                              : `${theme.exBorder} border-slate-750 text-slate-200`
-                          }`}
-                        >
-                          <p className={`italic leading-relaxed flex-1 min-w-0 pt-0.5 font-medium ${
-                            layoutColumns === '1' ? 'text-sm sm:text-base' : 'text-xs'
-                          }`}>
-                            "<HighlightedText text={ex} targetWord={entry.word} />"
-                          </p>
-
-                          {/* Example Sound Button */}
-                          <button
-                            id={`read-ex-${entry.id}-${idx}`}
-                            onClick={() => handlePronounceAudio(ex, exAudioId, 0.88)}
-                            title="Listen to this example sentence"
-                            aria-label={`Listen to example sentence: ${ex}`}
-                            className={`w-8.5 h-8.5 rounded-xl flex items-center justify-center transition-all shrink-0 cursor-pointer ${
-                              isExPlaying
-                                ? 'bg-amber-400 text-slate-950 shadow-md ring-2 ring-amber-300'
-                                : 'bg-slate-900 text-slate-300 hover:bg-amber-400 hover:text-slate-950 shadow-2xs border border-slate-700 hover:scale-105 active:scale-95'
-                            }`}
-                          >
-                            <SoundWaveIcon isPlaying={isExPlaying} size="sm" />
-                          </button>
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {/* Synonyms & Antonyms preview tags */}
-                  {(entry.synonyms.length > 0 || entry.antonyms.length > 0) && (
-                    <div className="space-y-2 text-xs mb-3.5">
-                      {entry.synonyms.length > 0 && (
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="font-bold text-emerald-400 text-[11px] flex items-center gap-1">
-                            ✨ Synonyms:
-                          </span>
-                          {entry.synonyms.map((syn, idx) => (
-                            <button
-                              key={idx}
-                              onClick={() => setSearchQuery(syn)}
-                              className="px-2.5 py-0.5 bg-emerald-950/60 text-emerald-300 border border-emerald-700/50 rounded-lg text-[11px] font-bold hover:bg-emerald-900 hover:scale-105 cursor-pointer transition-all shadow-2xs"
-                            >
-                              {syn}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-
-                      {entry.antonyms.length > 0 && (
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="font-bold text-amber-400 text-[11px] flex items-center gap-1">
-                            ⚡ Antonyms:
-                          </span>
-                          {entry.antonyms.map((ant, idx) => (
-                            <button
-                              key={idx}
-                              onClick={() => setSearchQuery(ant)}
-                              className="px-2.5 py-0.5 bg-amber-950/60 text-amber-300 border border-amber-700/50 rounded-lg text-[11px] font-bold hover:bg-amber-900 hover:scale-105 cursor-pointer transition-all shadow-2xs"
-                            >
-                              {ant}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-
-                {/* Card Footer: Deep Study Action */}
-                <div className="pt-3 border-t border-slate-800 flex items-center justify-between gap-2">
-                  <span className="text-[11px] font-medium text-slate-400 flex items-center gap-1">
-                    <span>✨</span>
-                    <span className="hidden sm:inline">Etymology, voice & quiz</span>
-                    <span className="sm:hidden">Study lab</span>
-                  </span>
-
-                  <button
-                    id={`open-detail-btn-${entry.id}`}
-                    onClick={() => {
-                      setActiveModalWord(entry);
-                      playSound('pop');
-                    }}
-                    title={`Open full pronunciation studio, etymology, and mastery challenge for ${entry.word}`}
-                    className={`group flex items-center justify-center gap-1.5 sm:gap-2 font-black rounded-xl transition-all hover:scale-[1.02] active:scale-95 cursor-pointer shadow-2xs shrink-0 border ${theme.studyBtn} ${
-                      layoutColumns === '1' ? 'px-4 py-2 text-sm' : 'px-3 py-1.5 text-xs'
-                    }`}
-                  >
-                    <div className={`w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-lg flex items-center justify-center text-[10px] font-black shrink-0 ${theme.studyIconBg}`}>
-                      ⚡
-                    </div>
-                    <span>Study Lab & Lore</span>
-                    <ChevronRight className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-0.5 ${theme.studyChevron}`} />
-                  </button>
-                </div>
-              </div>
-            );
-          })}
+                  {group.entries.map(renderWordCard)}
                 </div>
               </div>
             );
