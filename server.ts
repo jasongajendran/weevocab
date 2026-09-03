@@ -41,6 +41,34 @@ async function startServer() {
     res.json({ status: 'ok', time: new Date().toISOString() });
   });
 
+  const CANDIDATE_MODELS = [
+    'gemini-3.1-flash-lite',
+    'gemini-3.8-flash',
+    'gemini-flash-latest',
+  ];
+
+  async function generateWithGemini(ai: GoogleGenAI, params: {
+    contents: string;
+    config?: any;
+  }) {
+    let lastError: any = null;
+    for (const model of CANDIDATE_MODELS) {
+      try {
+        const response = await ai.models.generateContent({
+          model,
+          ...params,
+        });
+        if (response && response.text) {
+          return response;
+        }
+      } catch (err: any) {
+        console.warn(`Model (${model}) error: ${err?.message || err}. Trying next fallback...`);
+        lastError = err;
+      }
+    }
+    throw lastError || new Error('All AI models unavailable');
+  }
+
   // AI Endpoint: Ask Hamish the Tartan Owl / Word Tutor
   app.post('/api/ask-bard', async (req, res) => {
     try {
@@ -63,8 +91,7 @@ Always provide definitions, at least two lively relatable examples (e.g. school 
         systemInstruction += `\nTask: Provide the Scottish Scots/regional equivalent of the phrase or explain how a Scottish student would say it casually with friends or at school, with cultural context.`;
       }
 
-      const response = await ai.models.generateContent({
-        model: 'gemini-3.7-flash',
+      const response = await generateWithGemini(ai, {
         contents: prompt,
         config: {
           systemInstruction,
@@ -100,8 +127,7 @@ Return a JSON object with:
   "funFact": "Cool historical or Scottish fact about the word"
 }`;
 
-      const response = await ai.models.generateContent({
-        model: 'gemini-3.7-flash',
+      const response = await generateWithGemini(ai, {
         contents: prompt,
         config: {
           responseMimeType: 'application/json',

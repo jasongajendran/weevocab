@@ -256,7 +256,7 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
       return {
         level: 'Formal & Academic',
         dots: 5,
-        badgeBg: 'bg-emerald-100 text-emerald-950 border-emerald-300',
+        badgeBg: 'bg-indigo-950/80 text-indigo-300 border-indigo-600/50',
         tone: 'Essays, presentations, debate, and formal writing',
         advice: 'Use this term in high-level coursework, analytical essays, and formal discussions to convey precision.',
       };
@@ -265,7 +265,7 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
       return {
         level: 'Casual & Conversational',
         dots: 2,
-        badgeBg: 'bg-amber-100 text-amber-950 border-amber-300',
+        badgeBg: 'bg-amber-950/80 text-amber-300 border-amber-600/50',
         tone: 'Playground banter, daily texts, casual chat with friends',
         advice: 'Common in relaxed spoken conversation and banter. Keep for informal settings rather than exam essays.',
       };
@@ -274,7 +274,7 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
       return {
         level: 'Dialect & Cultural Expressive',
         dots: 3,
-        badgeBg: 'bg-teal-100 text-teal-950 border-teal-300',
+        badgeBg: 'bg-sky-950/80 text-sky-300 border-sky-600/50',
         tone: 'Scottish storytelling, regional conversation, local heritage',
         advice: 'Deeply expressive in Scottish storytelling, literature, poetry, and regional dialogue.',
       };
@@ -282,7 +282,7 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
     return {
       level: 'Everyday Standard UK',
       dots: 3,
-      badgeBg: 'bg-lime-100 text-lime-950 border-lime-300',
+      badgeBg: 'bg-teal-950/80 text-teal-300 border-teal-600/50',
       tone: 'General everyday UK English across all ages',
       advice: 'Versatile and widely recognized in both spoken conversation and general writing.',
     };
@@ -305,70 +305,102 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
     return list;
   }, [word]);
 
+  // Highlight the target word inside example sentences
+  const renderHighlightedSentence = (sentence: string, targetWord: string) => {
+    if (!sentence || !targetWord) return sentence;
+    const escaped = targetWord.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(`\\b(${escaped}(?:ing|ed|s|es|d|er|est)?)\\b`, 'gi');
+    const parts = sentence.split(regex);
+    if (parts.length === 1) {
+      return `"${sentence}"`;
+    }
+    return (
+      <>
+        "
+        {parts.map((part, i) =>
+          regex.test(part) ? (
+            <span
+              key={i}
+              className="font-black text-slate-950 bg-amber-400 px-1.5 py-0.5 rounded"
+            >
+              {part}
+            </span>
+          ) : (
+            <span key={i}>{part}</span>
+          )
+        )}
+        "
+      </>
+    );
+  };
+
+  // Lock background scroll and handle Escape key to keep modal fully responsive
+  useEffect(() => {
+    const originalOverflow = document.body.style.overflow;
+    const originalTouchAction = document.body.style.touchAction;
+    document.body.style.overflow = 'hidden';
+    document.body.style.touchAction = 'none';
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      document.body.style.touchAction = originalTouchAction;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onClose]);
+
   return (
     <div 
-      className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto animate-fadeIn"
+      id="word-study-modal-backdrop"
+      className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-2.5 sm:p-4 overflow-hidden animate-fadeIn overscroll-contain"
       onClick={onClose}
     >
       <div 
-        className="bg-white rounded-3xl max-w-2xl w-full p-5 sm:p-7 shadow-2xl border border-emerald-900/15 relative my-6 text-left max-h-[92vh] overflow-y-auto space-y-5"
+        id="word-study-modal-dialog"
+        className="bg-slate-900 rounded-3xl max-w-2xl w-full flex flex-col shadow-2xl border border-slate-700/80 max-h-[92vh] sm:max-h-[88vh] overflow-hidden text-left relative overscroll-contain touch-pan-y ring-1 ring-slate-700/50"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close Button */}
-        <button
-          id="close-modal-btn"
-          onClick={onClose}
-          aria-label="Close Study Guide"
-          className="absolute right-4 top-4 p-2 rounded-full text-[#4b6354] hover:text-[#14281f] hover:bg-emerald-50 transition-colors cursor-pointer"
-        >
-          <X className="w-5 h-5" />
-        </button>
-
-        {/* Modal Header & Quick Audio */}
-        <div className="border-b border-emerald-900/10 pb-4">
-          <div className="flex items-start justify-between gap-3 pr-8">
-            <div>
-              <div className="flex items-center gap-2.5 flex-wrap">
-                <h2 className="text-2xl sm:text-4xl font-black text-[#14281f] tracking-tight">
-                  {word.word}
-                </h2>
-
-                <span className={`px-2.5 py-0.5 text-xs font-black rounded-lg border ${formalityDetails.badgeBg}`}>
-                  {word.category}
+        {/* Pinned Top Header: Breadcrumbs & Quick Controls (No duplicated word/definition) */}
+        <div className="shrink-0 bg-slate-900/98 backdrop-blur-md border-b border-slate-800 px-4 sm:px-6 py-3 sm:py-3.5 z-20 shadow-xs">
+          <div className="flex items-center justify-between gap-3">
+            
+            {/* Header Left: Category & Study Guide indicator */}
+            <div className="min-w-0 flex-1 pr-1 flex items-center gap-2 flex-wrap">
+              <span className="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                <BookOpen className="w-3.5 h-3.5 text-emerald-400" />
+                Study Guide
+              </span>
+              <span className="text-slate-600">•</span>
+              <span className={`px-2.5 py-0.5 text-xs font-black rounded-lg border ${formalityDetails.badgeBg} shrink-0`}>
+                {word.category}
+              </span>
+              {word.isScots && (
+                <span className="px-2.5 py-0.5 text-xs font-bold rounded-lg bg-sky-950/80 text-sky-300 border border-sky-600/50 shrink-0">
+                  🏴󠁧󠁢󠁳󠁣󠁴󠁿 {word.scotsRegion}
                 </span>
-
-                {word.isScots && (
-                  <span className="px-2.5 py-0.5 text-xs font-bold rounded-lg bg-emerald-50 text-emerald-900 border border-emerald-200">
-                    🏴󠁧󠁢󠁳󠁣󠁴󠁿 {word.scotsRegion}
-                  </span>
-                )}
-              </div>
-
-              <div className="flex items-center gap-2.5 mt-2 text-sm text-[#4b6354] flex-wrap">
-                <span className="font-extrabold text-[#14281f] bg-emerald-50 px-2 py-0.5 rounded-md text-xs border border-emerald-200">
-                  {word.partOfSpeech}
-                </span>
-                <span className="font-mono text-[#4b6354] font-bold text-xs">{word.phonetic}</span>
-                <span className="text-emerald-800 font-extrabold text-xs">
-                  📖 {word.phoneticGuide}
-                </span>
-              </div>
+              )}
             </div>
 
-            {/* Top Right Action Icons */}
-            <div className="flex items-center gap-2 shrink-0">
+            {/* Pinned Header Action Controls: Audio, Star & Close */}
+            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
               <button
                 id="modal-word-title-sound-btn"
                 onClick={() => onPlayAudio(word.word, 'modal-title-word', 0.9)}
                 title={`Listen to pronunciation of "${word.word}"`}
                 aria-label={`Listen to pronunciation of ${word.word}`}
-                className={`p-3 rounded-2xl flex items-center justify-center transition-all cursor-pointer ${
+                className={`p-2.5 sm:p-3 rounded-2xl flex items-center justify-center transition-all cursor-pointer ${
                   playingAudioId === 'modal-title-word'
-                    ? 'bg-gradient-to-tr from-emerald-800 via-teal-800 to-amber-500 text-amber-100 scale-110 ring-4 ring-emerald-300 shadow-lg'
-                    : 'bg-emerald-50 text-emerald-900 hover:bg-emerald-800 hover:text-amber-100 hover:scale-108 border border-emerald-200 shadow-2xs active:scale-95'
+                    ? 'bg-gradient-to-tr from-sky-600 to-indigo-600 text-white scale-105 ring-2 ring-sky-400 shadow-md'
+                    : 'bg-slate-800 text-sky-300 hover:bg-sky-600 hover:text-white hover:scale-105 border border-slate-700 shadow-2xs active:scale-95'
                 }`}
               >
-                <SoundWaveIcon isPlaying={playingAudioId === 'modal-title-word'} size="lg" />
+                <SoundWaveIcon isPlaying={playingAudioId === 'modal-title-word'} size="md" />
               </button>
 
               <button
@@ -378,430 +410,478 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
                   playSound('pop');
                 }}
                 title={isStarred ? 'Remove from Vault' : 'Save to Vault'}
-                className={`p-3 rounded-2xl transition-all cursor-pointer ${
+                aria-label={isStarred ? 'Remove from Vault' : 'Save to Vault'}
+                className={`p-2.5 sm:p-3 rounded-2xl transition-all cursor-pointer ${
                   isStarred
                     ? 'bg-gradient-to-r from-amber-400 to-yellow-400 text-slate-950 shadow-md border border-amber-300 ring-2 ring-amber-300/40 scale-105'
-                    : 'bg-emerald-50/70 text-slate-400 hover:bg-amber-50 hover:text-amber-600 border border-emerald-900/10'
+                    : 'bg-slate-800 text-slate-300 hover:bg-amber-950/50 hover:text-amber-300 border border-slate-700'
                 }`}
               >
-                <Star className={`w-5 h-5 ${isStarred ? 'fill-slate-950 text-slate-950' : ''}`} />
+                <Star className={`w-4 h-4 sm:w-5 sm:h-5 ${isStarred ? 'fill-slate-950 text-slate-950' : ''}`} />
+              </button>
+
+              <button
+                id="close-modal-btn"
+                onClick={onClose}
+                aria-label="Close Study Guide"
+                title="Close"
+                className="p-2.5 sm:p-3 rounded-2xl text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors cursor-pointer border border-slate-700"
+              >
+                <X className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             </div>
           </div>
         </div>
 
-        {/* Section: Meaning & Primary Definition */}
-        <div className="bg-gradient-to-br from-emerald-50/80 to-amber-50/50 rounded-2xl p-4 sm:p-5 border-2 border-emerald-800/20 shadow-xs space-y-2.5">
-          <div className="flex items-center justify-between">
-            <span className="font-black text-xs uppercase tracking-wider text-emerald-950 flex items-center gap-1.5">
-              <BookOpen className="w-4 h-4 text-emerald-800" />
-              Definition & Meaning
-            </span>
-            <span className="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-800 text-amber-100 shadow-2xs">
-              {word.difficulty}
-            </span>
-          </div>
-          <p className="text-base sm:text-lg font-bold text-[#14281f] leading-relaxed">
-            {word.definition}
-          </p>
-        </div>
+        {/* Scrollable Content Body */}
+        <div 
+          className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 sm:py-5 space-y-4 sm:space-y-5 custom-scrollbar text-left overscroll-contain touch-pan-y"
+          onWheel={(e) => e.stopPropagation()}
+        >
 
-        {/* Section: Example Sentences in Action with Voice Audio */}
-        {word.examples && word.examples.length > 0 && (
-          <div className="bg-white rounded-2xl p-4 sm:p-5 border border-emerald-900/15 space-y-3 shadow-2xs">
-            <div className="flex items-center justify-between">
-              <span className="font-black text-xs uppercase tracking-wider text-emerald-950 flex items-center gap-1.5">
-                <Quote className="w-4 h-4 text-emerald-800" />
-                Contextual Example Sentences ({word.examples.length})
+          {/* Master Spotlight Showcase: Word, Phonetics & Definition Stated Cleanly ONCE */}
+          <div className="bg-slate-800/90 rounded-3xl p-5 sm:p-6 border border-slate-700 shadow-lg space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="space-y-2 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-xs font-black text-emerald-300 bg-emerald-950/80 px-2.5 py-0.5 rounded-md border border-emerald-600/50">
+                    {word.difficulty}
+                  </span>
+                  <span className="text-xs font-black text-slate-300 bg-slate-900/90 px-2.5 py-0.5 rounded-md border border-slate-700">
+                    {word.partOfSpeech}
+                  </span>
+                </div>
+                <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight break-words">
+                  {word.word}
+                </h1>
+                <div className="flex items-center gap-2.5 flex-wrap text-sm sm:text-base text-slate-300 font-bold">
+                  <span className="font-mono text-cyan-300 bg-slate-900/90 px-2.5 py-1 rounded-md border border-slate-700 font-bold">
+                    {word.phonetic}
+                  </span>
+                  <span className="text-slate-500">•</span>
+                  <span className="text-slate-300">🗣️ {word.phoneticGuide}</span>
+                </div>
+              </div>
+
+              <button
+                onClick={() => onPlayAudio(word.word, 'hero-spotlight-audio', 0.9)}
+                title="Listen to pronunciation aloud"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white font-black text-xs sm:text-sm shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer shrink-0 border border-emerald-500/40"
+              >
+                <SoundWaveIcon isPlaying={playingAudioId === 'hero-spotlight-audio'} size="sm" />
+                <span>Pronounce Aloud</span>
+              </button>
+            </div>
+
+            {/* Clear Primary Definition */}
+            <div className="border-t border-slate-700/80 pt-3.5 mt-2">
+              <span className="text-[11px] font-black uppercase tracking-wider text-emerald-400 block mb-1">
+                Definition
               </span>
-              <span className="text-[10px] font-bold text-[#4b6354]">
-                Tap speaker icon to listen
+              <p className="text-lg sm:text-xl font-semibold text-slate-100 leading-relaxed">
+                {word.definition}
+              </p>
+            </div>
+          </div>
+
+          {/* Section: Example Sentences in Action with Voice Audio */}
+          {word.examples && word.examples.length > 0 && (
+            <div className="bg-slate-800/80 rounded-2xl p-4 sm:p-5 border border-slate-700 space-y-3 shadow-xs">
+              <div className="flex items-center justify-between">
+                <span className="font-black text-xs uppercase tracking-wider text-amber-300 flex items-center gap-1.5">
+                  <div className="p-1 rounded-lg bg-amber-500 text-slate-950 shadow-2xs">
+                    <Quote className="w-3.5 h-3.5" />
+                  </div>
+                  Examples in Action
+                </span>
+                <span className="text-xs font-black text-amber-300 bg-amber-950/80 px-2.5 py-0.5 rounded-full border border-amber-600/50">
+                  {word.examples.length} {word.examples.length === 1 ? 'sentence' : 'sentences'}
+                </span>
+              </div>
+
+              <div className="space-y-2.5">
+                {word.examples.map((example, idx) => {
+                  const audioKey = `modal-example-${word.id}-${idx}`;
+                  const isPlaying = playingAudioId === audioKey;
+                  return (
+                    <div 
+                      key={idx} 
+                      className="flex items-center justify-between gap-3.5 p-3.5 sm:p-4 rounded-xl bg-slate-900/90 border-l-4 border-l-amber-400 border-y border-r border-slate-750 hover:bg-slate-900 transition-colors shadow-2xs"
+                    >
+                      <p className="flex-1 text-base sm:text-lg font-medium text-slate-200 leading-relaxed italic">
+                        {renderHighlightedSentence(example, word.word)}
+                      </p>
+
+                      <button
+                        id={`modal-listen-ex-${idx}`}
+                        onClick={() => onPlayAudio(example, audioKey, 0.9)}
+                        title="Listen to this example sentence"
+                        aria-label={`Listen to example ${idx + 1}`}
+                        className={`p-2.5 sm:p-3 rounded-xl transition-all shrink-0 cursor-pointer ${
+                          isPlaying
+                            ? 'bg-amber-400 text-slate-950 scale-108 shadow-md ring-2 ring-amber-300'
+                            : 'bg-amber-950/60 text-amber-300 hover:bg-amber-400 hover:text-slate-950 border border-amber-500/40 shadow-2xs'
+                        }`}
+                      >
+                        <SoundWaveIcon isPlaying={isPlaying} size="md" />
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Section: Synonyms & Antonyms */}
+          {((word.synonyms && word.synonyms.length > 0) || (word.antonyms && word.antonyms.length > 0)) && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {word.synonyms && word.synonyms.length > 0 && (
+                <div className="bg-slate-800/80 p-3.5 rounded-2xl border border-slate-700 space-y-2 shadow-xs">
+                  <span className="text-[11px] font-black uppercase tracking-wider text-emerald-300 flex items-center gap-1.5">
+                    <Tag className="w-3.5 h-3.5 text-emerald-400" /> Synonyms
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {word.synonyms.map((syn, idx) => (
+                      <span 
+                        key={idx}
+                        className="px-3 py-1 rounded-lg bg-emerald-950/60 text-sm font-bold text-emerald-300 border border-emerald-700/50 shadow-2xs"
+                      >
+                        {syn}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {word.antonyms && word.antonyms.length > 0 && (
+                <div className="bg-slate-800/80 p-3.5 rounded-2xl border border-slate-700 space-y-2 shadow-xs">
+                  <span className="text-[11px] font-black uppercase tracking-wider text-rose-300 flex items-center gap-1.5">
+                    <Tag className="w-3.5 h-3.5 text-rose-400" /> Antonyms
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {word.antonyms.map((ant, idx) => (
+                      <span 
+                        key={idx}
+                        className="px-3 py-1 rounded-lg bg-rose-950/60 text-sm font-bold text-rose-300 border border-rose-700/50 shadow-2xs"
+                      >
+                        {ant}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Section: Pronunciation Studio & Voice Test Lab (Serene Indigo & Sky Blue theme) */}
+          <div className="bg-slate-800/80 rounded-3xl p-4 sm:p-5 border border-slate-700 space-y-3.5 shadow-xs">
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <span className="text-xs font-black uppercase tracking-wider text-indigo-300 flex items-center gap-1.5">
+                <div className="p-1.5 rounded-lg bg-indigo-600 text-white shadow-xs">
+                  <Volume2 className="w-4 h-4" />
+                </div>
+                Pronunciation Studio
+              </span>
+
+              {/* Speed Buttons */}
+              <div className="flex items-center gap-2">
+                <button
+                  id="modal-pronounce-normal"
+                  onClick={() => onPlayAudio(word.word, 'modal-word-norm', 0.9)}
+                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs shadow-sm transition-all hover:scale-105 cursor-pointer border border-indigo-500"
+                >
+                  <Volume2 className="w-3.5 h-3.5" />
+                  <span>Normal Speed</span>
+                </button>
+                <button
+                  id="modal-pronounce-slow"
+                  onClick={() => onPlayAudio(word.word, 'modal-word-slow', 0.6)}
+                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-slate-900 text-sky-300 border border-sky-600/50 hover:bg-slate-850 font-black text-xs transition-all hover:scale-105 shadow-2xs cursor-pointer"
+                >
+                  <Volume2 className="w-3.5 h-3.5 text-sky-400" />
+                  <span>0.6x Slow Coach</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Interactive Voice Mic */}
+            <div className="bg-slate-900/90 rounded-2xl p-4 border border-slate-750 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-2xs">
+              <div className="text-left w-full sm:w-auto">
+                <span className="text-[11px] font-black uppercase tracking-wider text-sky-400 block mb-0.5">
+                  Voice Speech Test
+                </span>
+                <p className="text-xs text-slate-400 font-medium">
+                  Speak aloud to verify your accent & vowel articulation
+                </p>
+              </div>
+
+              <button
+                id="voice-practice-mic-btn"
+                onClick={() => handleStartVoice(word.word)}
+                disabled={isRecording}
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black transition-all cursor-pointer shrink-0 ${
+                  isRecording
+                    ? 'bg-rose-600 text-white animate-pulse shadow-lg'
+                    : 'bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white shadow-md hover:scale-105 active:scale-95 border border-sky-500/40'
+                }`}
+              >
+                {isRecording ? <Mic className="w-4 h-4 animate-bounce" /> : <Mic className="w-4 h-4" />}
+                <span>{isRecording ? 'Listening now...' : 'Test My Voice'}</span>
+              </button>
+            </div>
+
+            {/* Voice Result Feedback */}
+            {voiceResult && (
+              <div className={`p-3 rounded-xl border text-xs flex items-center gap-2.5 ${
+                voiceResult.isMatch 
+                  ? 'bg-emerald-950/80 border-emerald-600/60 text-emerald-200' 
+                  : 'bg-amber-950/80 border-amber-600/60 text-amber-200'
+              }`}>
+                {voiceResult.isMatch ? (
+                  <>
+                    <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+                    <div>
+                      <span className="font-black">Brilliant pronunciation!</span> You spoke "{voiceResult.transcript}", which matched accurately!
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <AlertCircle className="w-5 h-5 text-amber-400 shrink-0" />
+                    <div>
+                      <span className="font-black">Good attempt!</span> We detected "{voiceResult.transcript}". Try the 0.6x Slow Coach to nail the Scottish/UK vowels!
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+
+            {voiceError && (
+              <p className="text-xs text-rose-400 font-bold">⚠️ {voiceError}</p>
+            )}
+          </div>
+
+          {/* Section: Etymology & Cultural Heritage Story */}
+          {word.loreOrFunFact && (
+            <div className="bg-amber-950/30 rounded-2xl p-4 sm:p-5 border border-amber-500/30 text-amber-200 space-y-2.5 shadow-2xs">
+              <div className="flex items-center justify-between">
+                <span className="font-black text-xs uppercase tracking-wider text-amber-300 flex items-center gap-1.5">
+                  <div className="p-1 rounded-lg bg-amber-500 text-slate-950 shadow-2xs">
+                    <Sparkles className="w-3.5 h-3.5" />
+                  </div>
+                  Origin & Heritage Story
+                </span>
+              </div>
+              <p className="text-base sm:text-lg leading-relaxed text-amber-100 font-medium">
+                {word.loreOrFunFact}
+              </p>
+            </div>
+          )}
+
+          {/* Section: Formality Meter & Conversational Register */}
+          <div className="bg-sky-950/30 rounded-2xl p-4 sm:p-5 border border-sky-500/30 space-y-3 shadow-xs">
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <span className="text-xs font-black uppercase tracking-wider text-sky-300 flex items-center gap-1.5">
+                <div className="p-1 rounded-lg bg-sky-600 text-white shadow-2xs">
+                  <Compass className="w-3.5 h-3.5" />
+                </div>
+                Usage & Register
+              </span>
+              <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-sky-900/90 text-sky-200 border border-sky-600/50 shadow-2xs">
+                {formalityDetails.level}
               </span>
             </div>
 
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="bg-slate-900/90 p-3.5 rounded-xl border border-slate-750 space-y-1 shadow-2xs">
+                <span className="text-xs font-black uppercase tracking-wider text-sky-400 flex items-center gap-1.5">
+                  <MessageSquare className="w-3.5 h-3.5 text-sky-400" /> Context
+                </span>
+                <p className="text-sm sm:text-base font-medium text-slate-200 leading-snug">{formalityDetails.tone}</p>
+              </div>
+
+              <div className="bg-slate-900/90 p-3.5 rounded-xl border border-slate-750 space-y-1 shadow-2xs">
+                <span className="text-xs font-black uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
+                  <Lightbulb className="w-3.5 h-3.5 text-amber-400" /> Usage Tip
+                </span>
+                <p className="text-sm sm:text-base font-medium text-slate-200 leading-snug">{formalityDetails.advice}</p>
+              </div>
+            </div>
+
+            {/* Natural Phrasal Collocations */}
+            {collocations.length > 0 && (
+              <div>
+                <span className="text-xs font-black uppercase tracking-wider text-sky-300 block mb-2">
+                  Common Pairings:
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  {collocations.map((phrase, idx) => (
+                    <span 
+                      key={idx} 
+                      className="px-3 py-1.5 bg-slate-900 text-sky-200 border border-sky-600/50 rounded-xl text-sm font-semibold shadow-2xs hover:border-sky-400 transition-colors"
+                    >
+                      "{phrase}"
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Section: Interactive Quick Mastery Challenge (Active Recall) */}
+          <div className="bg-teal-950/30 rounded-2xl p-4 sm:p-5 border border-teal-500/30 space-y-3 shadow-xs">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="p-1 rounded-lg bg-teal-600 text-white shadow-2xs">
+                  <Zap className="w-3.5 h-3.5 text-amber-300 fill-amber-300" />
+                </div>
+                <span className="text-xs font-black uppercase tracking-wider text-teal-300">
+                  Quick Quiz
+                </span>
+              </div>
+              {quizAnswered && (
+                <button
+                  onClick={handleResetQuiz}
+                  title="Try another attempt"
+                  className="flex items-center gap-1 text-xs font-black text-teal-300 hover:text-teal-200 cursor-pointer hover:underline"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span>Retry</span>
+                </button>
+              )}
+            </div>
+
+            <p className="text-base sm:text-lg font-bold text-white leading-snug">
+              {quiz.question}
+            </p>
+
+            {/* Multiple Choice Options */}
             <div className="space-y-2.5">
-              {word.examples.map((example, idx) => {
-                const audioKey = `modal-example-${word.id}-${idx}`;
-                const isPlaying = playingAudioId === audioKey;
+              {quiz.options.map((option, idx) => {
+                const isSelected = selectedOption === idx;
+                const isCorrect = option.isCorrect;
+                
+                let btnStyle = 'bg-slate-900/90 border border-slate-700 text-slate-200 font-semibold hover:border-teal-400 hover:bg-slate-850';
+                if (quizAnswered) {
+                  if (isCorrect) {
+                    btnStyle = 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white border border-emerald-400 font-black shadow-md ring-2 ring-emerald-400/40';
+                  } else if (isSelected && !isCorrect) {
+                    btnStyle = 'bg-rose-700 text-white border border-rose-500 font-black shadow-sm ring-2 ring-rose-400/40';
+                  } else {
+                    btnStyle = 'bg-slate-900/60 text-slate-500 border-slate-800 opacity-50';
+                  }
+                }
+
                 return (
-                  <div 
+                  <button
                     key={idx}
-                    className="flex items-start justify-between gap-3 p-3.5 rounded-xl bg-emerald-50/40 border-l-4 border-l-emerald-700 border-y border-r border-emerald-900/10 text-xs sm:text-sm font-medium text-[#14281f] hover:bg-emerald-50/80 transition-colors"
+                    disabled={quizAnswered}
+                    onClick={() => handleAnswerQuiz(idx)}
+                    className={`w-full text-left p-3.5 rounded-2xl border transition-all flex flex-col gap-1 cursor-pointer ${btnStyle}`}
                   >
-                    <div className="space-y-1 flex-1">
-                      <span className="text-[10px] font-black uppercase text-emerald-800 tracking-wider block">
-                        Example {idx + 1}
+                    <div className="w-full flex items-center justify-between gap-2.5">
+                      <span className="font-bold text-base leading-snug">
+                        {option.text}
                       </span>
-                      <p className="italic leading-relaxed">
-                        "{example}"
-                      </p>
+                      {quizAnswered && isCorrect && (
+                        <div className="flex items-center gap-1 bg-white/20 px-2.5 py-0.5 rounded-md text-xs font-black shrink-0">
+                          <Check className="w-4 h-4 text-white" />
+                          <span>Correct</span>
+                        </div>
+                      )}
+                      {quizAnswered && isSelected && !isCorrect && (
+                        <div className="flex items-center gap-1 bg-white/20 px-2.5 py-0.5 rounded-md text-xs font-black shrink-0">
+                          <X className="w-4 h-4 text-white" />
+                          <span>Your Choice</span>
+                        </div>
+                      )}
                     </div>
 
-                    <button
-                      id={`modal-listen-ex-${idx}`}
-                      onClick={() => onPlayAudio(example, audioKey, 0.9)}
-                      title="Listen to this example sentence"
-                      aria-label={`Listen to example ${idx + 1}`}
-                      className={`p-2.5 rounded-xl transition-all shrink-0 cursor-pointer ${
-                        isPlaying
-                          ? 'bg-emerald-800 text-amber-100 scale-110 shadow-md ring-2 ring-emerald-400'
-                          : 'bg-white text-emerald-900 hover:bg-emerald-800 hover:text-amber-100 border border-emerald-200 shadow-2xs'
-                      }`}
-                    >
-                      <SoundWaveIcon isPlaying={isPlaying} size="sm" />
-                    </button>
-                  </div>
+                    {/* Show definition context for every option once answered */}
+                    {quizAnswered && (
+                      <div className={`text-xs pt-1.5 mt-1 border-t ${
+                        isCorrect 
+                          ? 'border-white/30 text-emerald-100 font-medium' 
+                          : isSelected 
+                          ? 'border-white/30 text-rose-100 font-medium' 
+                          : 'border-slate-800 text-slate-400'
+                      }`}>
+                        {quiz.type === 'fill_blank' ? (
+                          <p className="leading-snug">
+                            <strong className="opacity-95 text-sm">"{option.word}"</strong>: {option.definition}
+                          </p>
+                        ) : (
+                          <p className="leading-snug">
+                            <strong className="opacity-95 text-sm">
+                              {isCorrect ? `Meaning of "${option.word}"` : `Belongs to "${option.word}"`}
+                            </strong>: {option.definition}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </button>
                 );
               })}
             </div>
-          </div>
-        )}
 
-        {/* Section: Synonyms & Antonyms */}
-        {((word.synonyms && word.synonyms.length > 0) || (word.antonyms && word.antonyms.length > 0)) && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {word.synonyms && word.synonyms.length > 0 && (
-              <div className="bg-emerald-50/30 p-3.5 rounded-2xl border border-emerald-900/10 space-y-1.5">
-                <span className="text-[11px] font-black uppercase tracking-wider text-emerald-900 flex items-center gap-1">
-                  <Tag className="w-3.5 h-3.5 text-emerald-700" /> Synonyms / Similar Terms:
-                </span>
-                <div className="flex flex-wrap gap-1.5">
-                  {word.synonyms.map((syn, idx) => (
-                    <span 
-                      key={idx}
-                      className="px-2.5 py-1 rounded-lg bg-white text-xs font-bold text-emerald-950 border border-emerald-200/80 shadow-2xs"
-                    >
-                      {syn}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {word.antonyms && word.antonyms.length > 0 && (
-              <div className="bg-amber-50/30 p-3.5 rounded-2xl border border-amber-900/10 space-y-1.5">
-                <span className="text-[11px] font-black uppercase tracking-wider text-amber-900 flex items-center gap-1">
-                  <Tag className="w-3.5 h-3.5 text-amber-700" /> Antonyms / Opposites:
-                </span>
-                <div className="flex flex-wrap gap-1.5">
-                  {word.antonyms.map((ant, idx) => (
-                    <span 
-                      key={idx}
-                      className="px-2.5 py-1 rounded-lg bg-white text-xs font-bold text-amber-950 border border-amber-200/80 shadow-2xs"
-                    >
-                      {ant}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Section 1: Pronunciation Studio & Voice Test Lab */}
-        <div className="bg-emerald-50/30 rounded-3xl p-4 sm:p-5 border border-emerald-900/15 space-y-3.5 shadow-2xs">
-          <div className="flex items-center justify-between flex-wrap gap-2">
-            <span className="text-xs font-black uppercase tracking-wider text-emerald-950 flex items-center gap-1.5">
-              <div className="p-1 rounded-lg bg-emerald-800 text-amber-100">
-                <Volume2 className="w-3.5 h-3.5" />
-              </div>
-              Pronunciation Studio & Voice Practice
-            </span>
-
-            {/* Speeds */}
-            <div className="flex items-center gap-2">
-              <button
-                id="modal-pronounce-normal"
-                onClick={() => onPlayAudio(word.word, 'modal-word-norm', 0.9)}
-                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-800 hover:bg-emerald-700 text-amber-100 font-black text-xs shadow-md transition-all hover:scale-105 cursor-pointer border border-emerald-700"
-              >
-                <Volume2 className="w-3.5 h-3.5" />
-                <span>Normal Speed</span>
-              </button>
-              <button
-                id="modal-pronounce-slow"
-                onClick={() => onPlayAudio(word.word, 'modal-word-slow', 0.6)}
-                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white text-emerald-900 border border-emerald-300 hover:bg-emerald-50 font-black text-xs transition-all hover:scale-105 shadow-2xs cursor-pointer"
-              >
-                <Volume2 className="w-3.5 h-3.5 text-emerald-700" />
-                <span>0.6x Slow Coach</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Interactive Voice Mic */}
-          <div className="bg-white rounded-2xl p-4 border border-emerald-900/10 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-2xs">
-            <div className="text-left w-full sm:w-auto">
-              <p className="text-xs font-black text-[#14281f] flex items-center gap-1.5">
-                <Mic className="w-4 h-4 text-emerald-700" />
-                Test your pronunciation with your microphone:
-              </p>
-              <p className="text-[11px] text-[#4b6354] font-medium mt-0.5">
-                Tap the button and clearly say <span className="font-black text-emerald-900">"{word.word}"</span>
-              </p>
-            </div>
-
-            <button
-              id="voice-practice-mic-btn"
-              onClick={() => handleStartVoice(word.word)}
-              disabled={isRecording}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black transition-all cursor-pointer shrink-0 ${
-                isRecording
-                  ? 'bg-rose-600 text-white animate-pulse shadow-lg'
-                  : 'bg-gradient-to-r from-emerald-800 to-teal-800 hover:from-emerald-700 hover:to-teal-700 text-amber-100 shadow-md hover:scale-105 active:scale-95 border border-emerald-700'
-              }`}
-            >
-              {isRecording ? <Mic className="w-4 h-4 animate-bounce" /> : <Mic className="w-4 h-4" />}
-              <span>{isRecording ? 'Listening now...' : 'Start Voice Test'}</span>
-            </button>
-          </div>
-
-          {/* Voice Result Feedback */}
-          {voiceResult && (
-            <div className={`p-3 rounded-xl border text-xs flex items-center gap-2.5 ${
-              voiceResult.isMatch 
-                ? 'bg-emerald-50 border-emerald-300 text-emerald-950' 
-                : 'bg-amber-50 border-amber-300 text-amber-950'
-            }`}>
-              {voiceResult.isMatch ? (
-                <>
-                  <CheckCircle2 className="w-5 h-5 text-emerald-700 shrink-0" />
-                  <div>
-                    <span className="font-black">Brilliant pronunciation!</span> You spoke "{voiceResult.transcript}", which matched perfectly!
-                  </div>
-                </>
-              ) : (
-                <>
-                  <AlertCircle className="w-5 h-5 text-amber-700 shrink-0" />
-                  <div>
-                    <span className="font-black">Good attempt!</span> We detected "{voiceResult.transcript}". Try listening to the 0.6x Slow Coach to nail the vowels!
-                  </div>
-                </>
-              )}
-            </div>
-          )}
-
-          {voiceError && (
-            <p className="text-xs text-rose-700 font-medium">⚠️ {voiceError}</p>
-          )}
-        </div>
-
-        {/* Section 2: Etymology & Cultural Heritage Story (Exclusive non-duplicate content) */}
-        {word.loreOrFunFact && (
-          <div className="bg-amber-50/70 rounded-2xl p-4 sm:p-5 border border-amber-300/80 text-amber-950 space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="font-black text-xs uppercase tracking-wider text-amber-900 flex items-center gap-1.5">
-                <Sparkles className="w-4 h-4 text-amber-700" />
-                Origin, Etymology & Cultural Heritage
-              </span>
-              <span className="text-[10px] font-extrabold px-2 py-0.5 bg-amber-200/70 rounded-md text-amber-900 border border-amber-300">
-                Word History
-              </span>
-            </div>
-            <p className="text-xs sm:text-sm leading-relaxed text-amber-950 font-medium">
-              {word.loreOrFunFact}
-            </p>
-          </div>
-        )}
-
-        {/* Section 3: Formality Meter & Conversational Register */}
-        <div className="bg-emerald-50/20 rounded-2xl p-4 sm:p-5 border border-emerald-900/15 space-y-3">
-          <div className="flex items-center justify-between flex-wrap gap-2">
-            <span className="text-xs font-black uppercase tracking-wider text-[#4b6354] flex items-center gap-1.5">
-              <Compass className="w-4 h-4 text-emerald-700" />
-              Usage Register & Formality Meter
-            </span>
-            <span className="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-950 border border-emerald-200">
-              {formalityDetails.level}
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-            <div className="bg-white p-3 rounded-xl border border-emerald-900/10 space-y-1">
-              <span className="font-black text-[#14281f] block flex items-center gap-1">
-                <MessageSquare className="w-3.5 h-3.5 text-emerald-700" /> Where to Use:
-              </span>
-              <p className="text-[#4b6354] leading-snug">{formalityDetails.tone}</p>
-            </div>
-
-            <div className="bg-white p-3 rounded-xl border border-emerald-900/10 space-y-1">
-              <span className="font-black text-[#14281f] block flex items-center gap-1">
-                <Lightbulb className="w-3.5 h-3.5 text-amber-600" /> Pro-Tip for Learners:
-              </span>
-              <p className="text-[#4b6354] leading-snug">{formalityDetails.advice}</p>
-            </div>
-          </div>
-
-          {/* Natural Phrasal Collocations */}
-          <div>
-            <span className="text-[11px] font-black uppercase tracking-wider text-[#4b6354] block mb-1.5">
-              Natural Word Pairings & Collocations:
-            </span>
-            <div className="flex flex-wrap gap-1.5">
-              {collocations.map((phrase, idx) => (
-                <span 
-                  key={idx} 
-                  className="px-2.5 py-1 bg-white text-[#14281f] border border-emerald-900/15 rounded-lg text-xs font-bold shadow-2xs hover:border-emerald-400 transition-colors"
-                >
-                  "{phrase}"
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Section 4: Interactive Quick Mastery Challenge (Active Recall) */}
-        <div className="bg-emerald-50/40 rounded-2xl p-4 sm:p-5 border border-emerald-900/15 space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Zap className="w-4 h-4 text-emerald-700" />
-              <span className="text-xs font-black uppercase tracking-wider text-emerald-950">
-                Quick Mastery Challenge (Active Recall)
-              </span>
-            </div>
+            {/* Feedback banner with full explanations */}
             {quizAnswered && (
-              <button
-                onClick={handleResetQuiz}
-                title="Try another attempt"
-                className="flex items-center gap-1 text-xs font-bold text-emerald-800 hover:text-emerald-950 cursor-pointer"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-                <span>Retry</span>
-              </button>
+              <div className={`p-4 rounded-2xl border animate-fadeIn space-y-2.5 ${
+                quizScore 
+                  ? 'bg-emerald-950/80 border-emerald-600/60 text-emerald-200 shadow-xs' 
+                  : 'bg-rose-950/80 border-rose-600/60 text-rose-200 shadow-xs'
+              }`}>
+                {quizScore ? (
+                  <div className="flex items-start gap-2.5">
+                    <Award className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                    <div className="space-y-1">
+                      <p className="font-black text-xs sm:text-sm text-white">
+                        Spot on! You've mastered "{word.word}"!
+                      </p>
+                      <p className="text-xs text-emerald-300 leading-relaxed font-medium">
+                        "{word.word}" fits correctly because it means: {word.definition}
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-start gap-2.5">
+                    <AlertCircle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
+                    <div className="space-y-2 flex-1">
+                      <p className="font-black text-xs sm:text-sm text-white">
+                        Not quite, but let's review both words:
+                      </p>
+                      
+                      {/* Chosen Wrong Option Explanation */}
+                      {selectedOption !== null && quiz.options[selectedOption] && !quiz.options[selectedOption].isCorrect && (
+                        <div className="bg-slate-900/90 p-2.5 rounded-xl border border-rose-700/60 text-xs text-rose-200 font-medium">
+                          <span className="font-black text-rose-400 block mb-0.5">
+                            ❌ You chose "{quiz.options[selectedOption].word || quiz.options[selectedOption].text}":
+                          </span>
+                          <span>{quiz.options[selectedOption].definition}</span>
+                        </div>
+                      )}
+
+                      {/* Correct Option Explanation */}
+                      <div className="bg-slate-900/90 p-2.5 rounded-xl border border-emerald-700/60 text-xs text-emerald-200 font-medium">
+                        <span className="font-black text-emerald-400 block mb-0.5">
+                          ✅ "{quiz.correctWord}" fits correctly because:
+                        </span>
+                        <span>{quiz.correctDefinition}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
             )}
           </div>
-
-          <p className="text-xs sm:text-sm font-bold text-[#14281f]">
-            {quiz.question}
-          </p>
-
-          {/* Multiple Choice Options */}
-          <div className="space-y-2.5">
-            {quiz.options.map((option, idx) => {
-              const isSelected = selectedOption === idx;
-              const isCorrect = option.isCorrect;
-              
-              let btnStyle = 'bg-white border border-emerald-900/15 text-[#14281f] hover:bg-emerald-50 hover:border-emerald-400 hover:shadow-xs';
-              if (quizAnswered) {
-                if (isCorrect) {
-                  btnStyle = 'bg-emerald-800 text-amber-100 border-emerald-700 font-black shadow-md ring-2 ring-emerald-400';
-                } else if (isSelected && !isCorrect) {
-                  btnStyle = 'bg-rose-700 text-white border-rose-700 font-bold shadow-sm ring-2 ring-rose-300';
-                } else {
-                  btnStyle = 'bg-slate-50 text-slate-400 border-slate-200 opacity-60';
-                }
-              }
-
-              return (
-                <button
-                  key={idx}
-                  disabled={quizAnswered}
-                  onClick={() => handleAnswerQuiz(idx)}
-                  className={`w-full text-left p-3.5 rounded-2xl border transition-all flex flex-col gap-1 cursor-pointer ${btnStyle}`}
-                >
-                  <div className="w-full flex items-center justify-between gap-2.5">
-                    <span className="font-black text-sm leading-snug">
-                      {option.text}
-                    </span>
-                    {quizAnswered && isCorrect && (
-                      <div className="flex items-center gap-1 bg-white/20 px-2 py-0.5 rounded-md text-[11px] font-black shrink-0">
-                        <Check className="w-3.5 h-3.5 text-amber-200" />
-                        <span>Correct</span>
-                      </div>
-                    )}
-                    {quizAnswered && isSelected && !isCorrect && (
-                      <div className="flex items-center gap-1 bg-white/20 px-2 py-0.5 rounded-md text-[11px] font-black shrink-0">
-                        <X className="w-3.5 h-3.5 text-white" />
-                        <span>Your Choice</span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Show definition context for every option once answered */}
-                  {quizAnswered && (
-                    <div className={`text-xs pt-1.5 mt-1 border-t ${
-                      isCorrect 
-                        ? 'border-white/30 text-emerald-100 font-medium' 
-                        : isSelected 
-                        ? 'border-white/30 text-rose-50 font-medium' 
-                        : 'border-slate-200 text-slate-500'
-                    }`}>
-                      {quiz.type === 'fill_blank' ? (
-                        <p className="leading-snug">
-                          <strong className="opacity-95">"{option.word}"</strong>: {option.definition}
-                        </p>
-                      ) : (
-                        <p className="leading-snug">
-                          <strong className="opacity-95">
-                            {isCorrect ? `Meaning of "${option.word}"` : `Belongs to "${option.word}"`}
-                          </strong>: {option.definition}
-                        </p>
-                      )}
-                    </div>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Feedback banner with full explanations */}
-          {quizAnswered && (
-            <div className={`p-4 rounded-2xl border animate-fadeIn space-y-2.5 ${
-              quizScore 
-                ? 'bg-emerald-50 border-emerald-300 text-emerald-950 shadow-xs' 
-                : 'bg-rose-50 border-rose-300 text-rose-950 shadow-xs'
-            }`}>
-              {quizScore ? (
-                <div className="flex items-start gap-2.5">
-                  <Award className="w-5 h-5 text-emerald-700 shrink-0 mt-0.5" />
-                  <div className="space-y-1">
-                    <p className="font-black text-xs sm:text-sm text-emerald-950">
-                      Spot on! You've mastered "{word.word}"!
-                    </p>
-                    <p className="text-xs text-emerald-900 leading-relaxed font-medium">
-                      "{word.word}" fits correctly because it means: {word.definition}
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <div className="flex items-start gap-2.5">
-                  <AlertCircle className="w-5 h-5 text-rose-700 shrink-0 mt-0.5" />
-                  <div className="space-y-2 flex-1">
-                    <p className="font-black text-xs sm:text-sm text-rose-950">
-                      Not quite, but let's review both words:
-                    </p>
-                    
-                    {/* Chosen Wrong Option Explanation */}
-                    {selectedOption !== null && quiz.options[selectedOption] && !quiz.options[selectedOption].isCorrect && (
-                      <div className="bg-white/90 p-2.5 rounded-xl border border-rose-200 text-xs text-rose-950 font-medium">
-                        <span className="font-black text-rose-800 block mb-0.5">
-                          ❌ You chose "{quiz.options[selectedOption].word || quiz.options[selectedOption].text}":
-                        </span>
-                        <span>{quiz.options[selectedOption].definition}</span>
-                      </div>
-                    )}
-
-                    {/* Correct Option Explanation */}
-                    <div className="bg-emerald-50/90 p-2.5 rounded-xl border border-emerald-200 text-xs text-emerald-950 font-medium">
-                      <span className="font-black text-emerald-900 block mb-0.5">
-                        ✅ "{quiz.correctWord}" fits correctly because:
-                      </span>
-                      <span>{quiz.correctDefinition}</span>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
         </div>
 
-        {/* Modal Footer Actions */}
-        <div className="pt-2 flex flex-wrap items-center justify-between gap-3 border-t border-emerald-900/10">
+        {/* Pinned Modal Footer Actions */}
+        <div className="shrink-0 bg-slate-900/98 backdrop-blur-md border-t border-slate-800 px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-3 z-20">
           <button
             onClick={onClose}
-            className="px-4 py-2.5 rounded-xl font-bold text-xs text-[#14281f] bg-emerald-50 hover:bg-emerald-100 transition-colors cursor-pointer"
+            className="px-4 py-2 rounded-xl font-black text-xs text-slate-300 bg-slate-800 hover:bg-slate-700 hover:text-white transition-colors cursor-pointer border border-slate-700"
           >
-            Back to Dictionary
+            ← Back to Dictionary
           </button>
 
           {onOpenAIBard && (
@@ -812,9 +892,9 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
                 onClose();
                 onOpenAIBard(w);
               }}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-800 to-teal-800 hover:from-emerald-700 hover:to-teal-700 text-amber-100 font-black text-xs shadow-md hover:scale-[1.02] active:scale-95 transition-all cursor-pointer border border-emerald-700"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black text-xs shadow-md hover:scale-[1.02] active:scale-95 transition-all cursor-pointer border border-amber-400"
             >
-              <Sparkles className="w-4 h-4 text-amber-300" />
+              <Sparkles className="w-4 h-4 text-slate-950 fill-slate-950" />
               <span>Create Scottish Tale with Hamish AI</span>
             </button>
           )}

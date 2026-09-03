@@ -118,13 +118,15 @@ Try using these in your next Scottish literature or creative writing assignment!
       });
 
       if (!res.ok) {
-        throw new Error('AI service error');
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || `Server responded with status ${res.status}`);
       }
 
       const data = await res.json();
       setAiResponse(data.text || 'No response received.');
       playSound('pop');
-    } catch (err) {
+    } catch (err: any) {
+      console.warn('Hamish AI call failed, using regional lore fallback:', err);
       // Offline fallback
       if (activeMode === 'story') {
         setAiResponse(generateOfflineStory());
@@ -408,7 +410,7 @@ Try using these in your next Scottish literature or creative writing assignment!
                 onClick={handleCopy}
                 className="flex items-center gap-1.5 text-xs font-bold text-emerald-950 hover:text-emerald-900 bg-white px-3 py-1.5 rounded-xl border border-emerald-200 shadow-2xs transition-colors cursor-pointer"
               >
-                {copied ? <Check className="w-4 h-4 text-emerald-700" /> : <Copy className="w-4 h-4" />}
+                {copied ? <Check className="w-4 h-4 text-emerald-700" /> : <Copy className="w-4 h-4 text-emerald-900" />}
                 <span>{copied ? 'Copied!' : 'Copy Text'}</span>
               </button>
             </div>

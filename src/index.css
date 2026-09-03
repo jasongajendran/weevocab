@@ -1,30 +1,30 @@
 @import "tailwindcss";
 
-/* Custom Pleasant Subtle Yellow-Green Scroller Styles */
+/* Custom Dark Theme Smooth Scroller Styles */
 .custom-scrollbar::-webkit-scrollbar {
   height: 7px;
   width: 7px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #f3f6ed;
+  background: #0f172a;
   border-radius: 9999px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #c3d9be;
+  background: #334155;
   border-radius: 9999px;
-  border: 1px solid #a3c89d;
+  border: 1px solid #475569;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #7ca874;
+  background: #059669;
 }
 
-/* Eye-friendly smooth botanical text rendering and background */
+/* Eye-friendly smooth dark botanical text rendering and background */
 body {
-  background-color: #f7f9f3;
-  color: #172a1f;
+  background-color: #0a0f18;
+  color: #f1f5f9;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -52,4 +52,5 @@ body {
 .animate-sound-wave-4 {
   animation: soundWave 0.4s ease-in-out infinite alternate;
 }
+
 

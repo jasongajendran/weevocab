@@ -257,244 +257,257 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
     }, 5000);
   };
 
-  // Helper for Category Styling & Badges with rich vibrant colors
+  // Helper for Category Styling & Badges with rich vibrant kid-friendly colors
   const getCategoryTheme = (entry: DictionaryEntry) => {
     if (entry.category === 'UK Common & Slang') {
       return {
-        badgeBg: 'bg-amber-100 text-amber-950 border-amber-300 font-black',
+        badgeBg: 'bg-amber-950/80 text-amber-300 border-amber-600/50 font-bold',
         flag: '🇬🇧 UK Slang',
-        accentBar: 'border-t-4 border-t-amber-500',
-        exBorder: 'border-l-amber-500 bg-amber-50/60',
-        titleHover: 'group-hover:text-amber-700',
+        accentBar: 'border-t-4 border-t-amber-400',
+        exBorder: 'border-l-amber-400 bg-slate-800/70',
+        titleHover: 'group-hover:text-amber-300',
+        studyBtn: 'bg-slate-800 hover:bg-slate-750 text-amber-300 border-amber-500/40 hover:border-amber-400 shadow-2xs',
+        studyIconBg: 'bg-amber-400 text-slate-950',
+        studyChevron: 'text-amber-400',
       };
     }
     if (entry.isScots || entry.category === 'School & Banter') {
       return {
-        badgeBg: 'bg-emerald-100 text-emerald-950 border-emerald-300 font-black',
+        badgeBg: 'bg-emerald-950/80 text-emerald-300 border-emerald-600/50 font-bold',
         flag: '🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scots',
-        accentBar: 'border-t-4 border-t-emerald-600',
-        exBorder: 'border-l-emerald-600 bg-emerald-50/60',
-        titleHover: 'group-hover:text-emerald-700',
+        accentBar: 'border-t-4 border-t-emerald-500',
+        exBorder: 'border-l-emerald-500 bg-slate-800/70',
+        titleHover: 'group-hover:text-emerald-300',
+        studyBtn: 'bg-slate-800 hover:bg-slate-750 text-emerald-300 border-emerald-500/40 hover:border-emerald-400 shadow-2xs',
+        studyIconBg: 'bg-emerald-600 text-white',
+        studyChevron: 'text-emerald-400',
       };
     }
     if (entry.isAcademic) {
       return {
-        badgeBg: 'bg-indigo-100 text-indigo-950 border-indigo-300 font-black',
+        badgeBg: 'bg-indigo-950/80 text-indigo-300 border-indigo-600/50 font-bold',
         flag: '🎓 Scholar',
-        accentBar: 'border-t-4 border-t-indigo-600',
-        exBorder: 'border-l-indigo-600 bg-indigo-50/60',
-        titleHover: 'group-hover:text-indigo-700',
+        accentBar: 'border-t-4 border-t-indigo-500',
+        exBorder: 'border-l-indigo-500 bg-slate-800/70',
+        titleHover: 'group-hover:text-indigo-300',
+        studyBtn: 'bg-slate-800 hover:bg-slate-750 text-indigo-300 border-indigo-500/40 hover:border-indigo-400 shadow-2xs',
+        studyIconBg: 'bg-indigo-600 text-white',
+        studyChevron: 'text-indigo-400',
       };
     }
     if (entry.category === 'Nature & Places') {
       return {
-        badgeBg: 'bg-teal-100 text-teal-950 border-teal-300 font-black',
+        badgeBg: 'bg-teal-950/80 text-teal-300 border-teal-600/50 font-bold',
         flag: '🌲 Nature',
-        accentBar: 'border-t-4 border-t-teal-600',
-        exBorder: 'border-l-teal-600 bg-teal-50/60',
-        titleHover: 'group-hover:text-teal-700',
+        accentBar: 'border-t-4 border-t-teal-500',
+        exBorder: 'border-l-teal-500 bg-slate-800/70',
+        titleHover: 'group-hover:text-teal-300',
+        studyBtn: 'bg-slate-800 hover:bg-slate-750 text-teal-300 border-teal-500/40 hover:border-teal-400 shadow-2xs',
+        studyIconBg: 'bg-teal-600 text-white',
+        studyChevron: 'text-teal-400',
       };
     }
     return {
-      badgeBg: 'bg-rose-100 text-rose-950 border-rose-300 font-black',
+      badgeBg: 'bg-rose-950/80 text-rose-300 border-rose-600/50 font-bold',
       flag: '🍲 Culture',
-      accentBar: 'border-t-4 border-t-rose-500',
-      exBorder: 'border-l-rose-500 bg-rose-50/60',
-      titleHover: 'group-hover:text-rose-700',
+      accentBar: 'border-t-4 border-t-rose-400',
+      exBorder: 'border-l-rose-400 bg-slate-800/70',
+      titleHover: 'group-hover:text-rose-300',
+      studyBtn: 'bg-slate-800 hover:bg-slate-750 text-rose-300 border-rose-500/40 hover:border-rose-400 shadow-2xs',
+      studyIconBg: 'bg-rose-500 text-white',
+      studyChevron: 'text-rose-400',
     };
   };
 
   const getPartOfSpeechBadge = (pos: string) => {
     const p = pos.toLowerCase();
     if (p.includes('noun')) {
-      return <span className="px-2 py-0.5 rounded-lg text-[11px] font-black bg-sky-100 text-sky-900 border border-sky-300">n.</span>;
+      return <span className="px-2 py-0.5 rounded-lg text-[11px] font-black bg-sky-950/80 text-sky-300 border border-sky-700/60">n.</span>;
     }
     if (p.includes('verb')) {
-      return <span className="px-2 py-0.5 rounded-lg text-[11px] font-black bg-emerald-100 text-emerald-900 border border-emerald-300">v.</span>;
+      return <span className="px-2 py-0.5 rounded-lg text-[11px] font-black bg-emerald-950/80 text-emerald-300 border border-emerald-700/60">v.</span>;
     }
     if (p.includes('adj')) {
-      return <span className="px-2 py-0.5 rounded-lg text-[11px] font-black bg-amber-100 text-amber-900 border border-amber-300">adj.</span>;
+      return <span className="px-2 py-0.5 rounded-lg text-[11px] font-black bg-amber-950/80 text-amber-300 border border-amber-700/60">adj.</span>;
     }
     if (p.includes('adv')) {
-      return <span className="px-2 py-0.5 rounded-lg text-[11px] font-black bg-purple-100 text-purple-900 border border-purple-300">adv.</span>;
+      return <span className="px-2 py-0.5 rounded-lg text-[11px] font-black bg-purple-950/80 text-purple-300 border border-purple-700/60">adv.</span>;
     }
-    return <span className="px-2 py-0.5 rounded-lg text-[11px] font-black bg-teal-100 text-teal-900 border border-teal-300">phr.</span>;
+    return <span className="px-2 py-0.5 rounded-lg text-[11px] font-black bg-teal-950/80 text-teal-300 border border-teal-700/60">phr.</span>;
   };
 
   const getDifficultyBadge = (difficulty: string) => {
     if (difficulty.includes('P6-P7')) {
-      return <span className="px-2 py-0.5 rounded-lg text-[10px] font-black bg-emerald-100 text-emerald-950 border border-emerald-300">🟢 P6–P7</span>;
+      return <span className="px-2 py-0.5 rounded-lg text-[10px] font-black bg-emerald-950/80 text-emerald-300 border border-emerald-700/60">🟢 P6–P7</span>;
     }
     if (difficulty.includes('S1-S2')) {
-      return <span className="px-2 py-0.5 rounded-lg text-[10px] font-black bg-amber-100 text-amber-950 border border-amber-300">🟡 S1–S2</span>;
+      return <span className="px-2 py-0.5 rounded-lg text-[10px] font-black bg-amber-950/80 text-amber-300 border border-amber-700/60">🟡 S1–S2</span>;
     }
-    return <span className="px-2 py-0.5 rounded-lg text-[10px] font-black bg-purple-100 text-purple-950 border border-purple-300">🟣 S3–S4</span>;
+    return <span className="px-2 py-0.5 rounded-lg text-[10px] font-black bg-purple-950/80 text-purple-300 border border-purple-700/60">🟣 S3–S4</span>;
   };
 
   return (
     <div className="space-y-5 pb-24 sm:pb-8">
       
-      {/* Top Controls: Focus Mode Toggle, Layout Selector & Quick Helper */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-white/90 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-emerald-900/10 shadow-2xs">
-        <div className="flex items-center gap-2">
-          <span className="text-xl">📖</span>
-          <span className="text-xs sm:text-sm font-black text-[#14281f]">
-            {isFocusMode ? '🎯 Focus Reading Mode' : '🌿 Interactive Dictionary'}
-          </span>
-          <span className="hidden md:inline-block px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-900 border border-emerald-200">
-            {filteredEntries.length} words
-          </span>
-        </div>
-
-        <div className="flex items-center gap-2 flex-wrap">
-          {/* Layout Selector */}
-          <div className="flex items-center gap-1 bg-emerald-50/80 p-1 rounded-xl border border-emerald-200/80">
-            <span className="text-[10px] font-extrabold uppercase text-emerald-900 px-1 hidden sm:inline">
-              Layout:
-            </span>
-            <button
-              id="top-layout-1-col-btn"
-              onClick={() => handleLayoutChange('1')}
-              title="1 Word per Row (Large & Easy Read on Tablet)"
-              aria-label="1 Word per Row"
-              className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
-                layoutColumns === '1'
-                  ? 'bg-emerald-800 text-amber-100 shadow-xs border border-emerald-800'
-                  : 'text-[#2a4436] hover:text-emerald-950 hover:bg-emerald-100/60'
-              }`}
-            >
-              <Rows className="w-3.5 h-3.5" />
-              <span>1 / row</span>
-            </button>
-            <button
-              id="top-layout-2-col-btn"
-              onClick={() => handleLayoutChange('2')}
-              title="2 Words per Row (Split Columns)"
-              aria-label="2 Words per Row"
-              className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
-                layoutColumns === '2'
-                  ? 'bg-emerald-800 text-amber-100 shadow-xs border border-emerald-800'
-                  : 'text-[#2a4436] hover:text-emerald-950 hover:bg-emerald-100/60'
-              }`}
-            >
-              <Columns2 className="w-3.5 h-3.5" />
-              <span>2 cols</span>
-            </button>
-            <button
-              id="top-layout-3-col-btn"
-              onClick={() => handleLayoutChange('3')}
-              title="3 Words per Row (Compact Grid)"
-              aria-label="3 Words per Row"
-              className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
-                layoutColumns === '3'
-                  ? 'bg-emerald-800 text-amber-100 shadow-xs border border-emerald-800'
-                  : 'text-[#2a4436] hover:text-emerald-950 hover:bg-emerald-100/60'
-              }`}
-            >
-              <Columns3 className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">3 cols</span>
-              <span className="sm:hidden">3</span>
-            </button>
-          </div>
-
-          {/* Hide Distractions / Focus Mode Button */}
-          <button
-            id="toggle-focus-mode-btn"
-            onClick={() => {
-              setIsFocusMode(!isFocusMode);
-              playSound('pop');
-            }}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs transition-all cursor-pointer ${
-              isFocusMode
-                ? 'bg-amber-400 text-slate-950 shadow-xs hover:bg-amber-300'
-                : 'bg-emerald-50 text-[#2a4436] border border-emerald-200 hover:bg-emerald-100'
-            }`}
-            title={isFocusMode ? 'Switch back to full interactive mode' : 'Hide distractions for peaceful reading'}
-          >
-            {isFocusMode ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
-            <span>{isFocusMode ? 'Show Full Mode' : 'Hide Distractions'}</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Main Header Banner (Hidden in Focus Mode) - Simple, Short & Fast */}
-      {!isFocusMode && (
-        <div className="bg-gradient-to-r from-[#14281f] via-[#1a382b] to-[#14281f] rounded-2xl p-3.5 sm:p-4 text-white shadow-xs border border-emerald-800/40">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <div className="space-y-0.5">
-              <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-white/10 text-[10px] font-black text-amber-200">
-                <Sparkles className="w-3 h-3 text-amber-300" />
-                <span>UK & Scottish Junior Dictionary</span>
+      {/* Top Header & Search Hub - Vibrant, Cheerful & Kid-Friendly */}
+      {!isFocusMode ? (
+        <div className="bg-slate-900/95 rounded-3xl p-3.5 sm:p-4 text-white shadow-md border border-slate-800 space-y-3">
+          {/* Top Bar: Identity on Left, Action Controls on Right */}
+          <div className="flex flex-wrap items-center justify-between gap-2.5">
+            <div className="flex items-center gap-2">
+              <span className="text-xl sm:text-2xl">📖</span>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h1 className="text-sm sm:text-base font-black text-amber-300 tracking-tight">
+                    British & Scottish Vocabulary
+                  </h1>
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-black bg-slate-800 text-slate-200 border border-slate-700">
+                    {filteredEntries.length} terms
+                  </span>
+                </div>
               </div>
-              <h1 className="text-base sm:text-lg font-black text-amber-100 tracking-tight">
-                British & Scottish Vocabulary
-              </h1>
             </div>
 
-            {/* Quick Surprise Button */}
-            <button
-              id="random-word-btn"
-              onClick={handleRandomWord}
-              className="flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-400 hover:from-amber-300 hover:to-yellow-300 active:scale-95 text-slate-950 font-black text-xs shadow-xs transition-all whitespace-nowrap cursor-pointer border border-amber-300 shrink-0 self-end sm:self-auto"
-            >
-              <Shuffle className="w-3.5 h-3.5 text-slate-950" />
-              <span>Surprise Word! 🎲</span>
-            </button>
+            {/* Aligned Right Controls: Surprise Word, Layout Selector & Focus Mode */}
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+              {/* Quick Surprise Word Button */}
+              <button
+                id="random-word-btn"
+                onClick={handleRandomWord}
+                title="Explore a random Scottish or British term"
+                className="flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-300 active:scale-95 text-slate-950 font-black text-xs sm:text-sm shadow-md transition-all whitespace-nowrap cursor-pointer border border-amber-300 shrink-0 hover:scale-[1.03]"
+              >
+                <Shuffle className="w-3.5 h-3.5 text-slate-950 stroke-[2.5]" />
+                <span>Surprise Word! 🎲</span>
+              </button>
+
+              {/* Layout Mode Selector */}
+              <div className="flex items-center gap-0.5 bg-slate-950/80 p-0.5 rounded-xl border border-slate-800">
+                <button
+                  id="top-layout-1-col-btn"
+                  onClick={() => handleLayoutChange('1')}
+                  title="1 Word per Row (Large & Easy Read on Tablet)"
+                  aria-label="1 Word per Row"
+                  className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                    layoutColumns === '1'
+                      ? 'bg-emerald-600 text-white shadow-xs'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                  }`}
+                >
+                  <Rows className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">1 / row</span>
+                </button>
+                <button
+                  id="top-layout-2-col-btn"
+                  onClick={() => handleLayoutChange('2')}
+                  title="2 Words per Row (Split Columns Grid)"
+                  aria-label="2 Words per Row"
+                  className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                    layoutColumns === '2'
+                      ? 'bg-emerald-600 text-white shadow-xs'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                  }`}
+                >
+                  <Columns2 className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">2 cols</span>
+                </button>
+                <button
+                  id="top-layout-3-col-btn"
+                  onClick={() => handleLayoutChange('3')}
+                  title="3 Words per Row (Compact Grid)"
+                  aria-label="3 Words per Row"
+                  className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                    layoutColumns === '3'
+                      ? 'bg-emerald-600 text-white shadow-xs'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                  }`}
+                >
+                  <Columns3 className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">3 cols</span>
+                </button>
+              </div>
+
+              {/* Focus Mode Toggle */}
+              <button
+                id="toggle-focus-mode-btn"
+                onClick={() => {
+                  setIsFocusMode(!isFocusMode);
+                  playSound('pop');
+                }}
+                className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl font-bold text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition-all cursor-pointer"
+                title="Hide distractions for peaceful reading"
+              >
+                <EyeOff className="w-3.5 h-3.5" />
+                <span className="hidden md:inline">Distraction Free</span>
+              </button>
+            </div>
           </div>
 
-          {/* Search Input Bar */}
-          <div className="mt-2.5 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-700" />
+          {/* Unified Search Input Bar */}
+          <div className="relative">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               id="dictionary-search-input"
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search word, meaning, or slang (e.g. chuffed, dreich, braw, analyse)..."
-              className="w-full pl-9 pr-9 py-2.5 rounded-xl bg-white text-slate-900 placeholder:text-[#527060] font-bold text-xs sm:text-sm shadow-xs border border-emerald-200 focus:outline-hidden focus:ring-2 focus:ring-amber-400 transition-all"
+              className="w-full pl-10 pr-9 py-2.5 rounded-xl bg-slate-950 text-slate-100 placeholder:text-slate-500 font-bold text-xs sm:text-sm shadow-xs border border-slate-700 focus:outline-hidden focus:ring-2 focus:ring-emerald-500 transition-all"
             />
             {searchQuery && (
               <button
                 id="clear-search-btn"
                 onClick={() => setSearchQuery('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1 rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-1 rounded-full hover:bg-slate-800 transition-colors cursor-pointer"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
         </div>
-      )}
+      ) : (
+        /* Focus Mode Simple Header */
+        <div className="flex items-center justify-between gap-3 bg-slate-900 p-3 rounded-2xl border border-slate-800 shadow-xs">
+          <div className="relative flex-1">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <input
+              id="focus-search-input"
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Type any word or meaning to search..."
+              className="w-full pl-10 pr-9 py-2 rounded-xl bg-slate-950 text-slate-100 placeholder:text-slate-500 font-semibold text-xs sm:text-sm border border-slate-700 focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-1 rounded-full hover:bg-slate-800"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
 
-      {/* Focus Mode Simple Search Bar */}
-      {isFocusMode && (
-        <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400" />
-          <input
-            id="focus-search-input"
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Type any word or meaning to search..."
-            className="w-full pl-11 pr-10 py-3 rounded-2xl bg-white text-slate-900 placeholder:text-slate-400 font-semibold text-sm sm:text-base shadow-xs border border-emerald-200 focus:outline-hidden focus:ring-2 focus:ring-emerald-700"
-          />
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery('')}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-100"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          )}
+          <button
+            id="exit-focus-mode-btn"
+            onClick={() => {
+              setIsFocusMode(false);
+              playSound('pop');
+            }}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl font-black text-xs bg-emerald-600 hover:bg-emerald-500 text-white transition-all cursor-pointer shrink-0"
+          >
+            <Eye className="w-3.5 h-3.5" />
+            <span>Show Full Hub</span>
+          </button>
         </div>
       )}
 
       {/* A to Z Alphabet Navigation Bar (Mobile Swipeable & Touch Optimized) */}
-      <div className="bg-white rounded-2xl p-3.5 sm:p-4 shadow-xs border border-emerald-900/10 space-y-2">
+      <div className="bg-slate-900/90 rounded-2xl p-3.5 sm:p-4 shadow-xs border border-slate-800 space-y-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-black uppercase tracking-wider text-[#203a2b] flex items-center gap-1.5">
-              <BookOpen className="w-4 h-4 text-emerald-800" />
+            <span className="text-xs font-black uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+              <BookOpen className="w-4 h-4 text-emerald-400" />
               A–Z Alphabet Scroller:
             </span>
             {selectedLetter && (
@@ -504,7 +517,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                   setSelectedLetter(null);
                   playSound('click');
                 }}
-                className="text-xs font-black text-emerald-900 hover:text-emerald-950 hover:underline px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-300"
+                className="text-xs font-black text-emerald-300 hover:text-emerald-200 hover:underline px-2.5 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-700/60"
               >
                 Show All (A–Z) ✕
               </button>
@@ -516,14 +529,14 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
             <button
               onClick={() => scrollAlphabetBar('left')}
               title="Scroll A-Z left"
-              className="p-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#203a2b] border border-emerald-200 shadow-2xs cursor-pointer transition-colors"
+              className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 shadow-2xs cursor-pointer transition-colors"
             >
               <ChevronLeft className="w-3.5 h-3.5" />
             </button>
             <button
               onClick={() => scrollAlphabetBar('right')}
               title="Scroll A-Z right"
-              className="p-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#203a2b] border border-emerald-200 shadow-2xs cursor-pointer transition-colors"
+              className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 shadow-2xs cursor-pointer transition-colors"
             >
               <ChevronRight className="w-3.5 h-3.5" />
             </button>
@@ -534,10 +547,6 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
         <div
           ref={alphabetBarRef}
           className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pt-2 pb-3 px-1 scroll-smooth custom-scrollbar"
-          style={{
-            scrollbarWidth: 'thin',
-            scrollbarColor: '#4d7c5f #eef6f0',
-          }}
         >
           <button
             id="alphabet-all-btn"
@@ -547,8 +556,8 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
             }}
             className={`px-4 py-2 min-h-[40px] rounded-xl font-black text-xs sm:text-sm whitespace-nowrap transition-all shrink-0 cursor-pointer ${
               selectedLetter === null
-                ? 'bg-gradient-to-r from-emerald-800 to-teal-800 text-amber-100 shadow-md shadow-emerald-950/20 ring-2 ring-emerald-600'
-                : 'bg-emerald-50/60 text-[#2a4436] hover:bg-emerald-100 hover:text-emerald-950 border border-emerald-200/80'
+                ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md ring-2 ring-emerald-400'
+                : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700'
             }`}
           >
             All ({entries.length})
@@ -568,16 +577,16 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                 }}
                 className={`relative px-3.5 py-2 min-h-[40px] min-w-[40px] rounded-xl font-black text-xs sm:text-sm transition-all shrink-0 cursor-pointer flex items-center justify-center gap-1.5 ${
                   isSelected
-                    ? 'bg-gradient-to-tr from-emerald-800 via-teal-800 to-emerald-900 text-amber-100 shadow-md shadow-emerald-950/25 ring-2 ring-amber-400 border-2 border-emerald-500'
+                    ? 'bg-gradient-to-tr from-emerald-600 to-teal-600 text-white shadow-md ring-2 ring-amber-400 border-2 border-emerald-400'
                     : count > 0
-                    ? 'bg-white text-[#1b3425] hover:bg-emerald-50 hover:text-emerald-950 hover:border-emerald-400 border border-emerald-900/15 shadow-2xs'
-                    : 'bg-emerald-50/30 text-emerald-900/30 cursor-not-allowed opacity-40 border border-transparent'
+                    ? 'bg-slate-800 text-slate-200 hover:bg-slate-750 hover:text-white hover:border-slate-600 border border-slate-700 shadow-2xs'
+                    : 'bg-slate-900/40 text-slate-600 cursor-not-allowed opacity-30 border border-slate-850'
                 }`}
                 title={count > 0 ? `${count} word${count > 1 ? 's' : ''} starting with ${letter}` : `No words starting with ${letter}`}
               >
                 <span className="text-sm">{letter}</span>
                 {count > 0 && (
-                  <span className={`text-[10px] font-black px-1.5 py-0.2 rounded-full ${isSelected ? 'bg-amber-400 text-emerald-950 font-black' : 'bg-emerald-100 text-emerald-900'}`}>
+                  <span className={`text-[10px] font-black px-1.5 py-0.2 rounded-full ${isSelected ? 'bg-amber-400 text-slate-950 font-black' : 'bg-slate-900 text-slate-300 border border-slate-700'}`}>
                     {count}
                   </span>
                 )}
@@ -588,29 +597,29 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
       </div>
 
       {/* Collapsible Filter Bar */}
-      <div className="bg-white rounded-2xl border border-emerald-900/10 shadow-2xs overflow-hidden transition-all">
+      <div className="bg-slate-900/90 rounded-2xl border border-slate-800 shadow-2xs overflow-hidden transition-all">
         {/* Accordion Header */}
         <div 
           onClick={() => {
             setIsFilterOpen(!isFilterOpen);
             playSound('click');
           }}
-          className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-emerald-50/60 to-lime-50/40 hover:bg-emerald-50/90 cursor-pointer border-b border-emerald-900/10 select-none transition-colors"
+          className="flex items-center justify-between px-4 py-3 bg-slate-900 hover:bg-slate-850 cursor-pointer border-b border-slate-800 select-none transition-colors"
         >
           <div className="flex items-center gap-2 flex-wrap">
-            <div className="p-1 rounded-lg bg-emerald-100 text-emerald-900">
+            <div className="p-1 rounded-lg bg-emerald-950 text-emerald-300 border border-emerald-700/50">
               <Filter className="w-4 h-4" />
             </div>
-            <span className="font-extrabold text-xs sm:text-sm text-[#14281f]">
+            <span className="font-extrabold text-xs sm:text-sm text-slate-200">
               Filter Categories & Regions
             </span>
             {activeFiltersCount > 0 && (
-              <span className="px-2.5 py-0.5 text-[11px] font-black bg-gradient-to-r from-emerald-800 to-teal-800 text-amber-100 rounded-full shadow-2xs">
+              <span className="px-2.5 py-0.5 text-[11px] font-black bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-full shadow-2xs">
                 {activeFiltersCount} Active
               </span>
             )}
             {!isFilterOpen && (
-              <span className="text-xs text-[#4b6354] font-bold truncate max-w-[200px] sm:max-w-md hidden sm:inline">
+              <span className="text-xs text-slate-400 font-bold truncate max-w-[200px] sm:max-w-md hidden sm:inline">
                 • {selectedCategory} • {selectedRegion} • {selectedDifficulty}
               </span>
             )}
@@ -629,7 +638,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                   setSelectedDifficulty('All');
                   playSound('click');
                 }}
-                className="text-xs font-black text-amber-800 hover:text-amber-950 hover:underline px-2 py-1 cursor-pointer"
+                className="text-xs font-black text-amber-300 hover:text-amber-200 hover:underline px-2 py-1 cursor-pointer"
               >
                 Reset All
               </button>
@@ -637,9 +646,9 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
             <button
               id="filter-accordion-toggle-btn"
               aria-label={isFilterOpen ? 'Collapse filter section' : 'Expand filter section'}
-              className="p-1.5 rounded-lg text-emerald-800 hover:bg-emerald-100/80 transition-colors"
+              className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-800 transition-colors"
             >
-              {isFilterOpen ? <ChevronUp className="w-4 h-4 text-emerald-800 font-bold" /> : <ChevronDown className="w-4 h-4 text-[#4b6354]" />}
+              {isFilterOpen ? <ChevronUp className="w-4 h-4 text-slate-200 font-bold" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
             </button>
           </div>
         </div>
@@ -649,18 +658,18 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
           <div className="p-4 space-y-3.5 animate-in fade-in duration-150">
             {/* Category Filter Chips */}
             <div>
-              <span className="text-[11px] font-black uppercase tracking-wider text-[#4b6354] block mb-2">
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-400 block mb-2">
                 Vocabulary Categories:
               </span>
               <div className="flex flex-wrap items-center gap-2">
                 {[
-                  { label: '🌿 All Categories', value: 'All', activeClass: 'bg-gradient-to-r from-emerald-800 to-teal-800 text-amber-100 shadow-xs', normalClass: 'bg-emerald-50/70 text-[#2a4436] hover:bg-emerald-100 border-emerald-200' },
-                  { label: '🇬🇧 UK Common & Slang', value: 'UK Common', activeClass: 'bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 shadow-xs', normalClass: 'bg-amber-50 text-amber-950 hover:bg-amber-100 border-amber-200' },
-                  { label: '🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scots & Regional', value: 'Scots Slang', activeClass: 'bg-gradient-to-r from-emerald-800 to-teal-800 text-amber-100 shadow-xs', normalClass: 'bg-emerald-50 text-emerald-950 hover:bg-emerald-100 border-emerald-200' },
-                  { label: '🎓 Academic & Power', value: 'Academic', activeClass: 'bg-gradient-to-r from-lime-800 to-emerald-900 text-amber-100 shadow-xs', normalClass: 'bg-lime-50 text-lime-950 hover:bg-lime-100 border-lime-200' },
-                  { label: '🏫 School & Banter', value: 'School & Banter', activeClass: 'bg-gradient-to-r from-emerald-700 to-lime-700 text-white shadow-xs', normalClass: 'bg-emerald-50 text-emerald-950 hover:bg-emerald-100 border-emerald-200' },
-                  { label: '🌲 Nature & Places', value: 'Nature & Places', activeClass: 'bg-gradient-to-r from-teal-800 to-emerald-800 text-amber-100 shadow-xs', normalClass: 'bg-teal-50 text-teal-950 hover:bg-teal-100 border-teal-200' },
-                  { label: '🍲 Food & Culture', value: 'Food & Culture', activeClass: 'bg-gradient-to-r from-yellow-700 to-amber-700 text-amber-100 shadow-xs', normalClass: 'bg-yellow-50 text-yellow-950 hover:bg-yellow-100 border-yellow-200' },
+                  { label: '🌿 All Categories', value: 'All', activeClass: 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-sm ring-2 ring-emerald-400', normalClass: 'bg-slate-800 text-slate-300 hover:bg-slate-700 border-slate-700' },
+                  { label: '🇬🇧 UK Common & Slang', value: 'UK Common', activeClass: 'bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 shadow-sm ring-2 ring-amber-300', normalClass: 'bg-slate-800 text-slate-300 hover:bg-slate-700 border-slate-700' },
+                  { label: '🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scots & Regional', value: 'Scots Slang', activeClass: 'bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-sm ring-2 ring-sky-400', normalClass: 'bg-slate-800 text-slate-300 hover:bg-slate-700 border-slate-700' },
+                  { label: '🎓 Academic & Power', value: 'Academic', activeClass: 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-sm ring-2 ring-indigo-400', normalClass: 'bg-slate-800 text-slate-300 hover:bg-slate-700 border-slate-700' },
+                  { label: '🏫 School & Banter', value: 'School & Banter', activeClass: 'bg-gradient-to-r from-teal-500 to-emerald-600 text-white shadow-sm ring-2 ring-teal-400', normalClass: 'bg-slate-800 text-slate-300 hover:bg-slate-700 border-slate-700' },
+                  { label: '🌲 Nature & Places', value: 'Nature & Places', activeClass: 'bg-gradient-to-r from-cyan-600 to-teal-600 text-white shadow-sm ring-2 ring-cyan-400', normalClass: 'bg-slate-800 text-slate-300 hover:bg-slate-700 border-slate-700' },
+                  { label: '🍲 Food & Culture', value: 'Food & Culture', activeClass: 'bg-gradient-to-r from-rose-500 to-orange-500 text-white shadow-sm ring-2 ring-rose-400', normalClass: 'bg-slate-800 text-slate-300 hover:bg-slate-700 border-slate-700' },
                 ].map(cat => (
                   <button
                     key={cat.value}
@@ -671,7 +680,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                     }}
                     className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer border ${
                       selectedCategory === cat.value
-                        ? `${cat.activeClass} scale-105 ring-2 ring-emerald-300`
+                        ? `${cat.activeClass} scale-105 ring-2 ring-emerald-400`
                         : `${cat.normalClass}`
                     }`}
                   >
@@ -682,13 +691,13 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
             </div>
 
             {/* Region & Difficulty Dropdowns */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-emerald-900/10">
-              <div className="flex items-center gap-2.5 bg-gradient-to-r from-emerald-50/60 to-teal-50/60 px-3.5 py-2.5 rounded-xl border border-emerald-200/80">
-                <div className="p-1 rounded-lg bg-emerald-100 text-emerald-900">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-800">
+              <div className="flex items-center gap-2.5 bg-slate-800/80 px-3.5 py-2.5 rounded-xl border border-slate-700">
+                <div className="p-1 rounded-lg bg-emerald-950 text-emerald-300 border border-emerald-700/50">
                   <MapPin className="w-4 h-4 shrink-0" />
                 </div>
                 <div className="flex-1">
-                  <label htmlFor="region-filter-select" className="text-[10px] font-black text-emerald-950 uppercase block">
+                  <label htmlFor="region-filter-select" className="text-[10px] font-black text-emerald-400 uppercase block">
                     Region
                   </label>
                   <select
@@ -696,7 +705,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                     value={selectedRegion}
                     onChange={(e) => setSelectedRegion(e.target.value)}
                     aria-label="Filter by UK or Scottish region"
-                    className="w-full bg-transparent font-black text-[#14281f] focus:outline-hidden text-xs cursor-pointer"
+                    className="w-full bg-slate-900 font-bold text-slate-200 border border-slate-700 rounded-md px-1.5 py-1 focus:outline-hidden text-xs cursor-pointer"
                   >
                     <option value="All">All UK & Scottish Regions</option>
                     <option value="UK Wide & Common">UK Wide & Common</option>
@@ -715,12 +724,12 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                 </div>
               </div>
 
-              <div className="flex items-center gap-2.5 bg-gradient-to-r from-lime-50/50 to-emerald-50/50 px-3.5 py-2.5 rounded-xl border border-lime-200/80">
-                <div className="p-1 rounded-lg bg-lime-100 text-lime-900">
+              <div className="flex items-center gap-2.5 bg-slate-800/80 px-3.5 py-2.5 rounded-xl border border-slate-700">
+                <div className="p-1 rounded-lg bg-lime-950 text-lime-300 border border-lime-700/50">
                   <GraduationCap className="w-4 h-4 shrink-0" />
                 </div>
                 <div className="flex-1">
-                  <label htmlFor="difficulty-filter-select" className="text-[10px] font-black text-lime-950 uppercase block">
+                  <label htmlFor="difficulty-filter-select" className="text-[10px] font-black text-lime-400 uppercase block">
                     School Stage
                   </label>
                   <select
@@ -728,7 +737,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                     value={selectedDifficulty}
                     onChange={(e) => setSelectedDifficulty(e.target.value)}
                     aria-label="Filter by school stage and difficulty"
-                    className="w-full bg-transparent font-black text-[#14281f] focus:outline-hidden text-xs cursor-pointer"
+                    className="w-full bg-slate-900 font-bold text-slate-200 border border-slate-700 rounded-md px-1.5 py-1 focus:outline-hidden text-xs cursor-pointer"
                   >
                     <option value="All">All School Stages (P6–S4)</option>
                     <option value="P6-P7">Primary 6–7 (Starter)</option>
@@ -742,12 +751,14 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
         )}
       </div>
 
-      {/* Results Count, Active Filters & Layout Selector */}
-      <div className="flex flex-wrap items-center justify-between gap-2.5 text-xs text-[#4b6354] px-1">
+      {/* Results Count & Active Filters Bar - Crystal Clear, High Contrast & Calibrated */}
+      <div className="flex flex-wrap items-center justify-between gap-2.5 text-xs text-slate-300 px-1">
         <div className="flex items-center gap-1.5 flex-wrap">
-          <span>Showing <strong className="font-black text-[#14281f]">{filteredEntries.length}</strong> of <strong className="font-black text-[#14281f]">{entries.length}</strong> terms</span>
-          {selectedLetter && <span> • Letter <strong>'{selectedLetter}'</strong></span>}
-          {searchQuery && <span> • Matching <strong>"{searchQuery}"</strong></span>}
+          <span className="text-slate-300 font-medium">
+            Showing <strong className="font-black text-amber-300">{filteredEntries.length}</strong> of <strong className="font-black text-slate-100">{entries.length}</strong> terms
+          </span>
+          {selectedLetter && <span className="text-slate-400"> • Letter <strong className="text-emerald-300 font-bold">'{selectedLetter}'</strong></span>}
+          {searchQuery && <span className="text-slate-400"> • Matching <strong className="text-emerald-300 font-bold">"{searchQuery}"</strong></span>}
           {activeFiltersCount > 0 && (
             <button
               id="reset-all-filters-btn"
@@ -759,78 +770,38 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                 setSelectedDifficulty('All');
                 playSound('click');
               }}
-              className="ml-1 text-emerald-800 hover:text-emerald-950 font-extrabold hover:underline cursor-pointer"
+              className="ml-1 text-amber-300 hover:text-amber-200 font-bold hover:underline cursor-pointer bg-amber-950/60 px-2 py-0.5 rounded-md border border-amber-600/50"
             >
-              Clear Filters
+              Clear Filters ✕
             </button>
           )}
         </div>
 
-        {/* Layout Mode Selector in Results Bar */}
-        <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-emerald-900/10 shadow-2xs">
-          <span className="text-[10px] font-extrabold uppercase text-[#4b6354] px-1">
-            Layout:
+        {/* Informative column layout indicator */}
+        <div className="hidden sm:flex items-center gap-1 text-[11px] font-bold text-slate-400">
+          <span>View: </span>
+          <span className="font-black text-slate-200">
+            {layoutColumns === '1' ? '1 Word / Row (Reader)' : layoutColumns === '2' ? '2 Columns Grid' : '3 Columns Grid'}
           </span>
-          <button
-            id="results-layout-1-col-btn"
-            onClick={() => handleLayoutChange('1')}
-            title="1 Word per Row (1 Column - Large fonts & easy to read on Tablet)"
-            aria-label="1 Word per Row"
-            className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
-              layoutColumns === '1'
-                ? 'bg-emerald-800 text-amber-100 shadow-xs'
-                : 'text-[#2a4436] hover:text-emerald-950 hover:bg-emerald-50'
-            }`}
-          >
-            <Rows className="w-3.5 h-3.5" />
-            <span>1 / row</span>
-          </button>
-          <button
-            id="results-layout-2-col-btn"
-            onClick={() => handleLayoutChange('2')}
-            title="2 Words per Row (2 Columns Grid)"
-            aria-label="2 Words per Row"
-            className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
-              layoutColumns === '2'
-                ? 'bg-emerald-800 text-amber-100 shadow-xs'
-                : 'text-[#2a4436] hover:text-emerald-950 hover:bg-emerald-50'
-            }`}
-          >
-            <Columns2 className="w-3.5 h-3.5" />
-            <span>2 cols</span>
-          </button>
-          <button
-            id="results-layout-3-col-btn"
-            onClick={() => handleLayoutChange('3')}
-            title="3 Words per Row (3 Columns Grid)"
-            aria-label="3 Words per Row"
-            className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
-              layoutColumns === '3'
-                ? 'bg-emerald-800 text-amber-100 shadow-xs'
-                : 'text-[#2a4436] hover:text-emerald-950 hover:bg-emerald-50'
-            }`}
-          >
-            <Columns3 className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">3 cols</span>
-            <span className="sm:hidden">3</span>
-          </button>
         </div>
       </div>
 
-      {/* Global Page Vertical Scrubber pinned to whole page scroll on right edge */}
-      <GlobalPageVerticalScrubber
-        entries={filteredEntries}
-        onScrollToWord={scrollToWordCard}
-      />
+      {/* Global Page Vertical Scrubber pinned to whole page scroll on right edge (hidden during active modal study to prevent touch conflicts) */}
+      {!activeModalWord && (
+        <GlobalPageVerticalScrubber
+          entries={filteredEntries}
+          onScrollToWord={scrollToWordCard}
+        />
+      )}
 
       {/* Word Cards Grid / Grouped Sections */}
       {filteredEntries.length === 0 ? (
-        <div className="bg-white rounded-3xl p-10 text-center border border-emerald-900/10 shadow-xs max-w-md mx-auto">
-          <div className="w-16 h-16 bg-emerald-50 text-emerald-800 rounded-2xl flex items-center justify-center mx-auto mb-3 text-3xl">
+        <div className="bg-slate-900 rounded-3xl p-10 text-center border border-slate-800 shadow-xs max-w-md mx-auto">
+          <div className="w-16 h-16 bg-slate-800 text-emerald-400 rounded-2xl flex items-center justify-center mx-auto mb-3 text-3xl">
             🔍
           </div>
-          <h3 className="text-lg font-black text-[#14281f] mb-1">No words match your filters</h3>
-          <p className="text-xs text-[#4b6354] mb-4">
+          <h3 className="text-lg font-black text-white mb-1">No words match your filters</h3>
+          <p className="text-xs text-slate-400 mb-4">
             Try checking spelling, searching for another word, or resetting your filter choices.
           </p>
           <button
@@ -841,7 +812,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
               setSelectedRegion('All');
               setSelectedDifficulty('All');
             }}
-            className="px-5 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-amber-100 font-bold text-xs rounded-xl transition-all"
+            className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl transition-all cursor-pointer"
           >
             Reset All Filters
           </button>
@@ -859,15 +830,15 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
             return (
               <div key={group.letter} id={`letter-section-${group.letter}`} className="relative space-y-3.5 scroll-mt-24">
                 {/* Section Header with anchor and count */}
-                <div className="flex items-center justify-between border-b-2 border-emerald-200 pb-2 pt-1">
+                <div className="flex items-center justify-between border-b border-slate-800 pb-2 pt-1">
                   <div className="flex items-center gap-2.5">
-                    <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-emerald-800 to-teal-900 text-amber-100 font-black text-base sm:text-lg flex items-center justify-center shadow-xs">
+                    <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white font-black text-base sm:text-lg flex items-center justify-center shadow-xs">
                       {group.letter}
                     </span>
-                    <span className="font-extrabold text-[#14281f] text-sm sm:text-base">
+                    <span className="font-extrabold text-slate-100 text-sm sm:text-base">
                       Letter {group.letter}
                     </span>
-                    <span className="text-[11px] sm:text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-950 border border-emerald-200">
+                    <span className="text-[11px] sm:text-xs font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
                       {group.entries.length} {group.entries.length === 1 ? 'word' : 'words'}
                     </span>
                   </div>
@@ -879,7 +850,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                     }}
                     title="Move to top"
                     aria-label="Move to top"
-                    className="p-1.5 rounded-lg text-[#4b6354] hover:text-emerald-900 hover:bg-emerald-50 transition-colors cursor-pointer"
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
                   >
                     <ArrowUp className="w-4 h-4 stroke-[2.5]" />
                   </button>
@@ -896,7 +867,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
               <div
                 key={entry.id}
                 id={`word-card-${entry.id}`}
-                className={`bg-white rounded-3xl border border-emerald-900/10 hover:border-emerald-600 hover:shadow-lg hover:shadow-emerald-950/10 transition-all duration-250 flex flex-col justify-between group ${theme.accentBar} ${
+                className={`bg-slate-900/90 rounded-3xl border border-slate-800 hover:border-slate-600 hover:shadow-lg transition-all duration-250 flex flex-col justify-between group ${theme.accentBar} ${
                   layoutColumns === '1' ? 'p-6 sm:p-7 shadow-2xs' : 'p-5 shadow-2xs'
                 }`}
               >
@@ -905,7 +876,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                   <div className="flex items-start justify-between gap-3 mb-3 pr-3 sm:pr-3.5">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <h2 className={`font-black text-[#14281f] tracking-tight transition-colors ${theme.titleHover} ${
+                        <h2 className={`font-black text-white tracking-tight transition-colors ${theme.titleHover} ${
                           layoutColumns === '1' ? 'text-2xl sm:text-3xl' : 'text-xl sm:text-2xl'
                         }`}>
                           {entry.word}
@@ -928,7 +899,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                           className={`p-1.5 rounded-xl transition-all cursor-pointer inline-flex items-center justify-center ${
                             isStarred 
                               ? 'bg-gradient-to-r from-amber-400 to-yellow-400 text-slate-950 shadow-xs scale-105 border border-amber-300 ring-2 ring-amber-300/40' 
-                              : 'bg-emerald-50/60 text-[#4b6354] hover:text-amber-600 hover:bg-amber-50 border border-emerald-200/80'
+                              : 'bg-slate-800 text-slate-400 hover:text-amber-300 hover:bg-slate-750 border border-slate-700'
                           }`}
                         >
                           <Star className={`w-3.5 h-3.5 ${isStarred ? 'fill-slate-950 text-slate-950' : ''}`} />
@@ -937,10 +908,10 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                       
                       {/* Phonetic & Pronunciation Guide */}
                       <div className="flex items-center gap-2 mt-1 flex-wrap">
-                        <span className={`font-mono font-bold text-[#4b6354] ${layoutColumns === '1' ? 'text-sm' : 'text-xs'}`}>
+                        <span className={`font-mono font-bold text-cyan-300 ${layoutColumns === '1' ? 'text-sm' : 'text-xs'}`}>
                           {entry.phonetic}
                         </span>
-                        <span className={`text-emerald-950 font-extrabold italic bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200 ${layoutColumns === '1' ? 'text-xs' : 'text-[11px]'}`} title={entry.phoneticGuide}>
+                        <span className={`text-slate-300 font-bold italic bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700 ${layoutColumns === '1' ? 'text-xs' : 'text-[11px]'}`} title={entry.phoneticGuide}>
                           🗣️ {entry.phoneticGuide}
                         </span>
                       </div>
@@ -954,8 +925,8 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                       aria-label={`Listen to pronunciation of ${entry.word}`}
                       className={`w-8.5 h-8.5 rounded-xl flex items-center justify-center transition-all cursor-pointer shrink-0 ${
                         isWordPlaying
-                          ? 'bg-gradient-to-tr from-emerald-800 via-teal-800 to-amber-500 text-white shadow-md ring-2 ring-emerald-300'
-                          : 'bg-gradient-to-tr from-emerald-50 to-lime-50 text-emerald-900 hover:from-emerald-800 hover:to-teal-800 hover:text-white shadow-2xs border border-emerald-200 hover:scale-105 active:scale-95'
+                          ? 'bg-emerald-600 text-white shadow-md ring-2 ring-emerald-400'
+                          : 'bg-slate-800 text-slate-300 hover:bg-emerald-600 hover:text-white shadow-2xs border border-slate-700 hover:scale-105 active:scale-95'
                       }`}
                     >
                       <SoundWaveIcon isPlaying={isWordPlaying} size="sm" />
@@ -966,8 +937,8 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                   <div className="flex items-center gap-1.5 mb-3 text-xs flex-wrap">
                     {getPartOfSpeechBadge(entry.partOfSpeech)}
                     {getDifficultyBadge(entry.difficulty)}
-                    <span className="text-[#204030] font-bold flex items-center gap-1 text-[11px] bg-emerald-50/80 px-2 py-0.5 rounded-lg border border-emerald-200/90 shadow-2xs" title={entry.scotsRegion}>
-                      <MapPin className="w-3 h-3 text-emerald-700 shrink-0" />
+                    <span className="text-slate-300 font-bold flex items-center gap-1 text-[11px] bg-slate-800 px-2 py-0.5 rounded-lg border border-slate-700 shadow-2xs" title={entry.scotsRegion}>
+                      <MapPin className="w-3 h-3 text-emerald-400 shrink-0" />
                       {entry.scotsRegion.replace(' & Scotland', '').replace('UK Wide & Common', 'UK Wide')}
                     </span>
                   </div>
@@ -976,9 +947,9 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                   {(() => {
                     const isDefPlaying = playingAudioId === `card-def-${entry.id}`;
                     return (
-                      <div className="bg-gradient-to-br from-emerald-50/60 to-lime-50/40 rounded-2xl p-3 sm:p-3.5 border border-emerald-900/10 mb-3 flex items-start justify-between gap-3 group/def shadow-2xs">
+                      <div className="bg-slate-800/80 rounded-2xl p-3 sm:p-3.5 border border-slate-700 mb-3 flex items-start justify-between gap-3 group/def shadow-2xs">
                         <div className="flex-1 min-w-0">
-                          <p className={`font-bold text-[#14281f] leading-relaxed ${
+                          <p className={`font-semibold text-slate-100 leading-relaxed ${
                             layoutColumns === '1' ? 'text-base sm:text-lg' : 'text-sm'
                           }`}>
                             {entry.definition}
@@ -993,8 +964,8 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                           aria-label={`Listen to definition: ${entry.definition}`}
                           className={`w-8.5 h-8.5 rounded-xl flex items-center justify-center transition-all shrink-0 cursor-pointer ${
                             isDefPlaying
-                              ? 'bg-emerald-800 text-white shadow-md ring-2 ring-emerald-300'
-                              : 'bg-white text-emerald-900 hover:bg-emerald-800 hover:text-white shadow-2xs border border-emerald-200 hover:scale-105 active:scale-95'
+                              ? 'bg-emerald-600 text-white shadow-md ring-2 ring-emerald-400'
+                              : 'bg-slate-900 text-slate-300 hover:bg-emerald-600 hover:text-white shadow-2xs border border-slate-700 hover:scale-105 active:scale-95'
                           }`}
                         >
                           <SoundWaveIcon isPlaying={isDefPlaying} size="sm" />
@@ -1012,10 +983,10 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                       return (
                         <div 
                           key={idx} 
-                          className={`flex items-start justify-between gap-3 p-3 sm:p-3.5 rounded-2xl border border-emerald-900/10 border-l-4 transition-all shadow-2xs ${
+                          className={`flex items-start justify-between gap-3 p-3 sm:p-3.5 rounded-2xl border transition-all shadow-2xs ${
                             isExPlaying 
-                              ? 'bg-emerald-100/90 border-l-emerald-800 text-emerald-950 font-bold' 
-                              : `${theme.exBorder} text-[#14281f]`
+                              ? 'bg-slate-800 border-l-4 border-l-amber-400 border-slate-700 text-slate-100 font-bold' 
+                              : `${theme.exBorder} border-slate-750 text-slate-200`
                           }`}
                         >
                           <p className={`italic leading-relaxed flex-1 min-w-0 pt-0.5 font-medium ${
@@ -1032,8 +1003,8 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                             aria-label={`Listen to example sentence: ${ex}`}
                             className={`w-8.5 h-8.5 rounded-xl flex items-center justify-center transition-all shrink-0 cursor-pointer ${
                               isExPlaying
-                                ? 'bg-emerald-800 text-white shadow-md ring-2 ring-emerald-300'
-                                : 'bg-white text-emerald-900 hover:bg-emerald-800 hover:text-white shadow-2xs border border-emerald-200 hover:scale-105 active:scale-95'
+                                ? 'bg-amber-400 text-slate-950 shadow-md ring-2 ring-amber-300'
+                                : 'bg-slate-900 text-slate-300 hover:bg-amber-400 hover:text-slate-950 shadow-2xs border border-slate-700 hover:scale-105 active:scale-95'
                             }`}
                           >
                             <SoundWaveIcon isPlaying={isExPlaying} size="sm" />
@@ -1048,14 +1019,14 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                     <div className="space-y-2 text-xs mb-3.5">
                       {entry.synonyms.length > 0 && (
                         <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="font-black text-emerald-900 text-[11px] flex items-center gap-1">
+                          <span className="font-bold text-emerald-400 text-[11px] flex items-center gap-1">
                             ✨ Synonyms:
                           </span>
                           {entry.synonyms.map((syn, idx) => (
                             <button
                               key={idx}
                               onClick={() => setSearchQuery(syn)}
-                              className="px-2.5 py-0.5 bg-emerald-50 text-emerald-950 border border-emerald-300 rounded-lg text-[11px] font-black hover:bg-emerald-100 hover:scale-105 cursor-pointer transition-all shadow-2xs"
+                              className="px-2.5 py-0.5 bg-emerald-950/60 text-emerald-300 border border-emerald-700/50 rounded-lg text-[11px] font-bold hover:bg-emerald-900 hover:scale-105 cursor-pointer transition-all shadow-2xs"
                             >
                               {syn}
                             </button>
@@ -1065,14 +1036,14 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
 
                       {entry.antonyms.length > 0 && (
                         <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="font-black text-amber-900 text-[11px] flex items-center gap-1">
+                          <span className="font-bold text-amber-400 text-[11px] flex items-center gap-1">
                             ⚡ Antonyms:
                           </span>
                           {entry.antonyms.map((ant, idx) => (
                             <button
                               key={idx}
                               onClick={() => setSearchQuery(ant)}
-                              className="px-2.5 py-0.5 bg-amber-50 text-amber-950 border border-amber-300 rounded-lg text-[11px] font-black hover:bg-amber-100 hover:scale-105 cursor-pointer transition-all shadow-2xs"
+                              className="px-2.5 py-0.5 bg-amber-950/60 text-amber-300 border border-amber-700/50 rounded-lg text-[11px] font-bold hover:bg-amber-900 hover:scale-105 cursor-pointer transition-all shadow-2xs"
                             >
                               {ant}
                             </button>
@@ -1084,7 +1055,13 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                 </div>
 
                 {/* Card Footer: Deep Study Action */}
-                <div className="pt-3 border-t border-emerald-900/10 flex items-center justify-end">
+                <div className="pt-3 border-t border-slate-800 flex items-center justify-between gap-2">
+                  <span className="text-[11px] font-medium text-slate-400 flex items-center gap-1">
+                    <span>✨</span>
+                    <span className="hidden sm:inline">Etymology, voice & quiz</span>
+                    <span className="sm:hidden">Study lab</span>
+                  </span>
+
                   <button
                     id={`open-detail-btn-${entry.id}`}
                     onClick={() => {
@@ -1092,12 +1069,15 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                       playSound('pop');
                     }}
                     title={`Open full pronunciation studio, etymology, and mastery challenge for ${entry.word}`}
-                    className={`flex items-center justify-center gap-2 font-black text-amber-100 bg-gradient-to-r from-emerald-900 via-teal-800 to-emerald-800 hover:from-emerald-800 hover:to-teal-700 rounded-2xl transition-all hover:scale-[1.03] active:scale-95 cursor-pointer shadow-md shadow-emerald-950/15 shrink-0 border border-emerald-700/40 ${
-                      layoutColumns === '1' ? 'px-5 py-2.5 text-sm' : 'px-4 py-2 text-xs'
+                    className={`group flex items-center justify-center gap-1.5 sm:gap-2 font-black rounded-xl transition-all hover:scale-[1.02] active:scale-95 cursor-pointer shadow-2xs shrink-0 border ${theme.studyBtn} ${
+                      layoutColumns === '1' ? 'px-4 py-2 text-sm' : 'px-3 py-1.5 text-xs'
                     }`}
                   >
-                    <span>⚡ Study Lab & Lore</span>
-                    <ChevronRight className="w-4 h-4 text-amber-300" />
+                    <div className={`w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-lg flex items-center justify-center text-[10px] font-black shrink-0 ${theme.studyIconBg}`}>
+                      ⚡
+                    </div>
+                    <span>Study Lab & Lore</span>
+                    <ChevronRight className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-0.5 ${theme.studyChevron}`} />
                   </button>
                 </div>
               </div>
