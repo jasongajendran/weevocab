@@ -628,188 +628,188 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             
             {/* Game 1: Scots Match Master (Emerald/Forest) */}
-            <div className="bg-white rounded-3xl p-6 border border-emerald-900/10 shadow-2xs hover:border-emerald-600 hover:shadow-lg transition-all duration-250 flex flex-col justify-between group relative overflow-hidden">
-              <div className="absolute top-0 right-0 bg-gradient-to-r from-emerald-800 to-teal-800 text-amber-100 font-black text-[10px] px-3 py-1 rounded-bl-xl uppercase tracking-wider shadow-2xs">
+            <div className="bg-slate-900/85 backdrop-blur-md rounded-3xl p-6 border border-slate-800 shadow-xl hover:border-emerald-500 hover:shadow-emerald-950/40 transition-all duration-250 flex flex-col justify-between group relative overflow-hidden">
+              <div className="absolute top-0 right-0 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-black text-[10px] px-3 py-1 rounded-bl-xl uppercase tracking-wider shadow-2xs">
                 ⏱️ 60s Memory
               </div>
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-14 h-14 bg-gradient-to-tr from-emerald-800 to-teal-700 text-amber-100 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-250 shadow-md shadow-emerald-950/15 border border-emerald-600/30">
+                  <div className="w-14 h-14 bg-gradient-to-tr from-emerald-700 to-teal-600 text-amber-200 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-250 shadow-lg shadow-emerald-950/50 border border-emerald-500/40">
                     🧩
                   </div>
-                  <span className="text-xs font-black px-3 py-1 bg-emerald-50 text-emerald-950 rounded-full border border-emerald-200 shadow-2xs">
+                  <span className="text-xs font-black px-3 py-1 bg-slate-800 text-emerald-300 rounded-full border border-slate-700 shadow-2xs">
                     Best: {userProgress.gameHighScores.matchMaster} pts
                   </span>
                 </div>
-                <h3 className="text-lg font-black text-[#14281f] mb-1.5 group-hover:text-emerald-800 transition-colors">
+                <h3 className="text-lg font-black text-slate-100 mb-1.5 group-hover:text-emerald-300 transition-colors">
                   1. Match Master
                 </h3>
-                <p className="text-xs text-[#4b6354] mb-5 leading-relaxed font-medium">
+                <p className="text-xs text-slate-400 mb-5 leading-relaxed font-medium">
                   Flip tiles to pair Scottish words with definitions in a 60-second pair-matching grid with live audio pronunciation!
                 </p>
               </div>
               <button
                 id="play-match-master-btn"
                 onClick={initMatchGame}
-                className="w-full py-3 rounded-2xl bg-gradient-to-r from-emerald-800 to-teal-800 hover:from-emerald-700 hover:to-teal-700 active:scale-95 text-amber-100 font-black text-xs shadow-md shadow-emerald-950/15 transition-all flex items-center justify-center gap-2 cursor-pointer border border-emerald-600/30"
+                className="w-full py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 active:scale-95 text-white font-black text-xs shadow-lg shadow-emerald-950/40 transition-all flex items-center justify-center gap-2 cursor-pointer border border-emerald-400/30"
               >
                 <span>Play Match Master</span>
-                <ArrowRight className="w-4 h-4 text-amber-200" />
+                <ArrowRight className="w-4 h-4 text-emerald-200" />
               </button>
             </div>
 
             {/* Game 2: Highland Anagram Scramble (Warm Amber/Honey) */}
-            <div className="bg-white rounded-3xl p-6 border border-emerald-900/10 shadow-2xs hover:border-amber-500 hover:shadow-lg transition-all duration-250 flex flex-col justify-between group relative overflow-hidden">
-              <div className="absolute top-0 right-0 bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 font-black text-[10px] px-3 py-1 rounded-bl-xl uppercase tracking-wider shadow-2xs">
+            <div className="bg-slate-900/85 backdrop-blur-md rounded-3xl p-6 border border-slate-800 shadow-xl hover:border-amber-500 hover:shadow-amber-950/40 transition-all duration-250 flex flex-col justify-between group relative overflow-hidden">
+              <div className="absolute top-0 right-0 bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 font-black text-[10px] px-3 py-1 rounded-bl-xl uppercase tracking-wider shadow-2xs">
                 🔤 Puzzle
               </div>
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-14 h-14 bg-gradient-to-tr from-amber-400 to-yellow-500 text-slate-950 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-250 shadow-md shadow-amber-500/20 border border-amber-300">
+                  <div className="w-14 h-14 bg-gradient-to-tr from-amber-500 to-yellow-400 text-slate-950 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-250 shadow-lg shadow-amber-950/50 border border-amber-300">
                     🔠
                   </div>
-                  <span className="text-xs font-black px-3 py-1 bg-amber-50 text-amber-950 rounded-full border border-amber-200 shadow-2xs">
+                  <span className="text-xs font-black px-3 py-1 bg-slate-800 text-amber-300 rounded-full border border-slate-700 shadow-2xs">
                     Best: {userProgress.gameHighScores.anagrams} pts
                   </span>
                 </div>
-                <h3 className="text-lg font-black text-[#14281f] mb-1.5 group-hover:text-amber-800 transition-colors">
+                <h3 className="text-lg font-black text-slate-100 mb-1.5 group-hover:text-amber-300 transition-colors">
                   2. Anagram Scramble
                 </h3>
-                <p className="text-xs text-[#4b6354] mb-5 leading-relaxed font-medium">
+                <p className="text-xs text-slate-400 mb-5 leading-relaxed font-medium">
                   Unscramble jumbled letter tiles to reconstruct vocabulary words using definitions, rhyming hints, and cultural lore!
                 </p>
               </div>
               <button
                 id="play-anagrams-btn"
                 onClick={initAnagramGame}
-                className="w-full py-3 rounded-2xl bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 active:scale-95 text-slate-950 font-black text-xs shadow-md shadow-amber-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer border border-amber-300"
+                className="w-full py-3 rounded-2xl bg-gradient-to-r from-amber-400 to-yellow-400 hover:from-amber-300 hover:to-yellow-300 active:scale-95 text-slate-950 font-black text-xs shadow-lg shadow-amber-950/40 transition-all flex items-center justify-center gap-2 cursor-pointer border border-amber-300"
               >
                 <span>Play Anagram Scramble</span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4 text-slate-950" />
               </button>
             </div>
 
             {/* Game 3: Synonym & Antonym Duel (Sage / Lime Green) */}
-            <div className="bg-white rounded-3xl p-6 border border-emerald-900/10 shadow-2xs hover:border-lime-600 hover:shadow-lg transition-all duration-250 flex flex-col justify-between group relative overflow-hidden">
-              <div className="absolute top-0 right-0 bg-gradient-to-r from-lime-800 to-emerald-900 text-amber-100 font-black text-[10px] px-3 py-1 rounded-bl-xl uppercase tracking-wider shadow-2xs">
+            <div className="bg-slate-900/85 backdrop-blur-md rounded-3xl p-6 border border-slate-800 shadow-xl hover:border-lime-500 hover:shadow-lime-950/40 transition-all duration-250 flex flex-col justify-between group relative overflow-hidden">
+              <div className="absolute top-0 right-0 bg-gradient-to-r from-lime-600 to-emerald-600 text-white font-black text-[10px] px-3 py-1 rounded-bl-xl uppercase tracking-wider shadow-2xs">
                 ⚡ Rapid Quiz
               </div>
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-14 h-14 bg-gradient-to-tr from-lime-800 to-emerald-900 text-amber-100 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-250 shadow-md shadow-lime-950/15 border border-lime-600/30">
+                  <div className="w-14 h-14 bg-gradient-to-tr from-lime-600 to-emerald-700 text-white rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-250 shadow-lg shadow-lime-950/50 border border-lime-400/40">
                     ⚔️
                   </div>
-                  <span className="text-xs font-black px-3 py-1 bg-lime-50 text-lime-950 rounded-full border border-lime-200 shadow-2xs">
+                  <span className="text-xs font-black px-3 py-1 bg-slate-800 text-lime-300 rounded-full border border-slate-700 shadow-2xs">
                     Best: {userProgress.gameHighScores.synonymDuel} pts
                   </span>
                 </div>
-                <h3 className="text-lg font-black text-[#14281f] mb-1.5 group-hover:text-lime-900 transition-colors">
+                <h3 className="text-lg font-black text-slate-100 mb-1.5 group-hover:text-lime-300 transition-colors">
                   3. Synonym & Antonym Duel
                 </h3>
-                <p className="text-xs text-[#4b6354] mb-5 leading-relaxed font-medium">
+                <p className="text-xs text-slate-400 mb-5 leading-relaxed font-medium">
                   15-second lightning quiz: pick the correct synonym or antonym before time runs out to build combo multipliers!
                 </p>
               </div>
               <button
                 id="play-synonym-duel-btn"
                 onClick={initSynonymDuel}
-                className="w-full py-3 rounded-2xl bg-gradient-to-r from-lime-800 to-emerald-900 hover:from-lime-700 hover:to-emerald-800 active:scale-95 text-amber-100 font-black text-xs shadow-md shadow-lime-950/15 transition-all flex items-center justify-center gap-2 cursor-pointer border border-lime-600/30"
+                className="w-full py-3 rounded-2xl bg-gradient-to-r from-lime-600 to-emerald-600 hover:from-lime-500 hover:to-emerald-500 active:scale-95 text-white font-black text-xs shadow-lg shadow-lime-950/40 transition-all flex items-center justify-center gap-2 cursor-pointer border border-lime-400/30"
               >
                 <span>Play Synonym Duel</span>
-                <ArrowRight className="w-4 h-4 text-amber-200" />
+                <ArrowRight className="w-4 h-4 text-lime-200" />
               </button>
             </div>
 
             {/* Game 4: Sentence Detective (Warm Ochre / Gold) */}
-            <div className="bg-white rounded-3xl p-6 border border-emerald-900/10 shadow-2xs hover:border-yellow-600 hover:shadow-lg transition-all duration-250 flex flex-col justify-between group relative overflow-hidden">
-              <div className="absolute top-0 right-0 bg-gradient-to-r from-yellow-700 to-amber-700 text-amber-100 font-black text-[10px] px-3 py-1 rounded-bl-xl uppercase tracking-wider shadow-2xs">
+            <div className="bg-slate-900/85 backdrop-blur-md rounded-3xl p-6 border border-slate-800 shadow-xl hover:border-yellow-500 hover:shadow-yellow-950/40 transition-all duration-250 flex flex-col justify-between group relative overflow-hidden">
+              <div className="absolute top-0 right-0 bg-gradient-to-r from-yellow-600 to-amber-600 text-white font-black text-[10px] px-3 py-1 rounded-bl-xl uppercase tracking-wider shadow-2xs">
                 🕵️ Clues
               </div>
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-14 h-14 bg-gradient-to-tr from-yellow-700 to-amber-700 text-amber-100 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-250 shadow-md shadow-yellow-950/15 border border-yellow-500/30">
+                  <div className="w-14 h-14 bg-gradient-to-tr from-yellow-600 to-amber-600 text-white rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-250 shadow-lg shadow-yellow-950/50 border border-yellow-400/40">
                     🔎
                   </div>
-                  <span className="text-xs font-black px-3 py-1 bg-yellow-50 text-yellow-950 rounded-full border border-yellow-200 shadow-2xs">
+                  <span className="text-xs font-black px-3 py-1 bg-slate-800 text-yellow-300 rounded-full border border-slate-700 shadow-2xs">
                     Best: {userProgress.gameHighScores.sentenceDetective} pts
                   </span>
                 </div>
-                <h3 className="text-lg font-black text-[#14281f] mb-1.5 group-hover:text-yellow-900 transition-colors">
+                <h3 className="text-lg font-black text-slate-100 mb-1.5 group-hover:text-yellow-300 transition-colors">
                   4. Sentence Detective
                 </h3>
-                <p className="text-xs text-[#4b6354] mb-5 leading-relaxed font-medium">
+                <p className="text-xs text-slate-400 mb-5 leading-relaxed font-medium">
                   Deduce missing words in Scottish school stories and everyday banter using rich contextual sentence clues!
                 </p>
               </div>
               <button
                 id="play-detective-btn"
                 onClick={initDetectiveGame}
-                className="w-full py-3 rounded-2xl bg-gradient-to-r from-yellow-700 to-amber-700 hover:from-yellow-600 hover:to-amber-600 active:scale-95 text-amber-100 font-black text-xs shadow-md shadow-yellow-950/15 transition-all flex items-center justify-center gap-2 cursor-pointer border border-yellow-500/30"
+                className="w-full py-3 rounded-2xl bg-gradient-to-r from-yellow-600 to-amber-600 hover:from-yellow-500 hover:to-amber-500 active:scale-95 text-white font-black text-xs shadow-lg shadow-yellow-950/40 transition-all flex items-center justify-center gap-2 cursor-pointer border border-yellow-400/30"
               >
                 <span>Play Detective</span>
-                <ArrowRight className="w-4 h-4 text-amber-200" />
+                <ArrowRight className="w-4 h-4 text-yellow-200" />
               </button>
             </div>
 
             {/* Game 5: British Voice Spelling Bee (Teal Forest) */}
-            <div className="bg-white rounded-3xl p-6 border border-emerald-900/10 shadow-2xs hover:border-teal-600 hover:shadow-lg transition-all duration-250 flex flex-col justify-between group relative overflow-hidden">
-              <div className="absolute top-0 right-0 bg-gradient-to-r from-teal-800 to-emerald-800 text-amber-100 font-black text-[10px] px-3 py-1 rounded-bl-xl uppercase tracking-wider shadow-2xs">
+            <div className="bg-slate-900/85 backdrop-blur-md rounded-3xl p-6 border border-slate-800 shadow-xl hover:border-teal-500 hover:shadow-teal-950/40 transition-all duration-250 flex flex-col justify-between group relative overflow-hidden">
+              <div className="absolute top-0 right-0 bg-gradient-to-r from-teal-600 to-emerald-600 text-white font-black text-[10px] px-3 py-1 rounded-bl-xl uppercase tracking-wider shadow-2xs">
                 🇬🇧 Voice Quest
               </div>
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-14 h-14 bg-gradient-to-tr from-teal-800 to-emerald-800 text-amber-100 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-250 shadow-md shadow-teal-950/15 border border-teal-600/30">
+                  <div className="w-14 h-14 bg-gradient-to-tr from-teal-600 to-emerald-600 text-amber-200 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-250 shadow-lg shadow-teal-950/50 border border-teal-400/40">
                     🐝
                   </div>
-                  <span className="text-xs font-black px-3 py-1 bg-teal-50 text-teal-950 rounded-full border border-teal-200 shadow-2xs">
+                  <span className="text-xs font-black px-3 py-1 bg-slate-800 text-teal-300 rounded-full border border-slate-700 shadow-2xs">
                     Best: {userProgress.gameHighScores.listeningBee || 0} pts
                   </span>
                 </div>
-                <h3 className="text-lg font-black text-[#14281f] mb-1.5 group-hover:text-teal-900 transition-colors flex items-center gap-1.5">
+                <h3 className="text-lg font-black text-slate-100 mb-1.5 group-hover:text-teal-300 transition-colors flex items-center gap-1.5">
                   5. British Voice Spelling Bee
                 </h3>
-                <p className="text-xs text-[#4b6354] mb-5 leading-relaxed font-medium">
+                <p className="text-xs text-slate-400 mb-5 leading-relaxed font-medium">
                   Listen to the young British female voice pronounce words, hear slow audio phonetics, and test your spelling accuracy!
                 </p>
               </div>
               <button
                 id="play-listening-bee-btn"
                 onClick={initListeningBee}
-                className="w-full py-3 rounded-2xl bg-gradient-to-r from-teal-800 to-emerald-800 hover:from-teal-700 hover:to-emerald-700 active:scale-95 text-amber-100 font-black text-xs shadow-md shadow-teal-950/15 transition-all flex items-center justify-center gap-2 cursor-pointer border border-teal-600/30"
+                className="w-full py-3 rounded-2xl bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 active:scale-95 text-white font-black text-xs shadow-lg shadow-teal-950/40 transition-all flex items-center justify-center gap-2 cursor-pointer border border-teal-400/30"
               >
                 <span>Start Voice Spelling Bee</span>
-                <ArrowRight className="w-4 h-4 text-amber-200" />
+                <ArrowRight className="w-4 h-4 text-teal-200" />
               </button>
             </div>
 
             {/* Game 6: Speed Slang & Dialect Conveyor Rush (Forest Pine / Amber) */}
-            <div className="bg-white rounded-3xl p-6 border border-emerald-900/10 shadow-2xs hover:border-emerald-700 hover:shadow-lg transition-all duration-250 flex flex-col justify-between group relative overflow-hidden">
-              <div className="absolute top-0 right-0 bg-gradient-to-r from-[#14281f] to-emerald-900 text-amber-200 font-black text-[10px] px-3 py-1 rounded-bl-xl uppercase tracking-wider shadow-2xs">
+            <div className="bg-slate-900/85 backdrop-blur-md rounded-3xl p-6 border border-slate-800 shadow-xl hover:border-sky-500 hover:shadow-sky-950/40 transition-all duration-250 flex flex-col justify-between group relative overflow-hidden">
+              <div className="absolute top-0 right-0 bg-gradient-to-r from-sky-600 to-teal-600 text-white font-black text-[10px] px-3 py-1 rounded-bl-xl uppercase tracking-wider shadow-2xs">
                 ⚡ 45s Rush
               </div>
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-14 h-14 bg-gradient-to-tr from-[#14281f] to-emerald-900 text-amber-200 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-250 shadow-md shadow-emerald-950/20 border border-emerald-700/30">
+                  <div className="w-14 h-14 bg-gradient-to-tr from-sky-600 to-teal-600 text-amber-200 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-250 shadow-lg shadow-sky-950/50 border border-sky-400/40">
                     ⚡
                   </div>
-                  <span className="text-xs font-black px-3 py-1 bg-emerald-50 text-emerald-950 rounded-full border border-emerald-200 shadow-2xs">
+                  <span className="text-xs font-black px-3 py-1 bg-slate-800 text-sky-300 rounded-full border border-slate-700 shadow-2xs">
                     Best: {userProgress.gameHighScores.speedDialectRush || 0} pts
                   </span>
                 </div>
-                <h3 className="text-lg font-black text-[#14281f] mb-1.5 group-hover:text-emerald-900 transition-colors">
+                <h3 className="text-lg font-black text-slate-100 mb-1.5 group-hover:text-sky-300 transition-colors">
                   6. Dialect Conveyor Rush
                 </h3>
-                <p className="text-xs text-[#4b6354] mb-5 leading-relaxed font-medium">
+                <p className="text-xs text-slate-400 mb-5 leading-relaxed font-medium">
                   Fast-paced 45s sorting arcade: rapidly categorize incoming words into Scots Regional, UK Slang, or Academic Power!
                 </p>
               </div>
               <button
                 id="play-rush-btn"
                 onClick={initDialectRush}
-                className="w-full py-3 rounded-2xl bg-gradient-to-r from-[#14281f] to-emerald-900 hover:from-emerald-900 hover:to-teal-900 active:scale-95 text-amber-100 font-black text-xs shadow-md shadow-emerald-950/20 transition-all flex items-center justify-center gap-2 cursor-pointer border border-emerald-700/30"
+                className="w-full py-3 rounded-2xl bg-gradient-to-r from-sky-600 to-teal-600 hover:from-sky-500 hover:to-teal-500 active:scale-95 text-white font-black text-xs shadow-lg shadow-sky-950/40 transition-all flex items-center justify-center gap-2 cursor-pointer border border-sky-400/30"
               >
                 <span>Play Dialect Rush</span>
-                <ArrowRight className="w-4 h-4 text-amber-200" />
+                <ArrowRight className="w-4 h-4 text-sky-200" />
               </button>
             </div>
 
@@ -821,19 +821,19 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
       {/* ACTIVE GAME 1: MATCH MASTER */}
       {/* ============================================================= */}
       {activeGame === 'match' && (
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-emerald-900/10 shadow-lg space-y-6 max-w-4xl mx-auto">
-          <div className="flex items-center justify-between flex-wrap gap-3 border-b border-emerald-900/10 pb-4">
+        <div className="bg-slate-900/90 backdrop-blur-md rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-2xl space-y-6 max-w-4xl mx-auto">
+          <div className="flex items-center justify-between flex-wrap gap-3 border-b border-slate-800 pb-4">
             <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-emerald-800">Game 1</span>
-              <h2 className="text-2xl font-black text-[#14281f]">Scots Match Master</h2>
+              <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">Game 1</span>
+              <h2 className="text-2xl font-black text-slate-100">Scots Match Master</h2>
             </div>
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-950 font-extrabold text-sm border border-emerald-200">
-                <Clock className="w-4 h-4 text-emerald-700" />
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 text-emerald-300 font-extrabold text-sm border border-slate-700">
+                <Clock className="w-4 h-4 text-emerald-400" />
                 <span>{matchTimer}s</span>
               </div>
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 text-amber-950 font-extrabold text-sm border border-amber-200">
-                <Trophy className="w-4 h-4 text-amber-600" />
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 text-amber-300 font-extrabold text-sm border border-slate-700">
+                <Trophy className="w-4 h-4 text-amber-400" />
                 <span>{matchScore} pts</span>
               </div>
               {matchCombo > 1 && (
@@ -856,12 +856,12 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
                     onClick={() => handleMatchCardClick(idx)}
                     className={`h-28 sm:h-32 p-3 rounded-2xl border-2 font-bold text-xs sm:text-sm flex items-center justify-center text-center transition-all duration-200 select-none cursor-pointer ${
                       card.isMatched
-                        ? 'bg-emerald-50/70 border-emerald-300 text-emerald-900 opacity-60 scale-95'
+                        ? 'bg-slate-800/80 border-emerald-500/50 text-emerald-400 opacity-60 scale-95'
                         : isSelected || card.isFlipped
                         ? card.type === 'word'
-                          ? 'bg-emerald-800 text-amber-100 border-emerald-900 shadow-md scale-105'
-                          : 'bg-teal-800 text-amber-100 border-teal-900 shadow-md scale-105'
-                        : 'bg-emerald-50/30 border-emerald-900/10 text-[#14281f] hover:border-emerald-500 hover:bg-emerald-50/70 shadow-2xs'
+                          ? 'bg-emerald-700 text-amber-100 border-emerald-500 shadow-lg scale-105'
+                          : 'bg-teal-700 text-amber-100 border-teal-500 shadow-lg scale-105'
+                        : 'bg-slate-800/70 border-slate-700 text-slate-200 hover:border-emerald-500 hover:bg-slate-800 shadow-md'
                     }`}
                   >
                     {card.isFlipped || card.isMatched ? (
@@ -871,7 +871,7 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
                         {card.text}
                       </span>
                     ) : (
-                      <div className="flex flex-col items-center gap-1 text-[#4b6354]">
+                      <div className="flex flex-col items-center gap-1 text-slate-400">
                         <span className="text-2xl">🌿</span>
                         <span className="text-[10px] uppercase tracking-wider font-extrabold">Tap to Flip</span>
                       </div>
@@ -883,22 +883,22 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
           ) : (
             <div className="text-center py-8 space-y-4">
               <div className="text-5xl">🎉</div>
-              <h3 className="text-2xl font-black text-[#14281f]">
+              <h3 className="text-2xl font-black text-slate-100">
                 Match Master Complete!
               </h3>
-              <p className="text-[#4b6354]">
-                You scored <strong className="text-emerald-800 text-lg">{matchScore} points</strong> (+45 EXP)!
+              <p className="text-slate-300">
+                You scored <strong className="text-emerald-400 text-lg">{matchScore} points</strong> (+45 EXP)!
               </p>
               <div className="flex items-center justify-center gap-3 pt-2">
                 <button
                   onClick={initMatchGame}
-                  className="px-6 py-2.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-amber-100 font-extrabold text-sm shadow-md cursor-pointer"
+                  className="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-sm shadow-md cursor-pointer transition-colors"
                 >
                   Play Again
                 </button>
                 <button
                   onClick={() => setActiveGame('hub')}
-                  className="px-6 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#14281f] font-bold text-sm cursor-pointer border border-emerald-200"
+                  className="px-6 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm cursor-pointer border border-slate-700 transition-colors"
                 >
                   Arcade Hub
                 </button>
@@ -909,7 +909,7 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
           {!matchIsOver && (
             <button
               onClick={() => setActiveGame('hub')}
-              className="text-xs font-bold text-[#4b6354] hover:text-[#14281f] flex items-center gap-1 cursor-pointer"
+              className="text-xs font-bold text-slate-400 hover:text-slate-200 flex items-center gap-1 cursor-pointer transition-colors"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Exit to Arcade Menu</span>
@@ -922,16 +922,16 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
       {/* ACTIVE GAME 2: ANAGRAM SCRAMBLE */}
       {/* ============================================================= */}
       {activeGame === 'anagram' && anagramPool.length > 0 && (
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-emerald-900/10 shadow-lg space-y-6 max-w-2xl mx-auto">
-          <div className="flex items-center justify-between border-b border-emerald-900/10 pb-4">
+        <div className="bg-slate-900/90 backdrop-blur-md rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-2xl space-y-6 max-w-2xl mx-auto">
+          <div className="flex items-center justify-between border-b border-slate-800 pb-4">
             <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-amber-800">
+              <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
                 Word {anagramIndex + 1} of {anagramPool.length}
               </span>
-              <h2 className="text-2xl font-black text-[#14281f]">Highland Anagram Scramble</h2>
+              <h2 className="text-2xl font-black text-slate-100">Highland Anagram Scramble</h2>
             </div>
             <div className="flex items-center gap-2">
-              <span className="px-3 py-1.5 rounded-xl bg-amber-50 text-amber-950 font-extrabold text-sm border border-amber-200">
+              <span className="px-3 py-1.5 rounded-xl bg-slate-800 text-amber-300 font-extrabold text-sm border border-slate-700">
                 Score: {anagramScore}
               </span>
             </div>
@@ -939,14 +939,14 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
 
           {!anagramIsOver ? (
             <div className="space-y-6">
-              <div className="bg-gradient-to-br from-amber-50/70 to-yellow-50/50 p-4 rounded-2xl border border-amber-200/80 text-center space-y-1">
-                <span className="text-xs font-bold text-amber-900 uppercase tracking-wider">
+              <div className="bg-slate-800/80 p-4 rounded-2xl border border-slate-700 text-center space-y-1">
+                <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">
                   Clue & Definition
                 </span>
-                <p className="text-sm sm:text-base font-semibold text-[#14281f]">
+                <p className="text-sm sm:text-base font-semibold text-slate-100">
                   "{anagramPool[anagramIndex].definition}"
                 </p>
-                <p className="text-xs text-amber-800 italic">
+                <p className="text-xs text-slate-400 italic">
                   Region: {anagramPool[anagramIndex].scotsRegion} • {anagramPool[anagramIndex].partOfSpeech}
                 </p>
               </div>
@@ -961,7 +961,7 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
                       className={`w-10 h-12 sm:w-12 sm:h-14 rounded-xl border-2 flex items-center justify-center font-black text-lg sm:text-xl shadow-xs transition-all ${
                         letter
                           ? 'bg-gradient-to-tr from-amber-400 to-yellow-400 border-amber-500 text-slate-950 scale-105'
-                          : 'bg-emerald-50/40 border-dashed border-emerald-300 text-emerald-400'
+                          : 'bg-slate-800/70 border-dashed border-slate-600 text-slate-500'
                       }`}
                     >
                       {letter || ''}
@@ -980,8 +980,8 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
                     onClick={() => handleAnagramTileClick(idx)}
                     className={`w-11 h-12 sm:w-13 sm:h-14 rounded-2xl font-black text-lg sm:text-xl shadow-md transition-all cursor-pointer ${
                       tile.used
-                        ? 'bg-emerald-50/30 text-emerald-900/30 shadow-none scale-90 cursor-not-allowed'
-                        : 'bg-white border-2 border-emerald-700 text-emerald-950 hover:bg-emerald-800 hover:text-amber-100 hover:scale-105 active:scale-95'
+                        ? 'bg-slate-800/40 text-slate-600 border border-slate-800 shadow-none scale-90 cursor-not-allowed'
+                        : 'bg-slate-800 border-2 border-emerald-500/60 text-emerald-200 hover:bg-emerald-600 hover:text-white hover:scale-105 active:scale-95'
                     }`}
                   >
                     {tile.letter}
@@ -993,7 +993,7 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
               <div className="flex items-center justify-center gap-3 pt-2">
                 <button
                   onClick={handleResetAnagramGuess}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#14281f] font-bold text-xs transition-colors cursor-pointer border border-emerald-200"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs transition-colors cursor-pointer border border-slate-700"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
                   <span>Clear Guess</span>
@@ -1005,16 +1005,16 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
                       setRevealedHint(true);
                       playSound('pop');
                     }}
-                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-950 font-bold text-xs border border-amber-300 transition-colors cursor-pointer"
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-bold text-xs border border-amber-500/40 transition-colors cursor-pointer"
                   >
-                    <HelpCircle className="w-3.5 h-3.5 text-amber-700" />
+                    <HelpCircle className="w-3.5 h-3.5 text-amber-400" />
                     <span>Reveal First Letter Hint</span>
                   </button>
                 )}
               </div>
 
               {revealedHint && (
-                <div className="text-center text-xs font-bold text-amber-950 bg-amber-50 p-2.5 rounded-xl border border-amber-300">
+                <div className="text-center text-xs font-bold text-amber-300 bg-amber-500/15 p-2.5 rounded-xl border border-amber-500/30">
                   💡 Hint: Starts with <strong>'{anagramPool[anagramIndex].word[0].toUpperCase()}'</strong> • Rhymes with: "{anagramPool[anagramIndex].rhymesWith?.[0] || '...'}"
                 </div>
               )}
@@ -1022,22 +1022,22 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
           ) : (
             <div className="text-center py-8 space-y-4">
               <div className="text-5xl">🏆</div>
-              <h3 className="text-2xl font-black text-[#14281f]">
+              <h3 className="text-2xl font-black text-slate-100">
                 Anagram Challenge Conquered!
               </h3>
-              <p className="text-[#4b6354]">
-                Final Score: <strong className="text-amber-800 text-lg">{anagramScore} pts</strong> (+40 EXP)
+              <p className="text-slate-300">
+                Final Score: <strong className="text-amber-400 text-lg">{anagramScore} pts</strong> (+40 EXP)
               </p>
               <div className="flex items-center justify-center gap-3 pt-2">
                 <button
                   onClick={initAnagramGame}
-                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-400 hover:from-amber-300 hover:to-yellow-300 text-slate-950 font-extrabold text-sm shadow-md cursor-pointer border border-amber-300"
+                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-400 hover:from-amber-300 hover:to-yellow-300 text-slate-950 font-extrabold text-sm shadow-md cursor-pointer border border-amber-300 transition-colors"
                 >
                   Play Another Round
                 </button>
                 <button
                   onClick={() => setActiveGame('hub')}
-                  className="px-6 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#14281f] font-bold text-sm cursor-pointer border border-emerald-200"
+                  className="px-6 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm cursor-pointer border border-slate-700 transition-colors"
                 >
                   Arcade Hub
                 </button>
@@ -1048,7 +1048,7 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
           {!anagramIsOver && (
             <button
               onClick={() => setActiveGame('hub')}
-              className="text-xs font-bold text-[#4b6354] hover:text-[#14281f] flex items-center gap-1 cursor-pointer"
+              className="text-xs font-bold text-slate-400 hover:text-slate-200 flex items-center gap-1 cursor-pointer transition-colors"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Exit to Arcade Menu</span>
@@ -1061,20 +1061,20 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
       {/* ACTIVE GAME 3: SYNONYM & ANTONYM DUEL */}
       {/* ============================================================= */}
       {activeGame === 'synonym-duel' && duelQuestions.length > 0 && (
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-emerald-900/10 shadow-lg space-y-6 max-w-2xl mx-auto">
-          <div className="flex items-center justify-between border-b border-emerald-900/10 pb-4">
+        <div className="bg-slate-900/90 backdrop-blur-md rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-2xl space-y-6 max-w-2xl mx-auto">
+          <div className="flex items-center justify-between border-b border-slate-800 pb-4">
             <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-emerald-800">
+              <span className="text-xs font-bold uppercase tracking-wider text-lime-400">
                 Question {duelCurrentIndex + 1} of {duelQuestions.length}
               </span>
-              <h2 className="text-2xl font-black text-[#14281f]">Synonym & Antonym Duel</h2>
+              <h2 className="text-2xl font-black text-slate-100">Synonym & Antonym Duel</h2>
             </div>
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-950 font-extrabold text-sm border border-emerald-200">
-                <Clock className="w-4 h-4 text-emerald-700" />
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 text-lime-300 font-extrabold text-sm border border-slate-700">
+                <Clock className="w-4 h-4 text-lime-400" />
                 <span>{duelTimer}s</span>
               </div>
-              <div className="px-3 py-1.5 rounded-xl bg-emerald-50 text-[#14281f] font-extrabold text-sm border border-emerald-200">
+              <div className="px-3 py-1.5 rounded-xl bg-slate-800 text-slate-100 font-extrabold text-sm border border-slate-700">
                 {duelScore} pts
               </div>
             </div>
@@ -1082,23 +1082,23 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
 
           {!duelIsOver ? (
             <div className="space-y-6">
-              <div className="bg-gradient-to-r from-emerald-50/80 to-lime-50/60 p-6 rounded-2xl border border-emerald-200 text-center space-y-2 relative">
-                <span className="text-xs font-black uppercase tracking-widest text-emerald-900">
+              <div className="bg-slate-800/80 p-6 rounded-2xl border border-slate-700 text-center space-y-2 relative">
+                <span className="text-xs font-black uppercase tracking-widest text-lime-400">
                   {duelQuestions[duelCurrentIndex].type === 'synonym' ? '🌿 FIND THE SYNONYM (SAME MEANING)' : '⚡ FIND THE ANTONYM (OPPOSITE)'}
                 </span>
                 <div className="flex items-center justify-center gap-2">
-                  <h3 className="text-3xl font-black text-[#14281f]">
+                  <h3 className="text-3xl font-black text-slate-100">
                     "{duelQuestions[duelCurrentIndex].word.word}"
                   </h3>
                   <button
                     onClick={() => speakWord(duelQuestions[duelCurrentIndex].word.word)}
-                    className="p-1.5 rounded-full bg-emerald-100 hover:bg-emerald-200 text-emerald-900 transition-colors cursor-pointer"
+                    className="p-1.5 rounded-full bg-slate-700 hover:bg-slate-600 text-lime-300 transition-colors cursor-pointer"
                     title="Pronounce with British female voice"
                   >
                     <Volume2 className="w-4 h-4" />
                   </button>
                 </div>
-                <p className="text-xs text-[#4b6354]">
+                <p className="text-xs text-slate-400">
                   Definition: {duelQuestions[duelCurrentIndex].word.definition}
                 </p>
               </div>
@@ -1109,14 +1109,14 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
                   const isChosen = duelSelectedAnswer === opt;
                   const isCorrect = opt === duelQuestions[duelCurrentIndex].correct;
                   
-                  let btnStyle = 'bg-white border-2 border-emerald-900/10 text-[#14281f] hover:border-emerald-600 hover:bg-emerald-50/50';
+                  let btnStyle = 'bg-slate-800/80 border-2 border-slate-700 text-slate-100 hover:border-lime-500 hover:bg-slate-800';
                   if (duelSelectedAnswer !== null) {
                     if (isCorrect) {
-                      btnStyle = 'bg-emerald-800 border-emerald-900 text-amber-100 shadow-md scale-102';
+                      btnStyle = 'bg-lime-600 border-lime-500 text-slate-950 font-black shadow-lg scale-102';
                     } else if (isChosen && !isCorrect) {
-                      btnStyle = 'bg-amber-700 border-amber-800 text-amber-100';
+                      btnStyle = 'bg-red-900/80 border-red-700 text-white';
                     } else {
-                      btnStyle = 'bg-emerald-50/30 border-emerald-900/10 text-[#4b6354] opacity-60';
+                      btnStyle = 'bg-slate-800/40 border-slate-800 text-slate-500 opacity-50';
                     }
                   }
 
@@ -1129,15 +1129,15 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
                       className={`p-4 rounded-2xl font-bold text-sm sm:text-base transition-all text-center flex items-center justify-between cursor-pointer ${btnStyle}`}
                     >
                       <span className="mx-auto">{opt}</span>
-                      {duelSelectedAnswer !== null && isCorrect && <CheckCircle2 className="w-5 h-5 text-amber-200 ml-2" />}
-                      {duelSelectedAnswer !== null && isChosen && !isCorrect && <XCircle className="w-5 h-5 text-amber-200 ml-2" />}
+                      {duelSelectedAnswer !== null && isCorrect && <CheckCircle2 className="w-5 h-5 text-slate-950 ml-2" />}
+                      {duelSelectedAnswer !== null && isChosen && !isCorrect && <XCircle className="w-5 h-5 text-red-300 ml-2" />}
                     </button>
                   );
                 })}
               </div>
 
               {duelSelectedAnswer !== null && (
-                <div className="text-xs font-semibold text-[#14281f] bg-emerald-50/60 p-3 rounded-xl border border-emerald-200 text-center animate-in fade-in">
+                <div className="text-xs font-semibold text-slate-200 bg-slate-800/90 p-3 rounded-xl border border-slate-700 text-center animate-in fade-in">
                   💡 {duelQuestions[duelCurrentIndex].explanation}
                 </div>
               )}
@@ -1145,22 +1145,22 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
           ) : (
             <div className="text-center py-8 space-y-4">
               <div className="text-5xl">⚔️</div>
-              <h3 className="text-2xl font-black text-[#14281f]">
+              <h3 className="text-2xl font-black text-slate-100">
                 Showdown Completed!
               </h3>
-              <p className="text-[#4b6354]">
-                You scored <strong className="text-emerald-800 text-lg">{duelScore} points</strong> (+40 EXP)!
+              <p className="text-slate-300">
+                You scored <strong className="text-lime-400 text-lg">{duelScore} points</strong> (+40 EXP)!
               </p>
               <div className="flex items-center justify-center gap-3 pt-2">
                 <button
                   onClick={initSynonymDuel}
-                  className="px-6 py-2.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-amber-100 font-extrabold text-sm shadow-md cursor-pointer"
+                  className="px-6 py-2.5 rounded-xl bg-lime-600 hover:bg-lime-500 text-slate-950 font-extrabold text-sm shadow-md cursor-pointer transition-colors"
                 >
                   Play Again
                 </button>
                 <button
                   onClick={() => setActiveGame('hub')}
-                  className="px-6 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#14281f] font-bold text-sm cursor-pointer border border-emerald-200"
+                  className="px-6 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm cursor-pointer border border-slate-700 transition-colors"
                 >
                   Arcade Hub
                 </button>
@@ -1171,7 +1171,7 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
           {!duelIsOver && (
             <button
               onClick={() => setActiveGame('hub')}
-              className="text-xs font-bold text-[#4b6354] hover:text-[#14281f] flex items-center gap-1 cursor-pointer"
+              className="text-xs font-bold text-slate-400 hover:text-slate-200 flex items-center gap-1 cursor-pointer transition-colors"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Exit to Arcade Menu</span>
@@ -1184,29 +1184,29 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
       {/* ACTIVE GAME 4: SENTENCE DETECTIVE */}
       {/* ============================================================= */}
       {activeGame === 'detective' && detectiveCases.length > 0 && (
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-emerald-900/10 shadow-lg space-y-6 max-w-2xl mx-auto">
-          <div className="flex items-center justify-between border-b border-emerald-900/10 pb-4">
+        <div className="bg-slate-900/90 backdrop-blur-md rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-2xl space-y-6 max-w-2xl mx-auto">
+          <div className="flex items-center justify-between border-b border-slate-800 pb-4">
             <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-yellow-800">
+              <span className="text-xs font-bold uppercase tracking-wider text-yellow-400">
                 Case {detectiveIndex + 1} of {detectiveCases.length}
               </span>
-              <h2 className="text-2xl font-black text-[#14281f]">Sentence Detective</h2>
+              <h2 className="text-2xl font-black text-slate-100">Sentence Detective</h2>
             </div>
-            <div className="px-3 py-1.5 rounded-xl bg-yellow-50 text-yellow-950 font-extrabold text-sm border border-yellow-200">
+            <div className="px-3 py-1.5 rounded-xl bg-slate-800 text-yellow-300 font-extrabold text-sm border border-slate-700">
               Score: {detectiveScore}
             </div>
           </div>
 
           {!detectiveIsOver ? (
             <div className="space-y-6">
-              <div className="bg-yellow-50/70 p-6 rounded-2xl border border-yellow-200 text-center space-y-3">
-                <span className="text-xs font-black uppercase tracking-wider text-yellow-900">
+              <div className="bg-slate-800/80 p-6 rounded-2xl border border-slate-700 text-center space-y-3">
+                <span className="text-xs font-black uppercase tracking-wider text-yellow-400">
                   🔍 Find the Missing Word in Context:
                 </span>
-                <p className="text-lg sm:text-xl font-bold text-[#14281f] italic leading-relaxed">
+                <p className="text-lg sm:text-xl font-bold text-slate-100 italic leading-relaxed">
                   "{detectiveCases[detectiveIndex].sentenceWithBlank}"
                 </p>
-                <p className="text-xs text-yellow-900 font-medium">
+                <p className="text-xs text-slate-400 font-medium">
                   Clue: {detectiveCases[detectiveIndex].targetWord.definition}
                 </p>
               </div>
@@ -1217,14 +1217,14 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
                   const isChosen = detectiveChosen === opt;
                   const isCorrect = opt === detectiveCases[detectiveIndex].correct;
 
-                  let style = 'bg-white border-2 border-emerald-900/10 text-[#14281f] hover:border-yellow-600 hover:bg-yellow-50/40';
+                  let style = 'bg-slate-800/80 border-2 border-slate-700 text-slate-100 hover:border-yellow-500 hover:bg-slate-800';
                   if (detectiveChosen !== null) {
                     if (isCorrect) {
-                      style = 'bg-yellow-600 border-yellow-700 text-white shadow-md scale-102';
+                      style = 'bg-yellow-600 border-yellow-500 text-slate-950 font-black shadow-lg scale-102';
                     } else if (isChosen && !isCorrect) {
-                      style = 'bg-amber-800 border-amber-900 text-white';
+                      style = 'bg-red-900/80 border-red-700 text-white';
                     } else {
-                      style = 'bg-emerald-50/30 border-emerald-900/10 text-[#4b6354] opacity-60';
+                      style = 'bg-slate-800/40 border-slate-800 text-slate-500 opacity-50';
                     }
                   }
 
@@ -1237,8 +1237,8 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
                       className={`p-4 rounded-2xl font-black text-sm sm:text-base transition-all text-center flex items-center justify-between cursor-pointer ${style}`}
                     >
                       <span className="mx-auto">{opt}</span>
-                      {detectiveChosen !== null && isCorrect && <CheckCircle2 className="w-5 h-5 text-white ml-2" />}
-                      {detectiveChosen !== null && isChosen && !isCorrect && <XCircle className="w-5 h-5 text-white ml-2" />}
+                      {detectiveChosen !== null && isCorrect && <CheckCircle2 className="w-5 h-5 text-slate-950 ml-2" />}
+                      {detectiveChosen !== null && isChosen && !isCorrect && <XCircle className="w-5 h-5 text-red-300 ml-2" />}
                     </button>
                   );
                 })}
@@ -1247,22 +1247,22 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
           ) : (
             <div className="text-center py-8 space-y-4">
               <div className="text-5xl">🕵️‍♂️</div>
-              <h3 className="text-2xl font-black text-[#14281f]">
+              <h3 className="text-2xl font-black text-slate-100">
                 Case Solved, Master Detective!
               </h3>
-              <p className="text-[#4b6354]">
-                You scored <strong className="text-yellow-800 text-lg">{detectiveScore} points</strong> (+40 EXP)!
+              <p className="text-slate-300">
+                You scored <strong className="text-yellow-400 text-lg">{detectiveScore} points</strong> (+40 EXP)!
               </p>
               <div className="flex items-center justify-center gap-3 pt-2">
                 <button
                   onClick={initDetectiveGame}
-                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-yellow-700 to-amber-700 hover:from-yellow-600 hover:to-amber-600 text-amber-100 font-extrabold text-sm shadow-md cursor-pointer border border-yellow-500/30"
+                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-yellow-600 to-amber-600 hover:from-yellow-500 hover:to-amber-500 text-white font-extrabold text-sm shadow-md cursor-pointer border border-yellow-400/30 transition-colors"
                 >
                   Solve More Cases
                 </button>
                 <button
                   onClick={() => setActiveGame('hub')}
-                  className="px-6 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#14281f] font-bold text-sm cursor-pointer border border-emerald-200"
+                  className="px-6 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm cursor-pointer border border-slate-700 transition-colors"
                 >
                   Arcade Hub
                 </button>
@@ -1273,7 +1273,7 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
           {!detectiveIsOver && (
             <button
               onClick={() => setActiveGame('hub')}
-              className="text-xs font-bold text-[#4b6354] hover:text-[#14281f] flex items-center gap-1 cursor-pointer"
+              className="text-xs font-bold text-slate-400 hover:text-slate-200 flex items-center gap-1 cursor-pointer transition-colors"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Exit to Arcade Menu</span>
@@ -1286,13 +1286,13 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
       {/* ACTIVE GAME 5: BRITISH VOICE SPELLING BEE */}
       {/* ============================================================= */}
       {activeGame === 'listening-bee' && beePool.length > 0 && (
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-emerald-900/10 shadow-lg space-y-6 max-w-2xl mx-auto">
-          <div className="flex items-center justify-between border-b border-emerald-900/10 pb-4">
+        <div className="bg-slate-900/90 backdrop-blur-md rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-2xl space-y-6 max-w-2xl mx-auto">
+          <div className="flex items-center justify-between border-b border-slate-800 pb-4">
             <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-teal-800">
+              <span className="text-xs font-bold uppercase tracking-wider text-teal-400">
                 Spelling Quest {beeIndex + 1} of {beePool.length}
               </span>
-              <h2 className="text-2xl font-black text-[#14281f] flex items-center gap-2">
+              <h2 className="text-2xl font-black text-slate-100 flex items-center gap-2">
                 <span>British Voice Spelling Bee</span>
                 <span className="text-sm">🐝</span>
               </h2>
@@ -1303,7 +1303,7 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
                   🔥 {beeStreak} Streak
                 </span>
               )}
-              <span className="px-3 py-1.5 rounded-xl bg-teal-50 text-teal-950 font-extrabold text-sm border border-teal-200">
+              <span className="px-3 py-1.5 rounded-xl bg-slate-800 text-teal-300 font-extrabold text-sm border border-slate-700">
                 Score: {beeScore}
               </span>
             </div>
@@ -1312,15 +1312,15 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
           {!beeIsOver ? (
             <div className="space-y-6">
               {/* Audio Listen Pod */}
-              <div className="bg-gradient-to-br from-emerald-50/60 via-teal-50/50 to-lime-50/40 p-6 rounded-3xl border border-emerald-200 text-center space-y-4">
-                <div className="w-16 h-16 mx-auto bg-gradient-to-tr from-emerald-800 to-teal-800 text-amber-100 rounded-3xl flex items-center justify-center shadow-md shadow-emerald-950/15">
+              <div className="bg-slate-800/80 p-6 rounded-3xl border border-slate-700 text-center space-y-4">
+                <div className="w-16 h-16 mx-auto bg-gradient-to-tr from-teal-700 to-emerald-700 text-amber-200 rounded-3xl flex items-center justify-center shadow-lg shadow-teal-950/50 border border-teal-500/30">
                   <Ear className="w-8 h-8" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-black text-[#14281f]">
+                  <h3 className="text-lg font-black text-slate-100">
                     Listen to the British Pronunciation
                   </h3>
-                  <p className="text-xs text-[#4b6354] font-medium">
+                  <p className="text-xs text-slate-400 font-medium">
                     Type the correct spelling of the spoken word below
                   </p>
                 </div>
@@ -1329,7 +1329,7 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
                 <div className="flex flex-wrap items-center justify-center gap-2.5 pt-1">
                   <button
                     onClick={() => speakWord(beePool[beeIndex].word)}
-                    className="px-4 py-2.5 rounded-2xl bg-emerald-800 hover:bg-emerald-900 text-amber-100 text-xs font-extrabold flex items-center gap-2 shadow-xs transition-all cursor-pointer"
+                    className="px-4 py-2.5 rounded-2xl bg-teal-600 hover:bg-teal-500 text-white text-xs font-extrabold flex items-center gap-2 shadow-md transition-all cursor-pointer"
                   >
                     <Volume2 className="w-4 h-4" />
                     <span>Pronounce Word (Normal)</span>
@@ -1337,9 +1337,9 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
 
                   <button
                     onClick={() => speakWord(beePool[beeIndex].word, { rate: 0.72 })}
-                    className="px-4 py-2.5 rounded-2xl bg-emerald-50 hover:bg-emerald-100 text-emerald-950 text-xs font-bold flex items-center gap-1.5 border border-emerald-300 transition-all cursor-pointer"
+                    className="px-4 py-2.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-teal-300 text-xs font-bold flex items-center gap-1.5 border border-slate-700 transition-all cursor-pointer"
                   >
-                    <Volume1 className="w-4 h-4 text-emerald-700" />
+                    <Volume1 className="w-4 h-4 text-teal-400" />
                     <span>Slow Phonetics (0.7x)</span>
                   </button>
                 </div>
@@ -1353,9 +1353,9 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
                       setBeeShowDefinitionHint(true);
                       playSound('pop');
                     }}
-                    className="px-3.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#14281f] text-xs font-bold flex items-center gap-1.5 cursor-pointer border border-emerald-200"
+                    className="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center gap-1.5 cursor-pointer border border-slate-700"
                   >
-                    <HelpCircle className="w-3.5 h-3.5 text-emerald-800" />
+                    <HelpCircle className="w-3.5 h-3.5 text-teal-400" />
                     <span>Definition Clue (-15 pts)</span>
                   </button>
                 )}
@@ -1366,9 +1366,9 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
                       setBeeShowPhoneticHint(true);
                       playSound('pop');
                     }}
-                    className="px-3.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-950 text-xs font-bold flex items-center gap-1.5 cursor-pointer border border-amber-200"
+                    className="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 text-xs font-bold flex items-center gap-1.5 cursor-pointer border border-slate-700"
                   >
-                    <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                    <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                     <span>Phonetic Guide Clue (-20 pts)</span>
                   </button>
                 )}
@@ -1376,13 +1376,13 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
 
               {/* Revealed Hints */}
               {beeShowDefinitionHint && (
-                <div className="bg-emerald-50/80 p-3 rounded-2xl border border-emerald-200 text-center text-xs text-emerald-950 font-semibold animate-in fade-in">
+                <div className="bg-slate-800/90 p-3 rounded-2xl border border-slate-700 text-center text-xs text-teal-300 font-semibold animate-in fade-in">
                   📖 Definition: <strong>"{beePool[beeIndex].definition}"</strong>
                 </div>
               )}
 
               {beeShowPhoneticHint && (
-                <div className="bg-amber-50 p-3 rounded-2xl border border-amber-200 text-center text-xs text-amber-950 font-semibold animate-in fade-in">
+                <div className="bg-slate-800/90 p-3 rounded-2xl border border-slate-700 text-center text-xs text-amber-300 font-semibold animate-in fade-in">
                   🗣️ Phonetic Guide: <strong>{beePool[beeIndex].phoneticGuide}</strong> ({beePool[beeIndex].phonetic})
                 </div>
               )}
@@ -1402,31 +1402,31 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
                     onChange={(e) => setBeeInput(e.target.value)}
                     className={`w-full text-center py-4 px-6 rounded-2xl text-xl sm:text-2xl font-black tracking-wider border-2 transition-all outline-hidden ${
                       beeFeedback === 'correct'
-                        ? 'bg-emerald-50 border-emerald-600 text-emerald-950'
+                        ? 'bg-emerald-950/60 border-emerald-500 text-emerald-200'
                         : beeFeedback === 'wrong'
-                        ? 'bg-rose-50 border-rose-500 text-rose-800 shake'
-                        : 'bg-white border-emerald-900/20 focus:border-emerald-700 focus:ring-4 focus:ring-emerald-100 text-[#14281f]'
+                        ? 'bg-rose-950/60 border-rose-500 text-rose-200 shake'
+                        : 'bg-slate-800 border-slate-700 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 text-slate-100 placeholder:text-slate-500'
                     }`}
                   />
                   {beeFeedback === 'correct' && (
-                    <CheckCircle2 className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 text-emerald-700" />
+                    <CheckCircle2 className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 text-emerald-400" />
                   )}
                   {beeFeedback === 'wrong' && (
-                    <XCircle className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 text-rose-600" />
+                    <XCircle className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 text-rose-400" />
                   )}
                 </div>
 
                 <div className="flex gap-2">
                   <button
                     type="submit"
-                    className="flex-1 py-3 rounded-2xl bg-emerald-800 hover:bg-emerald-900 active:scale-98 text-amber-100 font-extrabold text-sm shadow-md transition-all cursor-pointer"
+                    className="flex-1 py-3 rounded-2xl bg-teal-600 hover:bg-teal-500 active:scale-98 text-white font-extrabold text-sm shadow-md transition-all cursor-pointer"
                   >
                     Submit Spelling ↵
                   </button>
                   <button
                     type="button"
                     onClick={() => setBeeInput('')}
-                    className="px-4 py-3 rounded-2xl bg-emerald-50 hover:bg-emerald-100 text-[#14281f] font-bold text-xs cursor-pointer border border-emerald-200"
+                    className="px-4 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs cursor-pointer border border-slate-700 transition-colors"
                   >
                     Clear
                   </button>
@@ -1436,22 +1436,22 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
           ) : (
             <div className="text-center py-8 space-y-4">
               <div className="text-5xl">🐝</div>
-              <h3 className="text-2xl font-black text-[#14281f]">
+              <h3 className="text-2xl font-black text-slate-100">
                 Spelling Bee Complete!
               </h3>
-              <p className="text-[#4b6354]">
-                You scored <strong className="text-teal-800 text-lg">{beeScore} points</strong> with a bonus of +50 EXP!
+              <p className="text-slate-300">
+                You scored <strong className="text-teal-400 text-lg">{beeScore} points</strong> with a bonus of +50 EXP!
               </p>
               <div className="flex items-center justify-center gap-3 pt-2">
                 <button
                   onClick={initListeningBee}
-                  className="px-6 py-2.5 rounded-xl bg-teal-800 hover:bg-teal-900 text-amber-100 font-extrabold text-sm shadow-md cursor-pointer"
+                  className="px-6 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-extrabold text-sm shadow-md cursor-pointer transition-colors"
                 >
                   Play Another Round
                 </button>
                 <button
                   onClick={() => setActiveGame('hub')}
-                  className="px-6 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#14281f] font-bold text-sm cursor-pointer border border-emerald-200"
+                  className="px-6 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm cursor-pointer border border-slate-700 transition-colors"
                 >
                   Arcade Hub
                 </button>
@@ -1462,7 +1462,7 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
           {!beeIsOver && (
             <button
               onClick={() => setActiveGame('hub')}
-              className="text-xs font-bold text-[#4b6354] hover:text-[#14281f] flex items-center gap-1 cursor-pointer"
+              className="text-xs font-bold text-slate-400 hover:text-slate-200 flex items-center gap-1 cursor-pointer transition-colors"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Exit to Arcade Menu</span>
@@ -1475,25 +1475,25 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
       {/* ACTIVE GAME 6: SPEED SLANG & DIALECT CONVEYOR RUSH */}
       {/* ============================================================= */}
       {activeGame === 'dialect-rush' && rushQueue.length > 0 && (
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-emerald-900/10 shadow-lg space-y-6 max-w-2xl mx-auto">
-          <div className="flex items-center justify-between border-b border-emerald-900/10 pb-4">
+        <div className="bg-slate-900/90 backdrop-blur-md rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-2xl space-y-6 max-w-2xl mx-auto">
+          <div className="flex items-center justify-between border-b border-slate-800 pb-4">
             <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-emerald-800">
+              <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">
                 Card {rushIndex + 1} of {rushQueue.length}
               </span>
-              <h2 className="text-2xl font-black text-[#14281f] flex items-center gap-2">
+              <h2 className="text-2xl font-black text-slate-100 flex items-center gap-2">
                 <span>Dialect Conveyor Rush</span>
                 <span className="text-sm">⚡</span>
               </h2>
             </div>
             <div className="flex items-center gap-3">
               <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-extrabold text-sm border ${
-                rushTimer <= 10 ? 'bg-amber-100 border-amber-300 text-amber-950 animate-pulse' : 'bg-emerald-50 border-emerald-200 text-[#14281f]'
+                rushTimer <= 10 ? 'bg-amber-500/20 border-amber-500/40 text-amber-300 animate-pulse' : 'bg-slate-800 border-slate-700 text-slate-100'
               }`}>
-                <Clock className="w-4 h-4 text-emerald-700" />
+                <Clock className="w-4 h-4 text-emerald-400" />
                 <span>{rushTimer}s</span>
               </div>
-              <div className="px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-950 font-extrabold text-sm">
+              <div className="px-3 py-1.5 rounded-xl bg-slate-800 border border-slate-700 text-amber-300 font-extrabold text-sm">
                 {rushScore} pts
               </div>
               {rushMultiplier > 1 && (
@@ -1509,26 +1509,26 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
               {/* Conveyor Word Card */}
               <div className={`p-8 rounded-3xl border-2 text-center space-y-3 transition-all duration-150 ${
                 rushFeedbackAnimation === 'flash-green'
-                  ? 'bg-emerald-50 border-emerald-500 scale-102'
+                  ? 'bg-emerald-950/60 border-emerald-500 scale-102'
                   : rushFeedbackAnimation === 'flash-red'
-                  ? 'bg-amber-50 border-amber-400 shake'
-                  : 'bg-gradient-to-b from-emerald-50/40 to-white border-emerald-900/10 shadow-sm'
+                  ? 'bg-amber-950/60 border-amber-500 shake'
+                  : 'bg-slate-800/80 border-slate-700 shadow-lg'
               }`}>
                 <div className="flex items-center justify-center gap-2">
-                  <h3 className="text-3xl sm:text-4xl font-black text-[#14281f] tracking-tight">
+                  <h3 className="text-3xl sm:text-4xl font-black text-slate-100 tracking-tight">
                     {rushQueue[rushIndex].entry.word}
                   </h3>
                   <button
                     onClick={() => speakWord(rushQueue[rushIndex].entry.word)}
-                    className="p-1.5 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-200 cursor-pointer"
+                    className="p-1.5 rounded-full bg-slate-700 hover:bg-slate-600 text-emerald-300 border border-slate-600 cursor-pointer transition-colors"
                   >
                     <Volume2 className="w-4 h-4" />
                   </button>
                 </div>
-                <p className="text-xs sm:text-sm font-semibold text-[#4b6354] max-w-md mx-auto">
+                <p className="text-xs sm:text-sm font-semibold text-slate-300 max-w-md mx-auto">
                   "{rushQueue[rushIndex].entry.definition}"
                 </p>
-                <div className="text-[11px] font-bold text-emerald-800">
+                <div className="text-[11px] font-bold text-emerald-400">
                   Phonetics: {rushQueue[rushIndex].entry.phoneticGuide}
                 </div>
               </div>
@@ -1538,11 +1538,11 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
                 <button
                   id="sort-bucket-scots"
                   onClick={() => handleRushSort('scots')}
-                  className="p-4 rounded-2xl bg-emerald-50 border-2 border-emerald-200 hover:bg-emerald-800 hover:border-emerald-900 hover:text-amber-100 group text-emerald-950 font-black text-sm flex flex-col items-center gap-1.5 transition-all shadow-xs active:scale-95 cursor-pointer"
+                  className="p-4 rounded-2xl bg-slate-800/90 border-2 border-emerald-500/40 hover:bg-emerald-700 hover:border-emerald-500 hover:text-white group text-emerald-200 font-black text-sm flex flex-col items-center gap-1.5 transition-all shadow-md active:scale-95 cursor-pointer"
                 >
                   <span className="text-2xl group-hover:scale-110 transition-transform">🏴󠁧󠁢󠁳󠁣󠁴󠁿</span>
                   <span>Scots Regional</span>
-                  <span className="text-[10px] font-semibold text-emerald-700 group-hover:text-emerald-200">
+                  <span className="text-[10px] font-semibold text-emerald-400 group-hover:text-emerald-100">
                     Braw, Dreich, Gallus
                   </span>
                 </button>
@@ -1550,11 +1550,11 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
                 <button
                   id="sort-bucket-uk-slang"
                   onClick={() => handleRushSort('uk-slang')}
-                  className="p-4 rounded-2xl bg-amber-50 border-2 border-amber-200 hover:bg-amber-500 hover:border-amber-600 hover:text-slate-950 group text-amber-950 font-black text-sm flex flex-col items-center gap-1.5 transition-all shadow-xs active:scale-95 cursor-pointer"
+                  className="p-4 rounded-2xl bg-slate-800/90 border-2 border-amber-500/40 hover:bg-amber-500 hover:border-amber-400 hover:text-slate-950 group text-amber-200 font-black text-sm flex flex-col items-center gap-1.5 transition-all shadow-md active:scale-95 cursor-pointer"
                 >
                   <span className="text-2xl group-hover:scale-110 transition-transform">🇬🇧</span>
                   <span>UK Common & Slang</span>
-                  <span className="text-[10px] font-semibold text-amber-800 group-hover:text-slate-900">
+                  <span className="text-[10px] font-semibold text-amber-400 group-hover:text-slate-950">
                     Chuffed, Dodgy, Proper
                   </span>
                 </button>
@@ -1562,11 +1562,11 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
                 <button
                   id="sort-bucket-academic"
                   onClick={() => handleRushSort('academic')}
-                  className="p-4 rounded-2xl bg-lime-50 border-2 border-lime-200 hover:bg-lime-800 hover:border-lime-900 hover:text-amber-100 group text-lime-950 font-black text-sm flex flex-col items-center gap-1.5 transition-all shadow-xs active:scale-95 cursor-pointer"
+                  className="p-4 rounded-2xl bg-slate-800/90 border-2 border-lime-500/40 hover:bg-lime-600 hover:border-lime-400 hover:text-slate-950 group text-lime-200 font-black text-sm flex flex-col items-center gap-1.5 transition-all shadow-md active:scale-95 cursor-pointer"
                 >
                   <span className="text-2xl group-hover:scale-110 transition-transform">🎓</span>
                   <span>Academic Power</span>
-                  <span className="text-[10px] font-semibold text-lime-800 group-hover:text-lime-200">
+                  <span className="text-[10px] font-semibold text-lime-400 group-hover:text-slate-950">
                     Articulate, Resilient
                   </span>
                 </button>
@@ -1575,22 +1575,22 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
           ) : (
             <div className="text-center py-8 space-y-4">
               <div className="text-5xl">⚡</div>
-              <h3 className="text-2xl font-black text-[#14281f]">
+              <h3 className="text-2xl font-black text-slate-100">
                 Dialect Rush Finished!
               </h3>
-              <p className="text-[#4b6354]">
-                You scored <strong className="text-emerald-800 text-lg">{rushScore} points</strong> with +50 EXP!
+              <p className="text-slate-300">
+                You scored <strong className="text-emerald-400 text-lg">{rushScore} points</strong> with +50 EXP!
               </p>
               <div className="flex items-center justify-center gap-3 pt-2">
                 <button
                   onClick={initDialectRush}
-                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-800 to-teal-800 hover:from-emerald-700 hover:to-teal-700 text-amber-100 font-extrabold text-sm shadow-md cursor-pointer border border-emerald-600/30"
+                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-sm shadow-md cursor-pointer border border-emerald-400/30 transition-colors"
                 >
                   Play Another 45s Rush
                 </button>
                 <button
                   onClick={() => setActiveGame('hub')}
-                  className="px-6 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#14281f] font-bold text-sm cursor-pointer border border-emerald-200"
+                  className="px-6 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm cursor-pointer border border-slate-700 transition-colors"
                 >
                   Arcade Hub
                 </button>
@@ -1601,7 +1601,7 @@ export const GamesArcade: React.FC<GamesArcadeProps> = ({
           {!rushIsOver && (
             <button
               onClick={() => setActiveGame('hub')}
-              className="text-xs font-bold text-[#4b6354] hover:text-[#14281f] flex items-center gap-1 cursor-pointer"
+              className="text-xs font-bold text-slate-400 hover:text-slate-200 flex items-center gap-1 cursor-pointer transition-colors"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Exit to Arcade Menu</span>

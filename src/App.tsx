@@ -8,11 +8,15 @@ import { HamishAIBard } from './components/HamishAIBard';
 import { WordVault } from './components/WordVault';
 import { ScrollToTop } from './components/ScrollToTop';
 import { VoiceSettingsModal } from './components/VoiceSettingsModal';
+import { GeometricBackdrop } from './components/GeometricBackdrop';
+import { WidescreenSideCompanions } from './components/WidescreenSideCompanions';
+import { WordStudyModal } from './components/WordStudyModal';
 
 import { DictionaryEntry, UserProgress } from './types/dictionary';
 import { INITIAL_DICTIONARY_ENTRIES, BADGES } from './data/dictionaryData';
 import { loadUserProgress, saveUserProgress } from './utils/storage';
 import { playSound } from './utils/soundEffects';
+import { speakSentence, cancelSpeech } from './utils/speech';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<'dictionary' | 'games' | 'daily' | 'ai-bard' | 'vault'>('dictionary');
@@ -21,6 +25,8 @@ export default function App() {
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
   const [aiBardTargetWord, setAiBardTargetWord] = useState<DictionaryEntry | null>(null);
   const [isVoiceStudioOpen, setIsVoiceStudioOpen] = useState<boolean>(false);
+  const [sideStudyWord, setSideStudyWord] = useState<DictionaryEntry | null>(null);
+  const [sidePlayingAudioId, setSidePlayingAudioId] = useState<string | null>(null);
 
   // Network offline listener
   useEffect(() => {
@@ -184,20 +190,24 @@ export default function App() {
     setActiveTab('ai-bard');
   };
 
+  const handleSidePlayAudio = (text: string, id: string, rate: number = 0.9) => {
+    if (sidePlayingAudioId === id) {
+      cancelSpeech();
+      setSidePlayingAudioId(null);
+      return;
+    }
+    setSidePlayingAudioId(id);
+    speakSentence(text, {
+      rate,
+      onEnd: () => setSidePlayingAudioId((prev) => (prev === id ? null : prev)),
+    });
+  };
+
   return (
-    <div className="min-h-screen bg-[#0a0f18] text-slate-100 flex flex-col selection:bg-emerald-600 selection:text-white font-sans relative overflow-x-hidden">
+    <div className="min-h-screen bg-[#0c1322] text-slate-100 flex flex-col selection:bg-emerald-600 selection:text-white font-sans relative overflow-x-hidden">
       
-      {/* Eye-friendly Dark Midnight Botanical Ambient Washes */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        {/* Soft Emerald Glow */}
-        <div className="absolute -top-24 left-10 w-96 h-96 bg-emerald-600/10 rounded-full blur-3xl" />
-        {/* Soft Honey & Buttercup Glow */}
-        <div className="absolute top-1/4 -right-20 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl" />
-        {/* Soft Indigo Glow */}
-        <div className="absolute top-2/3 -left-20 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl" />
-        {/* Soft Cyan & Teal Glow */}
-        <div className="absolute -bottom-24 right-1/4 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl" />
-      </div>
+      {/* Rich Highland Atmospheric Geometric & Tartan Backdrop */}
+      <GeometricBackdrop />
 
       {/* Top Navbar */}
       <Navbar
@@ -210,8 +220,16 @@ export default function App() {
         onOpenVoiceStudio={() => setIsVoiceStudioOpen(true)}
       />
 
-      {/* Main Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 relative z-10">
+      {/* Widescreen Interactive Companion Rails in Outer Gutters (Left & Right Wings) */}
+      <WidescreenSideCompanions
+        entries={allEntries}
+        userProgress={userProgress}
+        onOpenWordStudy={(entry) => setSideStudyWord(entry)}
+        onSelectTab={(tab) => setActiveTab(tab)}
+      />
+
+      {/* Main Content Container - Expanded gracefully for wide tablet/desktop viewports */}
+      <main className="flex-1 max-w-7xl 2xl:max-w-[1460px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 relative z-10 transition-all">
         
         {/* Tab 1: A-Z Dictionary Explorer */}
         {activeTab === 'dictionary' && (
@@ -268,7 +286,7 @@ export default function App() {
 
       {/* Footer */}
       <footer className="bg-slate-900/90 backdrop-blur-md border-t border-slate-800/80 py-6 text-center text-xs text-slate-400 relative z-10">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="max-w-7xl 2xl:max-w-[1460px] mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <span className="text-base">🦉</span>
             <span className="font-extrabold text-slate-100">WeeVocab Scotland Junior Dictionary</span>
@@ -290,6 +308,20 @@ export default function App() {
         isOpen={isVoiceStudioOpen}
         onClose={() => setIsVoiceStudioOpen(false)}
       />
+
+      {/* Word Study Modal opened from Gutter Word of the Moment */}
+      {sideStudyWord && (
+        <WordStudyModal
+          word={sideStudyWord}
+          allEntries={allEntries}
+          isStarred={userProgress.starredWordIds.includes(sideStudyWord.id)}
+          onToggleStar={() => handleToggleStar(sideStudyWord.id)}
+          onClose={() => setSideStudyWord(null)}
+          onOpenAIBard={handleOpenAIBardWithWord}
+          playingAudioId={sidePlayingAudioId}
+          onPlayAudio={handleSidePlayAudio}
+        />
+      )}
 
     </div>
   );

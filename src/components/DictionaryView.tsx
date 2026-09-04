@@ -353,14 +353,14 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
     }
     if (entry.isAcademic) {
       return {
-        badgeBg: 'bg-indigo-950/80 text-indigo-300 border-indigo-600/50 font-bold',
+        badgeBg: 'bg-sky-950/80 text-sky-300 border-sky-600/50 font-bold',
         flag: '🎓 Scholar',
-        accentBar: 'border-t-4 border-t-indigo-500',
-        exBorder: 'border-l-indigo-500 bg-slate-800/70',
-        titleHover: 'group-hover:text-indigo-300',
-        studyBtn: 'bg-slate-800 hover:bg-slate-750 text-indigo-300 border-indigo-500/40 hover:border-indigo-400 shadow-2xs',
-        studyIconBg: 'bg-indigo-600 text-white',
-        studyChevron: 'text-indigo-400',
+        accentBar: 'border-t-4 border-t-sky-500',
+        exBorder: 'border-l-sky-500 bg-slate-800/70',
+        titleHover: 'group-hover:text-sky-300',
+        studyBtn: 'bg-slate-800 hover:bg-slate-750 text-sky-300 border-sky-500/40 hover:border-sky-400 shadow-2xs',
+        studyIconBg: 'bg-sky-600 text-white',
+        studyChevron: 'text-sky-400',
       };
     }
     if (entry.category === 'Nature & Places') {
@@ -399,7 +399,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
       return <span className="px-2 py-0.5 rounded-lg text-[11px] font-black bg-amber-950/80 text-amber-300 border border-amber-700/60">adj.</span>;
     }
     if (p.includes('adv')) {
-      return <span className="px-2 py-0.5 rounded-lg text-[11px] font-black bg-purple-950/80 text-purple-300 border border-purple-700/60">adv.</span>;
+      return <span className="px-2 py-0.5 rounded-lg text-[11px] font-black bg-cyan-950/80 text-cyan-300 border border-cyan-700/60">adv.</span>;
     }
     return <span className="px-2 py-0.5 rounded-lg text-[11px] font-black bg-teal-950/80 text-teal-300 border border-teal-700/60">phr.</span>;
   };
@@ -411,7 +411,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
     if (difficulty.includes('S1-S2')) {
       return <span className="px-2 py-0.5 rounded-lg text-[10px] font-black bg-amber-950/80 text-amber-300 border border-amber-700/60">🟡 S1–S2</span>;
     }
-    return <span className="px-2 py-0.5 rounded-lg text-[10px] font-black bg-purple-950/80 text-purple-300 border border-purple-700/60">🟣 S3–S4</span>;
+    return <span className="px-2 py-0.5 rounded-lg text-[10px] font-black bg-blue-950/80 text-blue-300 border border-blue-700/60">🔵 S3–S4</span>;
   };
 
   // Reusable Word Card Renderer
@@ -653,10 +653,10 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
               <span className="text-xl sm:text-2xl">📖</span>
               <div>
                 <div className="flex items-center gap-2">
-                  <h1 className="text-sm sm:text-base font-black text-amber-300 tracking-tight">
+                  <h1 className="text-sm sm:text-base font-black text-slate-100 tracking-tight">
                     British & Scottish Vocabulary
                   </h1>
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-black bg-slate-800 text-slate-200 border border-slate-700">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold bg-slate-800 text-slate-300 border border-slate-700">
                     {filteredEntries.length} terms
                   </span>
                 </div>
@@ -669,24 +669,38 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
               <button
                 id="shuffle-words-btn"
                 onClick={handleShuffleWords}
-                title={isShuffled ? 'Shuffle words again in random order' : 'Shuffle words in random order'}
+                title={isShuffled ? 'Shuffle words in another random order' : 'Shuffle words in random order'}
                 aria-label="Shuffle dictionary words"
                 className={`flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl font-black text-xs sm:text-sm shadow-md transition-all whitespace-nowrap cursor-pointer shrink-0 border ${
                   isShuffled
-                    ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-emerald-400 ring-2 ring-emerald-400/40 hover:scale-[1.03]'
-                    : 'bg-slate-800 hover:bg-slate-750 text-amber-300 border-slate-700 hover:border-amber-400 hover:text-amber-200 hover:scale-[1.02]'
+                    ? 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-400 ring-2 ring-emerald-400/40 hover:scale-[1.02]'
+                    : 'bg-slate-800 hover:bg-slate-750 text-slate-200 border-slate-700 hover:border-slate-600 hover:text-white hover:scale-[1.02]'
                 }`}
               >
-                <Shuffle className={`w-3.5 h-3.5 ${isShuffled ? 'text-white' : 'text-amber-400'}`} />
-                <span>Shuffle Words 🔀</span>
+                <Shuffle className={`w-3.5 h-3.5 ${isShuffled ? 'text-white' : 'text-emerald-400'}`} />
+                <span>{isShuffled ? 'Re-shuffle' : 'Shuffle Words 🔀'}</span>
               </button>
+
+              {/* Reset A-Z button if shuffled */}
+              {isShuffled && (
+                <button
+                  id="reset-shuffle-alpha-btn"
+                  onClick={handleResetAlphabetical}
+                  title="Reset dictionary back to alphabetical order (A–Z)"
+                  aria-label="Reset alphabetical order"
+                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl font-black text-xs bg-slate-800 hover:bg-slate-750 text-slate-300 hover:text-white border border-slate-700 transition-all cursor-pointer"
+                >
+                  <RotateCcw className="w-3.5 h-3.5 text-amber-400" />
+                  <span>A–Z</span>
+                </button>
+              )}
 
               {/* Quick Surprise Word Button */}
               <button
                 id="random-word-btn"
                 onClick={handleRandomWord}
                 title="Explore a random Scottish or British term"
-                className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-300 active:scale-95 text-slate-950 font-black text-xs sm:text-sm shadow-md transition-all whitespace-nowrap cursor-pointer border border-amber-300 shrink-0 hover:scale-[1.03]"
+                className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-black text-xs sm:text-sm shadow-md transition-all whitespace-nowrap cursor-pointer border border-amber-400 shrink-0 hover:scale-[1.02]"
               >
                 <Sparkles className="w-3.5 h-3.5 text-slate-950 stroke-[2.5]" />
                 <span>Surprise Word! 🎲</span>
@@ -698,21 +712,21 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                 onClick={toggleFullscreen}
                 title={isFullscreen ? 'Exit Full Screen (Normal View)' : 'Maximise to Full Screen'}
                 aria-label={isFullscreen ? 'Exit Full Screen' : 'Maximise to Full Screen'}
-                className={`flex items-center gap-1 px-2.5 py-1.5 rounded-xl font-bold text-xs border transition-all cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs border transition-all cursor-pointer shadow-xs ${
                   isFullscreen
                     ? 'bg-amber-950/80 text-amber-300 border-amber-600/70 hover:bg-amber-900 ring-2 ring-amber-500/30'
-                    : 'bg-slate-800 hover:bg-slate-750 text-slate-300 hover:text-white border-slate-700'
+                    : 'bg-slate-800 hover:bg-slate-750 text-slate-200 hover:text-white border-slate-700'
                 }`}
               >
                 {isFullscreen ? (
                   <>
                     <Minimize2 className="w-3.5 h-3.5 text-amber-300" />
-                    <span className="hidden md:inline">Exit Fullscreen</span>
+                    <span className="hidden sm:inline">Exit Fullscreen</span>
                   </>
                 ) : (
                   <>
                     <Maximize2 className="w-3.5 h-3.5 text-emerald-400" />
-                    <span className="hidden md:inline">Full Screen</span>
+                    <span className="hidden sm:inline">Full Screen</span>
                   </>
                 )}
               </button>
@@ -1002,7 +1016,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
                   { label: '🌿 All Categories', value: 'All', activeClass: 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-sm ring-2 ring-emerald-400', normalClass: 'bg-slate-800 text-slate-300 hover:bg-slate-700 border-slate-700' },
                   { label: '🇬🇧 UK Common & Slang', value: 'UK Common', activeClass: 'bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 shadow-sm ring-2 ring-amber-300', normalClass: 'bg-slate-800 text-slate-300 hover:bg-slate-700 border-slate-700' },
                   { label: '🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scots & Regional', value: 'Scots Slang', activeClass: 'bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-sm ring-2 ring-sky-400', normalClass: 'bg-slate-800 text-slate-300 hover:bg-slate-700 border-slate-700' },
-                  { label: '🎓 Academic & Power', value: 'Academic', activeClass: 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-sm ring-2 ring-indigo-400', normalClass: 'bg-slate-800 text-slate-300 hover:bg-slate-700 border-slate-700' },
+                  { label: '🎓 Academic & Power', value: 'Academic', activeClass: 'bg-gradient-to-r from-sky-600 to-teal-600 text-white shadow-sm ring-2 ring-sky-400', normalClass: 'bg-slate-800 text-slate-300 hover:bg-slate-700 border-slate-700' },
                   { label: '🏫 School & Banter', value: 'School & Banter', activeClass: 'bg-gradient-to-r from-teal-500 to-emerald-600 text-white shadow-sm ring-2 ring-teal-400', normalClass: 'bg-slate-800 text-slate-300 hover:bg-slate-700 border-slate-700' },
                   { label: '🌲 Nature & Places', value: 'Nature & Places', activeClass: 'bg-gradient-to-r from-cyan-600 to-teal-600 text-white shadow-sm ring-2 ring-cyan-400', normalClass: 'bg-slate-800 text-slate-300 hover:bg-slate-700 border-slate-700' },
                   { label: '🍲 Food & Culture', value: 'Food & Culture', activeClass: 'bg-gradient-to-r from-rose-500 to-orange-500 text-white shadow-sm ring-2 ring-rose-400', normalClass: 'bg-slate-800 text-slate-300 hover:bg-slate-700 border-slate-700' },
@@ -1089,14 +1103,27 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
 
       {/* Results Count & Active Filters Bar - Crystal Clear, High Contrast & Calibrated */}
       <div className="flex flex-wrap items-center justify-between gap-2.5 text-xs text-slate-300 px-1">
-        <div className="flex items-center gap-1.5 flex-wrap">
-          <span className="text-slate-300 font-medium">
-            Showing <strong className="font-black text-amber-300">{filteredEntries.length}</strong> of <strong className="font-black text-slate-100">{entries.length}</strong> terms
-          </span>
+        <div className="flex items-center gap-2 flex-wrap">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800/60 border border-slate-750 text-xs text-slate-400">
+            <span>Showing</span>
+            <span className="text-slate-200 font-semibold">{filteredEntries.length}</span>
+            <span className="text-slate-500">of</span>
+            <span className="text-slate-200 font-semibold">{entries.length}</span>
+            <span>terms</span>
+          </div>
           {isShuffled && (
-            <span className="text-amber-300 font-bold bg-amber-950/80 px-2 py-0.5 rounded-md border border-amber-600/50 flex items-center gap-1">
-              🔀 Shuffled Order
-            </span>
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-950/60 border border-emerald-700/50 text-emerald-300 text-xs font-semibold">
+              <Shuffle className="w-3 h-3 text-emerald-400" />
+              <span>Shuffled</span>
+              <button
+                id="reset-shuffle-filter-btn"
+                onClick={handleResetAlphabetical}
+                className="ml-1 text-[11px] font-bold text-emerald-200 hover:text-white underline cursor-pointer"
+                title="Reset to alphabetical order"
+              >
+                Reset (A–Z)
+              </button>
+            </div>
           )}
           {selectedLetter && <span className="text-slate-400"> • Letter <strong className="text-emerald-300 font-bold">'{selectedLetter}'</strong></span>}
           {searchQuery && <span className="text-slate-400"> • Matching <strong className="text-emerald-300 font-bold">"{searchQuery}"</strong></span>}

@@ -256,7 +256,7 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
       return {
         level: 'Formal & Academic',
         dots: 5,
-        badgeBg: 'bg-indigo-950/80 text-indigo-300 border-indigo-600/50',
+        badgeBg: 'bg-sky-950/80 text-sky-300 border-sky-600/50',
         tone: 'Essays, presentations, debate, and formal writing',
         advice: 'Use this term in high-level coursework, analytical essays, and formal discussions to convey precision.',
       };
@@ -274,7 +274,7 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
       return {
         level: 'Dialect & Cultural Expressive',
         dots: 3,
-        badgeBg: 'bg-sky-950/80 text-sky-300 border-sky-600/50',
+        badgeBg: 'bg-teal-950/80 text-teal-300 border-teal-600/50',
         tone: 'Scottish storytelling, regional conversation, local heritage',
         advice: 'Deeply expressive in Scottish storytelling, literature, poetry, and regional dialogue.',
       };
@@ -282,7 +282,7 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
     return {
       level: 'Everyday Standard UK',
       dots: 3,
-      badgeBg: 'bg-teal-950/80 text-teal-300 border-teal-600/50',
+      badgeBg: 'bg-slate-800 text-slate-200 border-slate-700',
       tone: 'General everyday UK English across all ages',
       advice: 'Versatile and widely recognized in both spoken conversation and general writing.',
     };
@@ -358,16 +358,16 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
   return (
     <div 
       id="word-study-modal-backdrop"
-      className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-2.5 sm:p-4 overflow-hidden animate-fadeIn overscroll-contain"
+      className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-xl flex items-center justify-center p-2.5 sm:p-4 overflow-hidden animate-fadeIn overscroll-contain"
       onClick={onClose}
     >
       <div 
         id="word-study-modal-dialog"
-        className="bg-slate-900 rounded-3xl max-w-2xl w-full flex flex-col shadow-2xl border border-slate-700/80 max-h-[92vh] sm:max-h-[88vh] overflow-hidden text-left relative overscroll-contain touch-pan-y ring-1 ring-slate-700/50"
+        className="bg-[#0f172a] rounded-3xl max-w-2xl w-full flex flex-col shadow-[0_25px_70px_rgba(0,0,0,0.95)] border-2 border-slate-700/90 max-h-[92vh] sm:max-h-[88vh] overflow-hidden text-left relative overscroll-contain touch-pan-y ring-1 ring-slate-600/50"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Pinned Top Header: Breadcrumbs & Quick Controls (No duplicated word/definition) */}
-        <div className="shrink-0 bg-slate-900/98 backdrop-blur-md border-b border-slate-800 px-4 sm:px-6 py-3 sm:py-3.5 z-20 shadow-xs">
+        <div className="shrink-0 bg-[#0f172a]/95 backdrop-blur-md border-b border-slate-800 px-4 sm:px-6 py-3 sm:py-3.5 z-20 shadow-xs">
           <div className="flex items-center justify-between gap-3">
             
             {/* Header Left: Category & Study Guide indicator */}
@@ -396,7 +396,7 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
                 aria-label={`Listen to pronunciation of ${word.word}`}
                 className={`p-2.5 sm:p-3 rounded-2xl flex items-center justify-center transition-all cursor-pointer ${
                   playingAudioId === 'modal-title-word'
-                    ? 'bg-gradient-to-tr from-sky-600 to-indigo-600 text-white scale-105 ring-2 ring-sky-400 shadow-md'
+                    ? 'bg-gradient-to-tr from-sky-600 to-teal-600 text-white scale-105 ring-2 ring-sky-400 shadow-md'
                     : 'bg-slate-800 text-sky-300 hover:bg-sky-600 hover:text-white hover:scale-105 border border-slate-700 shadow-2xs active:scale-95'
                 }`}
               >
@@ -440,7 +440,7 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
         >
 
           {/* Master Spotlight Showcase: Word, Phonetics & Definition Stated Cleanly ONCE */}
-          <div className="bg-slate-800/90 rounded-3xl p-5 sm:p-6 border border-slate-700 shadow-lg space-y-4">
+          <div className="bg-slate-850/95 rounded-3xl p-5 sm:p-6 border border-slate-700 shadow-lg space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="space-y-2 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
@@ -573,11 +573,11 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
             </div>
           )}
 
-          {/* Section: Pronunciation Studio & Voice Test Lab (Serene Indigo & Sky Blue theme) */}
-          <div className="bg-slate-800/80 rounded-3xl p-4 sm:p-5 border border-slate-700 space-y-3.5 shadow-xs">
+          {/* Section: Pronunciation Studio & Voice Test Lab (Crisp Sky Blue & Loch Teal theme) */}
+          <div className="bg-slate-850/90 rounded-3xl p-4 sm:p-5 border border-slate-700 space-y-3.5 shadow-xs">
             <div className="flex items-center justify-between flex-wrap gap-2">
-              <span className="text-xs font-black uppercase tracking-wider text-indigo-300 flex items-center gap-1.5">
-                <div className="p-1.5 rounded-lg bg-indigo-600 text-white shadow-xs">
+              <span className="text-xs font-black uppercase tracking-wider text-sky-300 flex items-center gap-1.5">
+                <div className="p-1.5 rounded-lg bg-sky-600 text-white shadow-xs">
                   <Volume2 className="w-4 h-4" />
                 </div>
                 Pronunciation Studio
@@ -588,7 +588,7 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
                 <button
                   id="modal-pronounce-normal"
                   onClick={() => onPlayAudio(word.word, 'modal-word-norm', 0.9)}
-                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs shadow-sm transition-all hover:scale-105 cursor-pointer border border-indigo-500"
+                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-black text-xs shadow-sm transition-all hover:scale-105 cursor-pointer border border-sky-500"
                 >
                   <Volume2 className="w-3.5 h-3.5" />
                   <span>Normal Speed</span>
@@ -596,7 +596,7 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
                 <button
                   id="modal-pronounce-slow"
                   onClick={() => onPlayAudio(word.word, 'modal-word-slow', 0.6)}
-                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-slate-900 text-sky-300 border border-sky-600/50 hover:bg-slate-850 font-black text-xs transition-all hover:scale-105 shadow-2xs cursor-pointer"
+                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-slate-900 text-sky-300 border border-sky-600/50 hover:bg-slate-800 font-black text-xs transition-all hover:scale-105 shadow-2xs cursor-pointer"
                 >
                   <Volume2 className="w-3.5 h-3.5 text-sky-400" />
                   <span>0.6x Slow Coach</span>
@@ -622,7 +622,7 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
                 className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black transition-all cursor-pointer shrink-0 ${
                   isRecording
                     ? 'bg-rose-600 text-white animate-pulse shadow-lg'
-                    : 'bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white shadow-md hover:scale-105 active:scale-95 border border-sky-500/40'
+                    : 'bg-gradient-to-r from-sky-600 to-teal-600 hover:from-sky-500 hover:to-teal-500 text-white shadow-md hover:scale-105 active:scale-95 border border-sky-500/40'
                 }`}
               >
                 {isRecording ? <Mic className="w-4 h-4 animate-bounce" /> : <Mic className="w-4 h-4" />}
@@ -876,7 +876,7 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
         </div>
 
         {/* Pinned Modal Footer Actions */}
-        <div className="shrink-0 bg-slate-900/98 backdrop-blur-md border-t border-slate-800 px-4 sm:px-6 py-3.5 flex items-center justify-between gap-3 z-20">
+        <div className="shrink-0 bg-[#0f172a]/95 backdrop-blur-md border-t border-slate-800 px-4 sm:px-6 py-3.5 flex items-center justify-between gap-3 z-20">
           <button
             onClick={onClose}
             className="px-4 py-2 rounded-xl font-black text-xs text-slate-300 bg-slate-800 hover:bg-slate-700 hover:text-white transition-colors cursor-pointer border border-slate-700"

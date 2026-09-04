@@ -66,7 +66,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* Top subtle Scottish ribbon accent: Warm Honey, Sage, Forest Green & Olive */}
       <div className="h-1.5 w-full bg-gradient-to-r from-amber-400 via-lime-500 via-emerald-500 to-teal-500 shadow-2xs" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl 2xl:max-w-[1460px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-18 gap-3">
           
           {/* App Logo & Mascot */}
@@ -234,11 +234,11 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => setActiveTab('games')}
             className={`flex items-center gap-2 px-4 py-2 rounded-2xl text-xs sm:text-sm font-extrabold whitespace-nowrap transition-all duration-200 cursor-pointer ${
               activeTab === 'games'
-                ? 'bg-gradient-to-r from-indigo-600 to-teal-600 text-white shadow-md shadow-indigo-950/50 scale-[1.03] border border-indigo-500/40'
+                ? 'bg-gradient-to-r from-sky-600 to-teal-600 text-white shadow-md shadow-sky-950/50 scale-[1.03] border border-sky-500/40'
                 : 'text-slate-300 hover:text-white hover:bg-slate-800'
             }`}
           >
-            <div className={`p-1 rounded-lg transition-colors ${activeTab === 'games' ? 'bg-white/20 text-white' : 'bg-slate-800 text-indigo-400 border border-slate-700'}`}>
+            <div className={`p-1 rounded-lg transition-colors ${activeTab === 'games' ? 'bg-white/20 text-white' : 'bg-slate-800 text-sky-400 border border-slate-700'}`}>
               <Gamepad2 className="w-4 h-4" />
             </div>
             <span>Word Arcade</span>
@@ -350,14 +350,14 @@ export const Navbar: React.FC<NavbarProps> = ({
           onClick={() => setActiveTab('games')}
           className={`flex flex-col items-center justify-center flex-1 py-1 rounded-xl transition-all relative ${
             activeTab === 'games'
-              ? 'text-indigo-400 font-black'
+              ? 'text-sky-400 font-black'
               : 'text-slate-400 hover:text-slate-200 font-bold'
           }`}
         >
           <div className={`p-1.5 rounded-xl transition-all flex items-center justify-center ${
             activeTab === 'games' 
-              ? 'bg-gradient-to-tr from-indigo-600 to-teal-600 text-white shadow-xs scale-105' 
-              : 'bg-slate-800 text-slate-300 border border-slate-700 shadow-2xs'
+              ? 'bg-gradient-to-tr from-sky-600 to-teal-600 text-white shadow-xs scale-105' 
+              : 'bg-slate-800 text-slate-300 border border-slate-750 shadow-2xs'
           }`}>
             <Gamepad2 className="w-4 h-4 text-current" />
           </div>
