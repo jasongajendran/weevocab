@@ -12,6 +12,7 @@ interface PrefixItem {
 interface GlobalPageVerticalScrubberProps {
   entries: { id: string; word: string }[];
   onScrollToWord: (firstId: string) => void;
+  isHidden?: boolean;
 }
 
 const STORAGE_KEY = 'weevocab_scrubber_collapsed_v1';
@@ -19,6 +20,7 @@ const STORAGE_KEY = 'weevocab_scrubber_collapsed_v1';
 export const GlobalPageVerticalScrubber: React.FC<GlobalPageVerticalScrubberProps> = ({
   entries,
   onScrollToWord,
+  isHidden = false,
 }) => {
   const [scrollPercent, setScrollPercent] = useState<number>(0);
   const [activeLetter, setActiveLetter] = useState<string>('A');
@@ -77,51 +79,53 @@ export const GlobalPageVerticalScrubber: React.FC<GlobalPageVerticalScrubberProp
     return list;
   }, [entries]);
 
-  // Track window scroll position to sync active thumb position and active prefix
+  // Track window scroll position to sync active thumb position and active prefix with RAF throttling
   useEffect(() => {
-    const handleScroll = () => {
-      if (isDragging) return; // Don't fight drag updates
+    if (isHidden) return;
+
+    let rafId: number | null = null;
+    let ticking = false;
+
+    const computeScroll = () => {
+      ticking = false;
+      if (isDragging) return;
 
       const docHeight = document.documentElement.scrollHeight - window.innerHeight;
       const currentScroll = window.scrollY;
       const percent = docHeight > 0 ? Math.min(100, Math.max(0, (currentScroll / docHeight) * 100)) : 0;
       setScrollPercent(percent);
 
-      const scrollYTarget = window.scrollY + 220;
+      if (allPrefixItems.length === 0) return;
 
-      // Find active letter section
-      const letterSections = document.querySelectorAll<HTMLElement>('[id^="letter-section-"]');
-      let currentLetter = 'A';
+      // Estimate active prefix and letter in O(1) time without calling getBoundingClientRect() on 100+ items
+      const estimatedIdx = Math.min(
+        allPrefixItems.length - 1,
+        Math.max(0, Math.floor((percent / 100) * allPrefixItems.length))
+      );
+      const activeItem = allPrefixItems[estimatedIdx];
+      if (activeItem) {
+        setActiveLetter(activeItem.letter);
+        setActivePrefix(activeItem.prefix);
+      }
+    };
 
-      letterSections.forEach((sec) => {
-        const top = sec.offsetTop;
-        const height = sec.offsetHeight;
-        if (scrollYTarget >= top && scrollYTarget < top + height) {
-          currentLetter = sec.id.replace('letter-section-', '');
-        }
-      });
-      setActiveLetter(currentLetter);
-
-      // Find active prefix
-      for (let i = allPrefixItems.length - 1; i >= 0; i--) {
-        const item = allPrefixItems[i];
-        const el = document.getElementById(`word-card-${item.firstId}`);
-        if (el) {
-          const rect = el.getBoundingClientRect();
-          if (rect.top <= 280) {
-            setActivePrefix(item.prefix);
-            break;
-          }
-        }
+    const handleScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        rafId = requestAnimationFrame(computeScroll);
       }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [allPrefixItems, isDragging]);
+    computeScroll();
 
-  if (allPrefixItems.length <= 1) {
+    return () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [allPrefixItems, isDragging, isHidden]);
+
+  if (isHidden || allPrefixItems.length <= 1) {
     return null;
   }
 

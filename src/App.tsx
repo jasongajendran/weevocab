@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import confetti from 'canvas-confetti';
 import { Navbar } from './components/Navbar';
 import { DictionaryView } from './components/DictionaryView';
@@ -98,8 +98,8 @@ export default function App() {
     });
   };
 
-  // Toggle Star / Bookmark
-  const handleToggleStar = (wordId: string) => {
+  // Toggle Star / Bookmark (memoized for high-speed word card performance)
+  const handleToggleStar = useCallback((wordId: string) => {
     setUserProgress(prev => {
       const isStarred = prev.starredWordIds.includes(wordId);
       const newStarred = isStarred 
@@ -110,7 +110,7 @@ export default function App() {
       updated.unlockedBadges = checkBadgeUnlocks(updated);
       return updated;
     });
-  };
+  }, []);
 
   // Update Game High Score
   const handleUpdateGameScore = (gameName: keyof UserProgress['gameHighScores'], score: number, expGained: number) => {

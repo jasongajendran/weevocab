@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react';
+import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import confetti from 'canvas-confetti';
 import { 
   Search, Volume2, Mic, MicOff, Star, Sparkles, Shuffle, X, 
@@ -14,6 +14,7 @@ import { GlobalPageVerticalScrubber } from './GlobalPageVerticalScrubber';
 import { HighlightedText } from '../utils/textHighlight';
 import { WordStudyModal } from './WordStudyModal';
 import { SoundWaveIcon } from './SoundWaveIcon';
+import { WordCard } from './WordCard';
 
 interface DictionaryViewProps {
   entries: DictionaryEntry[];
@@ -245,17 +246,51 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
     return Object.values(map).sort((a, b) => a.prefix.localeCompare(b.prefix));
   }, [filteredEntries]);
 
-  const scrollToWordCard = (cardId: string) => {
-    playSound('click');
-    const el = document.getElementById(`word-card-${cardId}`);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      el.classList.add('ring-4', 'ring-blue-400', 'scale-[1.02]');
-      setTimeout(() => {
-        el.classList.remove('ring-4', 'ring-blue-400', 'scale-[1.02]');
-      }, 1200);
+  // Progressive batch rendering count for high performance (zero lag)
+  const [visibleCount, setVisibleCount] = useState<number>(48);
+
+  // Reset visible limit on filter changes
+  useEffect(() => {
+    setVisibleCount(48);
+  }, [searchQuery, selectedLetter, selectedCategory, selectedRegion, selectedDifficulty, isShuffled]);
+
+  // Infinite scroll sentinel observer
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!sentinelRef.current) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          setVisibleCount((prev) => Math.min(prev + 36, filteredEntries.length));
+        }
+      },
+      { rootMargin: '600px' }
+    );
+
+    observer.observe(sentinelRef.current);
+    return () => observer.disconnect();
+  }, [filteredEntries.length, visibleCount]);
+
+  const scrollToWordCard = useCallback((cardId: string) => {
+    const index = filteredEntries.findIndex(e => e.id === cardId);
+    if (index >= 0) {
+      setVisibleCount(prev => Math.max(prev, index + 24));
     }
-  };
+    playSound('click');
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        const el = document.getElementById(`word-card-${cardId}`);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          el.classList.add('ring-4', 'ring-emerald-400', 'scale-[1.02]');
+          setTimeout(() => {
+            el.classList.remove('ring-4', 'ring-emerald-400', 'scale-[1.02]');
+          }, 1200);
+        }
+      }, 50);
+    });
+  }, [filteredEntries]);
 
   // Random word
   const handleRandomWord = () => {
@@ -271,375 +306,92 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
     setActiveModalWord(random);
   };
 
-  // Speak word or sentence with active animation feedback
-  const handlePronounceAudio = (text: string, audioId: string, rate: number = 0.9) => {
-    if (playingAudioId === audioId) {
-      cancelSpeech();
-      setPlayingAudioId(null);
-      return;
-    }
-
-    setPlayingAudioId(audioId);
-    speakSentence(text, {
-      rate,
-      onEnd: () => {
-        setPlayingAudioId((prev) => (prev === audioId ? null : prev));
-      },
-    });
-  };
-
-  // Voice practice
-  const handleStartVoice = (targetWord: string) => {
-    setVoiceResult(null);
-    setVoiceError(null);
-    setIsRecording(true);
-    playSound('click');
-
-    const stopFn = startVoicePractice(
-      targetWord,
-      (result) => {
-        setIsRecording(false);
-        setVoiceResult(result);
-        if (result.isMatch) {
-          playSound('celebrate');
-          confetti({
-            particleCount: 70,
-            spread: 70,
-            origin: { y: 0.55 },
-            colors: ['#10b981', '#3b82f6', '#fbbf24', '#a855f7']
-          });
-        } else {
-          playSound('wrong');
-        }
-      },
-      (error) => {
-        setIsRecording(false);
-        setVoiceError(error);
+  // Speak word or sentence with active animation feedback (stable callback with functional state)
+  const handlePronounceAudio = useCallback((text: string, audioId: string, rate: number = 0.9) => {
+    setPlayingAudioId((current) => {
+      if (current === audioId) {
+        cancelSpeech();
+        return null;
       }
-    );
+      speakSentence(text, {
+        rate,
+        onEnd: () => {
+          setPlayingAudioId((prev) => (prev === audioId ? null : prev));
+        },
+      });
+      return audioId;
+    });
+  }, []);
 
-    // Auto-stop after 5 seconds if silent
-    setTimeout(() => {
-      setIsRecording(false);
-      stopFn();
-    }, 5000);
-  };
+  // Set of starred word IDs for instant O(1) membership checks
+  const starredSet = useMemo(() => new Set(starredWordIds), [starredWordIds]);
 
-  // Helper for Category Styling & Badges with rich vibrant kid-friendly colors
-  const getCategoryTheme = (entry: DictionaryEntry) => {
-    if (entry.category === 'UK Common & Slang') {
-      return {
-        badgeBg: 'bg-amber-950/80 text-amber-300 border-amber-600/50 font-bold',
-        flag: '🇬🇧 UK Slang',
-        accentBar: 'border-t-4 border-t-amber-400',
-        exBorder: 'border-l-amber-400 bg-slate-800/70',
-        titleHover: 'group-hover:text-amber-300',
-        studyBtn: 'bg-slate-800 hover:bg-slate-750 text-amber-300 border-amber-500/40 hover:border-amber-400 shadow-2xs',
-        studyIconBg: 'bg-amber-400 text-slate-950',
-        studyChevron: 'text-amber-400',
-      };
-    }
-    if (entry.isScots || entry.category === 'School & Banter') {
-      return {
-        badgeBg: 'bg-emerald-950/80 text-emerald-300 border-emerald-600/50 font-bold',
-        flag: '🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scots',
-        accentBar: 'border-t-4 border-t-emerald-500',
-        exBorder: 'border-l-emerald-500 bg-slate-800/70',
-        titleHover: 'group-hover:text-emerald-300',
-        studyBtn: 'bg-slate-800 hover:bg-slate-750 text-emerald-300 border-emerald-500/40 hover:border-emerald-400 shadow-2xs',
-        studyIconBg: 'bg-emerald-600 text-white',
-        studyChevron: 'text-emerald-400',
-      };
-    }
-    if (entry.isAcademic) {
-      return {
-        badgeBg: 'bg-sky-950/80 text-sky-300 border-sky-600/50 font-bold',
-        flag: '🎓 Scholar',
-        accentBar: 'border-t-4 border-t-sky-500',
-        exBorder: 'border-l-sky-500 bg-slate-800/70',
-        titleHover: 'group-hover:text-sky-300',
-        studyBtn: 'bg-slate-800 hover:bg-slate-750 text-sky-300 border-sky-500/40 hover:border-sky-400 shadow-2xs',
-        studyIconBg: 'bg-sky-600 text-white',
-        studyChevron: 'text-sky-400',
-      };
-    }
-    if (entry.category === 'Nature & Places') {
-      return {
-        badgeBg: 'bg-teal-950/80 text-teal-300 border-teal-600/50 font-bold',
-        flag: '🌲 Nature',
-        accentBar: 'border-t-4 border-t-teal-500',
-        exBorder: 'border-l-teal-500 bg-slate-800/70',
-        titleHover: 'group-hover:text-teal-300',
-        studyBtn: 'bg-slate-800 hover:bg-slate-750 text-teal-300 border-teal-500/40 hover:border-teal-400 shadow-2xs',
-        studyIconBg: 'bg-teal-600 text-white',
-        studyChevron: 'text-teal-400',
-      };
-    }
-    return {
-      badgeBg: 'bg-rose-950/80 text-rose-300 border-rose-600/50 font-bold',
-      flag: '🍲 Culture',
-      accentBar: 'border-t-4 border-t-rose-400',
-      exBorder: 'border-l-rose-400 bg-slate-800/70',
-      titleHover: 'group-hover:text-rose-300',
-      studyBtn: 'bg-slate-800 hover:bg-slate-750 text-rose-300 border-rose-500/40 hover:border-rose-400 shadow-2xs',
-      studyIconBg: 'bg-rose-500 text-white',
-      studyChevron: 'text-rose-400',
-    };
-  };
+  // Stable callbacks for memoized WordCards
+  const handleToggleStar = useCallback((id: string) => {
+    onToggleStar(id);
+  }, [onToggleStar]);
 
-  const getPartOfSpeechBadge = (pos: string) => {
-    const p = pos.toLowerCase();
-    if (p.includes('noun')) {
-      return <span className="px-2 py-0.5 rounded-lg text-[11px] font-black bg-sky-950/80 text-sky-300 border border-sky-700/60">n.</span>;
-    }
-    if (p.includes('verb')) {
-      return <span className="px-2 py-0.5 rounded-lg text-[11px] font-black bg-emerald-950/80 text-emerald-300 border border-emerald-700/60">v.</span>;
-    }
-    if (p.includes('adj')) {
-      return <span className="px-2 py-0.5 rounded-lg text-[11px] font-black bg-amber-950/80 text-amber-300 border border-amber-700/60">adj.</span>;
-    }
-    if (p.includes('adv')) {
-      return <span className="px-2 py-0.5 rounded-lg text-[11px] font-black bg-cyan-950/80 text-cyan-300 border border-cyan-700/60">adv.</span>;
-    }
-    return <span className="px-2 py-0.5 rounded-lg text-[11px] font-black bg-teal-950/80 text-teal-300 border border-teal-700/60">phr.</span>;
-  };
+  const handleOpenStudy = useCallback((entry: DictionaryEntry) => {
+    setActiveModalWord(entry);
+  }, []);
 
-  const getDifficultyBadge = (difficulty: string) => {
-    if (difficulty.includes('P6-P7')) {
-      return <span className="px-2 py-0.5 rounded-lg text-[10px] font-black bg-emerald-950/80 text-emerald-300 border border-emerald-700/60">🟢 P6–P7</span>;
-    }
-    if (difficulty.includes('S1-S2')) {
-      return <span className="px-2 py-0.5 rounded-lg text-[10px] font-black bg-amber-950/80 text-amber-300 border border-amber-700/60">🟡 S1–S2</span>;
-    }
-    return <span className="px-2 py-0.5 rounded-lg text-[10px] font-black bg-blue-950/80 text-blue-300 border border-blue-700/60">🔵 S3–S4</span>;
-  };
+  const handleSearchKeyword = useCallback((keyword: string) => {
+    setSearchQuery(keyword);
+  }, []);
 
-  // Reusable Word Card Renderer
-  const renderWordCard = (entry: DictionaryEntry) => {
-    const isStarred = starredWordIds.includes(entry.id);
-    const theme = getCategoryTheme(entry);
+  // Visible sliced entries for smooth, lag-free performance
+  const visibleEntries = useMemo(() => {
+    return filteredEntries.slice(0, visibleCount);
+  }, [filteredEntries, visibleCount]);
+
+  // Group visible entries by starting letter
+  const visibleGroupedByLetter = useMemo(() => {
+    const groups: { letter: string; entries: DictionaryEntry[] }[] = [];
+    const map: Record<string, DictionaryEntry[]> = {};
+    visibleEntries.forEach(entry => {
+      const letter = entry.word[0]?.toUpperCase() || '#';
+      if (!map[letter]) map[letter] = [];
+      map[letter].push(entry);
+    });
+    Object.keys(map).sort().forEach(letter => {
+      groups.push({ letter, entries: map[letter] });
+    });
+    return groups;
+  }, [visibleEntries]);
+
+  // Visible shuffled entries
+  const visibleShuffledEntries = useMemo(() => {
+    return displayEntries.slice(0, visibleCount);
+  }, [displayEntries, visibleCount]);
+
+
+
+  // Reusable Word Card Renderer (Memoized to prevent unnecessary re-renders)
+  const renderWordCard = useCallback((entry: DictionaryEntry) => {
+    const isStarred = starredSet.has(entry.id);
     const isWordPlaying = playingAudioId === `word-${entry.id}`;
+    const isDefPlaying = playingAudioId === `card-def-${entry.id}`;
+    const isExPrefix = `card-${entry.id}-ex-`;
+    const playingExIdx = playingAudioId && playingAudioId.startsWith(isExPrefix)
+      ? parseInt(playingAudioId.slice(isExPrefix.length), 10)
+      : null;
 
     return (
-      <div
+      <WordCard
         key={entry.id}
-        id={`word-card-${entry.id}`}
-        className={`bg-slate-900/90 rounded-3xl border border-slate-800 hover:border-slate-600 hover:shadow-lg transition-all duration-250 flex flex-col justify-between group ${theme.accentBar} ${
-          layoutColumns === '1' ? 'p-6 sm:p-7 shadow-2xs' : 'p-5 shadow-2xs'
-        }`}
-      >
-        <div>
-          {/* Top Bar: Word, Badges & Bookmark on Left; Audio Icon Aligned */}
-          <div className="flex items-start justify-between gap-3 mb-3 pr-3 sm:pr-3.5">
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <h2 className={`font-black text-white tracking-tight transition-colors ${theme.titleHover} ${
-                  layoutColumns === '1' ? 'text-2xl sm:text-3xl' : 'text-xl sm:text-2xl'
-                }`}>
-                  {entry.word}
-                </h2>
-
-                <span className={`px-2.5 py-0.5 text-[11px] font-black rounded-lg border shadow-2xs ${theme.badgeBg}`}>
-                  {theme.flag}
-                </span>
-
-                {/* Star / Bookmark Button next to word & badge */}
-                <button
-                  id={`star-btn-${entry.id}`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onToggleStar(entry.id);
-                    playSound('pop');
-                  }}
-                  title={isStarred ? 'Remove from My Vault' : 'Save to My Vault'}
-                  aria-label={isStarred ? `Remove ${entry.word} from Vault` : `Save ${entry.word} to Vault`}
-                  className={`p-1.5 rounded-xl transition-all cursor-pointer inline-flex items-center justify-center ${
-                    isStarred 
-                      ? 'bg-gradient-to-r from-amber-400 to-yellow-400 text-slate-950 shadow-xs scale-105 border border-amber-300 ring-2 ring-amber-300/40' 
-                      : 'bg-slate-800 text-slate-400 hover:text-amber-300 hover:bg-slate-755 border border-slate-700'
-                  }`}
-                >
-                  <Star className={`w-3.5 h-3.5 ${isStarred ? 'fill-slate-950 text-slate-950' : ''}`} />
-                </button>
-              </div>
-              
-              {/* Phonetic & Pronunciation Guide */}
-              <div className="flex items-center gap-2 mt-1 flex-wrap">
-                <span className={`font-mono font-bold text-cyan-300 ${layoutColumns === '1' ? 'text-sm' : 'text-xs'}`}>
-                  {entry.phonetic}
-                </span>
-                <span className={`text-slate-300 font-bold italic bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700 ${layoutColumns === '1' ? 'text-xs' : 'text-[11px]'}`} title={entry.phoneticGuide}>
-                  🗣️ {entry.phoneticGuide}
-                </span>
-              </div>
-            </div>
-
-            {/* Word Pronunciation Sound Icon */}
-            <button
-              id={`word-sound-btn-${entry.id}`}
-              onClick={() => handlePronounceAudio(entry.word, `word-${entry.id}`, 0.9)}
-              title={`Listen to pronunciation of "${entry.word}"`}
-              aria-label={`Listen to pronunciation of ${entry.word}`}
-              className={`w-8.5 h-8.5 rounded-xl flex items-center justify-center transition-all cursor-pointer shrink-0 ${
-                isWordPlaying
-                  ? 'bg-emerald-600 text-white shadow-md ring-2 ring-emerald-400'
-                  : 'bg-slate-800 text-slate-300 hover:bg-emerald-600 hover:text-white shadow-2xs border border-slate-700 hover:scale-105 active:scale-95'
-              }`}
-            >
-              <SoundWaveIcon isPlaying={isWordPlaying} size="sm" />
-            </button>
-          </div>
-
-          {/* Tags & Metadata Bar */}
-          <div className="flex items-center gap-1.5 mb-3 text-xs flex-wrap">
-            {getPartOfSpeechBadge(entry.partOfSpeech)}
-            {getDifficultyBadge(entry.difficulty)}
-            <span className="text-slate-300 font-bold flex items-center gap-1 text-[11px] bg-slate-800 px-2 py-0.5 rounded-lg border border-slate-700 shadow-2xs" title={entry.scotsRegion}>
-              <MapPin className="w-3 h-3 text-emerald-400 shrink-0" />
-              {entry.scotsRegion.replace(' & Scotland', '').replace('UK Wide & Common', 'UK Wide')}
-            </span>
-          </div>
-
-          {/* Definition Box with Direct Sound Icon */}
-          {(() => {
-            const isDefPlaying = playingAudioId === `card-def-${entry.id}`;
-            return (
-              <div className="bg-slate-800/80 rounded-2xl p-3 sm:p-3.5 border border-slate-700 mb-3 flex items-start justify-between gap-3 group/def shadow-2xs">
-                <div className="flex-1 min-w-0">
-                  <p className={`font-semibold text-slate-100 leading-relaxed ${
-                    layoutColumns === '1' ? 'text-base sm:text-lg' : 'text-sm'
-                  }`}>
-                    {entry.definition}
-                  </p>
-                </div>
-
-                {/* Definition Sound Icon */}
-                <button
-                  id={`def-sound-btn-${entry.id}`}
-                  onClick={() => handlePronounceAudio(entry.definition, `card-def-${entry.id}`, 0.9)}
-                  title="Listen to definition"
-                  aria-label={`Listen to definition: ${entry.definition}`}
-                  className={`w-8.5 h-8.5 rounded-xl flex items-center justify-center transition-all shrink-0 cursor-pointer ${
-                    isDefPlaying
-                      ? 'bg-emerald-600 text-white shadow-md ring-2 ring-emerald-400'
-                      : 'bg-slate-900 text-slate-300 hover:bg-emerald-600 hover:text-white shadow-2xs border border-slate-700 hover:scale-105 active:scale-95'
-                  }`}
-                >
-                  <SoundWaveIcon isPlaying={isDefPlaying} size="sm" />
-                </button>
-              </div>
-            );
-          })()}
-
-          {/* Example Sentences */}
-          <div className="space-y-2 mb-3.5">
-            {entry.examples.map((ex, idx) => {
-              const exAudioId = `card-${entry.id}-ex-${idx}`;
-              const isExPlaying = playingAudioId === exAudioId;
-
-              return (
-                <div 
-                  key={idx} 
-                  className={`flex items-start justify-between gap-3 p-3 sm:p-3.5 rounded-2xl border transition-all shadow-2xs ${
-                    isExPlaying 
-                      ? 'bg-slate-800 border-l-4 border-l-amber-400 border-slate-700 text-slate-100 font-bold' 
-                      : `${theme.exBorder} border-slate-750 text-slate-200`
-                  }`}
-                >
-                  <p className={`italic leading-relaxed flex-1 min-w-0 pt-0.5 font-medium ${
-                    layoutColumns === '1' ? 'text-sm sm:text-base' : 'text-xs'
-                  }`}>
-                    "<HighlightedText text={ex} targetWord={entry.word} />"
-                  </p>
-
-                  {/* Example Sound Button */}
-                  <button
-                    id={`read-ex-${entry.id}-${idx}`}
-                    onClick={() => handlePronounceAudio(ex, exAudioId, 0.88)}
-                    title="Listen to this example sentence"
-                    aria-label={`Listen to example sentence: ${ex}`}
-                    className={`w-8.5 h-8.5 rounded-xl flex items-center justify-center transition-all shrink-0 cursor-pointer ${
-                      isExPlaying
-                        ? 'bg-amber-400 text-slate-950 shadow-md ring-2 ring-amber-300'
-                        : 'bg-slate-900 text-slate-300 hover:bg-amber-400 hover:text-slate-950 shadow-2xs border border-slate-700 hover:scale-105 active:scale-95'
-                    }`}
-                  >
-                    <SoundWaveIcon isPlaying={isExPlaying} size="sm" />
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Synonyms & Antonyms preview tags */}
-          {(entry.synonyms.length > 0 || entry.antonyms.length > 0) && (
-            <div className="space-y-2 text-xs mb-3.5">
-              {entry.synonyms.length > 0 && (
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="font-bold text-emerald-400 text-[11px] flex items-center gap-1">
-                    ✨ Synonyms:
-                  </span>
-                  {entry.synonyms.map((syn, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => setSearchQuery(syn)}
-                      className="px-2.5 py-0.5 bg-emerald-950/60 text-emerald-300 border border-emerald-700/50 rounded-lg text-[11px] font-bold hover:bg-emerald-900 hover:scale-105 cursor-pointer transition-all shadow-2xs"
-                    >
-                      {syn}
-                    </button>
-                  ))}
-                </div>
-              )}
-
-              {entry.antonyms.length > 0 && (
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="font-bold text-amber-400 text-[11px] flex items-center gap-1">
-                    ⚡ Antonyms:
-                  </span>
-                  {entry.antonyms.map((ant, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => setSearchQuery(ant)}
-                      className="px-2.5 py-0.5 bg-amber-950/60 text-amber-300 border border-amber-700/50 rounded-lg text-[11px] font-bold hover:bg-amber-900 hover:scale-105 cursor-pointer transition-all shadow-2xs"
-                    >
-                      {ant}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Card Footer: Deep Study Action */}
-        <div className="pt-3 border-t border-slate-800 flex items-center justify-between gap-2">
-          <span className="text-[11px] font-medium text-slate-400 flex items-center gap-1">
-            <span>✨</span>
-            <span className="hidden sm:inline">Etymology, voice & quiz</span>
-            <span className="sm:hidden">Study lab</span>
-          </span>
-
-          <button
-            id={`open-detail-btn-${entry.id}`}
-            onClick={() => {
-              setActiveModalWord(entry);
-              playSound('pop');
-            }}
-            title={`Open full pronunciation studio, etymology, and mastery challenge for ${entry.word}`}
-            className={`group flex items-center justify-center gap-1.5 sm:gap-2 font-black rounded-xl transition-all hover:scale-[1.02] active:scale-95 cursor-pointer shadow-2xs shrink-0 border ${theme.studyBtn} ${
-              layoutColumns === '1' ? 'px-4 py-2 text-sm' : 'px-3 py-1.5 text-xs'
-            }`}
-          >
-            <div className={`w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-lg flex items-center justify-center text-[10px] font-black shrink-0 ${theme.studyIconBg}`}>
-              ⚡
-            </div>
-            <span>Study Lab & Lore</span>
-            <ChevronRight className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-0.5 ${theme.studyChevron}`} />
-          </button>
-        </div>
-      </div>
+        entry={entry}
+        isStarred={isStarred}
+        isWordPlaying={isWordPlaying}
+        isDefPlaying={isDefPlaying}
+        playingExIdx={playingExIdx}
+        layoutColumns={layoutColumns}
+        onToggleStar={handleToggleStar}
+        onOpenStudy={handleOpenStudy}
+        onPlayAudio={handlePronounceAudio}
+        onSearchKeyword={handleSearchKeyword}
+      />
     );
-  };
+  }, [starredSet, playingAudioId, layoutColumns, handleToggleStar, handleOpenStudy, handlePronounceAudio, handleSearchKeyword]);
 
   return (
     <div className="space-y-5 pb-24 sm:pb-8">
@@ -1154,13 +906,12 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
         </div>
       </div>
 
-      {/* Global Page Vertical Scrubber pinned to whole page scroll on right edge (hidden during active modal study to prevent touch conflicts) */}
-      {!activeModalWord && !isShuffled && (
-        <GlobalPageVerticalScrubber
-          entries={filteredEntries}
-          onScrollToWord={scrollToWordCard}
-        />
-      )}
+      {/* Global Page Vertical Scrubber pinned to whole page scroll on right edge */}
+      <GlobalPageVerticalScrubber
+        entries={filteredEntries}
+        onScrollToWord={scrollToWordCard}
+        isHidden={Boolean(activeModalWord || isShuffled)}
+      />
 
       {/* Word Cards Grid / Grouped Sections */}
       {filteredEntries.length === 0 ? (
@@ -1228,12 +979,28 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
               ? 'grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 w-full'
               : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 w-full'
           }>
-            {displayEntries.map(renderWordCard)}
+            {visibleShuffledEntries.map(renderWordCard)}
           </div>
+
+          {/* Progressive Load More Sentinel for Shuffled view */}
+          {visibleCount < displayEntries.length && (
+            <div ref={sentinelRef} className="py-6 flex flex-col items-center justify-center gap-2 text-slate-400">
+              <div className="flex items-center gap-2 text-xs font-bold bg-slate-900 px-4 py-2.5 rounded-2xl border border-slate-800 shadow-md">
+                <div className="w-3.5 h-3.5 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin" />
+                <span>Loaded {visibleShuffledEntries.length} of {displayEntries.length} terms</span>
+                <button
+                  onClick={() => setVisibleCount(displayEntries.length)}
+                  className="ml-2 text-emerald-400 hover:text-emerald-300 font-black underline cursor-pointer"
+                >
+                  Load All
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         <div className="space-y-8">
-          {groupedByLetter.map((group) => {
+          {visibleGroupedByLetter.map((group) => {
             const gridClasses = 
               layoutColumns === '1'
                 ? 'grid grid-cols-1 gap-6 max-w-4xl mx-auto w-full'
@@ -1277,6 +1044,22 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
               </div>
             );
           })}
+
+          {/* Progressive Load More Sentinel for Alphabetical view */}
+          {visibleCount < filteredEntries.length && (
+            <div ref={sentinelRef} className="py-6 flex flex-col items-center justify-center gap-2 text-slate-400">
+              <div className="flex items-center gap-2 text-xs font-bold bg-slate-900 px-4 py-2.5 rounded-2xl border border-slate-800 shadow-md">
+                <div className="w-3.5 h-3.5 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin" />
+                <span>Loaded {visibleEntries.length} of {filteredEntries.length} terms</span>
+                <button
+                  onClick={() => setVisibleCount(filteredEntries.length)}
+                  className="ml-2 text-emerald-400 hover:text-emerald-300 font-black underline cursor-pointer"
+                >
+                  Load All
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

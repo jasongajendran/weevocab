@@ -65,9 +65,13 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
     const otherCandidates = allEntries.filter(e => e.id !== word.id && e.partOfSpeech === word.partOfSpeech);
     const pool = otherCandidates.length >= 2 ? otherCandidates : allEntries.filter(e => e.id !== word.id);
     
-    // Shuffle pool
-    const shuffledPool = [...pool].sort(() => 0.5 - Math.random());
-    const distractor1 = shuffledPool[0] || {
+    // Pick 2 random distractors in O(1) time without cloning or sorting the entire dictionary
+    const poolLen = pool.length;
+    const idx1 = poolLen > 0 ? Math.floor(Math.random() * poolLen) : 0;
+    let idx2 = poolLen > 1 ? Math.floor(Math.random() * (poolLen - 1)) : 0;
+    if (idx2 >= idx1 && poolLen > 1) idx2 = (idx2 + 1) % poolLen;
+
+    const distractor1 = pool[idx1] || {
       id: 'fallback-1',
       word: 'Meander',
       definition: 'To wander aimlessly or follow a winding, leisurely course.',
@@ -83,7 +87,7 @@ export const WordStudyModal: React.FC<WordStudyModalProps> = ({
       antonyms: ['march', 'rush'],
       scotsRegion: 'UK Wide & Common',
     };
-    const distractor2 = shuffledPool[1] || {
+    const distractor2 = pool[idx2] || {
       id: 'fallback-2',
       word: 'Embellish',
       definition: 'To add decorative details or exaggerated features to something.',
